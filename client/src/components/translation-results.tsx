@@ -232,32 +232,65 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
                   🇮🇳 Tamil Test
                 </button>
                 <button 
-                  onClick={() => {
-                    // Mobile-optimized speech test
-                    console.log('📱 Mobile speech test starting');
+                  onClick={async () => {
+                    // Advanced mobile speech test
+                    console.log('📱 Advanced mobile speech test starting');
                     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                     
-                    // Cancel any existing speech
-                    speechSynthesis.cancel();
-                    
-                    // Create simple test utterance
-                    const testText = isMobile ? 'Mobile test' : 'Desktop test';
-                    const utterance = new SpeechSynthesisUtterance(testText);
-                    utterance.lang = 'en-US';
-                    utterance.rate = isMobile ? 0.8 : 1.0;
-                    utterance.volume = 1.0;
-                    utterance.pitch = 1.0;
-                    
-                    utterance.onstart = () => console.log('📱 Mobile test speech started');
-                    utterance.onend = () => console.log('📱 Mobile test speech ended');
-                    utterance.onerror = (e) => {
-                      console.error('📱 Mobile test failed:', e);
-                      alert(`Mobile speech test failed: ${e.error || 'Unknown error'}`);
-                    };
-                    
-                    // Immediate speech for mobile
-                    speechSynthesis.speak(utterance);
-                    console.log('📱 Mobile test queued');
+                    try {
+                      // Cancel any existing speech
+                      speechSynthesis.cancel();
+                      await new Promise(resolve => setTimeout(resolve, isMobile ? 300 : 100));
+                      
+                      // Force voice loading
+                      const voices = speechSynthesis.getVoices();
+                      if (voices.length === 0) {
+                        console.log('📱 Loading voices...');
+                        const dummy = new SpeechSynthesisUtterance('');
+                        speechSynthesis.speak(dummy);
+                        speechSynthesis.cancel();
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                      }
+                      
+                      // Create test utterance with mobile optimizations
+                      const testText = `${isMobile ? 'Mobile' : 'Desktop'} voice test successful`;
+                      const utterance = new SpeechSynthesisUtterance(testText);
+                      utterance.lang = 'en-US';
+                      utterance.rate = isMobile ? 0.9 : 1.0;
+                      utterance.volume = 1.0;
+                      utterance.pitch = 1.0;
+                      
+                      // Enhanced event handlers
+                      utterance.onstart = () => {
+                        console.log('📱 Mobile test speech started successfully');
+                      };
+                      
+                      utterance.onend = () => {
+                        console.log('📱 Mobile test speech completed successfully');
+                        alert(`${isMobile ? 'Mobile' : 'Desktop'} speech test completed!`);
+                      };
+                      
+                      utterance.onerror = (e) => {
+                        console.error('📱 Mobile test failed:', e);
+                        alert(`Speech test failed: ${e.error || 'Unknown error'}\nTry checking device volume or browser permissions.`);
+                      };
+                      
+                      // Find best voice
+                      const updatedVoices = speechSynthesis.getVoices();
+                      const englishVoice = updatedVoices.find(v => v.lang === 'en-US' || v.lang.startsWith('en'));
+                      if (englishVoice) {
+                        utterance.voice = englishVoice;
+                        console.log('📱 Using voice:', englishVoice.name);
+                      }
+                      
+                      // Start speech
+                      console.log('📱 Starting optimized mobile speech test');
+                      speechSynthesis.speak(utterance);
+                      
+                    } catch (error) {
+                      console.error('📱 Mobile test setup failed:', error);
+                      alert(`Mobile test setup failed: ${error}`);
+                    }
                   }}
                   className="px-3 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
                 >
