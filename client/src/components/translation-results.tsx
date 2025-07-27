@@ -296,6 +296,150 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
                 >
                   📱 Mobile Test
                 </button>
+                <button 
+                  onClick={async () => {
+                    // Ultimate mobile audio test
+                    console.log('🔬 Ultimate mobile audio diagnostics starting...');
+                    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    
+                    try {
+                      // Step 1: Check basic support
+                      console.log('🔬 Step 1: Basic support check');
+                      const speechSupported = 'speechSynthesis' in window;
+                      console.log('🔬 speechSynthesis supported:', speechSupported);
+                      
+                      if (!speechSupported) {
+                        alert('Speech synthesis not supported in this browser');
+                        return;
+                      }
+                      
+                      // Step 2: Force audio context activation (mobile requirement)
+                      console.log('🔬 Step 2: Audio context activation');
+                      if (isMobile) {
+                        // Create AudioContext to activate mobile audio
+                        try {
+                          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+                          console.log('🔬 AudioContext created:', audioContext.state);
+                          if (audioContext.state === 'suspended') {
+                            await audioContext.resume();
+                            console.log('🔬 AudioContext resumed:', audioContext.state);
+                          }
+                        } catch (audioError) {
+                          console.warn('🔬 AudioContext creation failed:', audioError);
+                        }
+                      }
+                      
+                      // Step 3: Complete cancellation
+                      console.log('🔬 Step 3: Speech cancellation');
+                      speechSynthesis.cancel();
+                      await new Promise(resolve => setTimeout(resolve, 1000));
+                      
+                      // Step 4: Voice loading verification
+                      console.log('🔬 Step 4: Voice loading');
+                      let voices = speechSynthesis.getVoices();
+                      console.log('🔬 Initial voices:', voices.length);
+                      
+                      if (voices.length === 0) {
+                        console.log('🔬 Triggering voice loading...');
+                        const dummy = new SpeechSynthesisUtterance('');
+                        dummy.volume = 0;
+                        speechSynthesis.speak(dummy);
+                        speechSynthesis.cancel();
+                        
+                        // Wait for voices
+                        await new Promise((resolve) => {
+                          let attempts = 0;
+                          const checkVoices = () => {
+                            attempts++;
+                            const currentVoices = speechSynthesis.getVoices();
+                            console.log(`🔬 Voice check attempt ${attempts}:`, currentVoices.length);
+                            if (currentVoices.length > 0 || attempts >= 20) {
+                              resolve(void 0);
+                            } else {
+                              setTimeout(checkVoices, 200);
+                            }
+                          };
+                          checkVoices();
+                        });
+                        
+                        voices = speechSynthesis.getVoices();
+                        console.log('🔬 Final voices loaded:', voices.length);
+                      }
+                      
+                      // Step 5: Voice selection
+                      console.log('🔬 Step 5: Voice selection');
+                      const testText = 'Audio test successful';
+                      const utterance = new SpeechSynthesisUtterance(testText);
+                      
+                      const englishVoice = voices.find(v => 
+                        v.lang === 'en-US' || 
+                        v.lang.startsWith('en') || 
+                        v.name.toLowerCase().includes('english')
+                      );
+                      
+                      if (englishVoice) {
+                        utterance.voice = englishVoice;
+                        console.log('🔬 Selected voice:', englishVoice.name, englishVoice.lang);
+                      } else {
+                        console.log('🔬 Using default voice');
+                      }
+                      
+                      // Step 6: Configure utterance
+                      utterance.lang = 'en-US';
+                      utterance.rate = isMobile ? 0.8 : 1.0;
+                      utterance.volume = 1.0;
+                      utterance.pitch = 1.0;
+                      
+                      console.log('🔬 Step 6: Utterance configured:', {
+                        text: utterance.text,
+                        lang: utterance.lang,
+                        rate: utterance.rate,
+                        volume: utterance.volume,
+                        voice: utterance.voice?.name
+                      });
+                      
+                      // Step 7: Event handlers with detailed logging
+                      let speechStarted = false;
+                      let speechEnded = false;
+                      
+                      utterance.onstart = () => {
+                        speechStarted = true;
+                        console.log('🔬 ✅ Speech started successfully!');
+                      };
+                      
+                      utterance.onend = () => {
+                        speechEnded = true;
+                        console.log('🔬 ✅ Speech completed successfully!');
+                        alert(`Mobile audio test SUCCESSFUL!\n✅ Speech synthesis working\n📱 Device: ${isMobile ? 'Mobile' : 'Desktop'}\n🎤 Voice: ${utterance.voice?.name || 'Default'}`);
+                      };
+                      
+                      utterance.onerror = (e) => {
+                        console.error('🔬 ❌ Speech error:', e);
+                        alert(`Mobile audio test FAILED!\n❌ Error: ${e.error}\n📱 Device: ${isMobile ? 'Mobile' : 'Desktop'}\n\nTroubleshooting:\n• Check device volume\n• Try headphones\n• Enable browser audio\n• Try different browser`);
+                      };
+                      
+                      // Step 8: Speech execution
+                      console.log('🔬 Step 8: Starting speech...');
+                      speechSynthesis.speak(utterance);
+                      console.log('🔬 Speech queued for execution');
+                      
+                      // Step 9: Timeout check
+                      setTimeout(() => {
+                        if (!speechStarted) {
+                          console.error('🔬 ❌ Speech never started - possible mobile audio policy issue');
+                          alert('Mobile audio test TIMEOUT!\n⏰ Speech never started\n\nThis usually means:\n• Mobile browser audio policy blocked the request\n• Need to interact with page first\n• Audio permissions not granted');
+                        }
+                      }, 3000);
+                      
+                    } catch (error) {
+                      console.error('🔬 Ultimate test failed:', error);
+                      alert(`Ultimate mobile test CRASHED!\n💥 Error: ${error}\n\nPlease check browser console for details.`);
+                    }
+                  }}
+                  className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  🔬 Ultimate Test
+                </button>
                 </div>
               </div>
             )}

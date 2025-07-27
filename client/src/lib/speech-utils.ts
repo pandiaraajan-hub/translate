@@ -134,6 +134,7 @@ export class SpeechUtils {
     console.log('🔊 Speech synthesis requested:', { text: options.text, lang: options.lang });
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     console.log('📱 Device type:', isMobile ? 'Mobile' : 'Desktop');
+    console.log('📱 User agent:', navigator.userAgent);
     
     if (!this.isSynthesisSupported()) {
       const error = 'Speech synthesis is not supported in this browser';
@@ -141,25 +142,62 @@ export class SpeechUtils {
       throw new Error(error);
     }
 
-    // Cancel any existing speech
-    if (this.synthesis.speaking || this.synthesis.pending) {
-      console.log('🛑 Cancelling existing speech');
+    // Mobile-specific initialization
+    if (isMobile) {
+      console.log('📱 Mobile device detected - applying mobile audio policies');
+      
+      // Force complete cancellation on mobile
       this.synthesis.cancel();
-      await new Promise(resolve => setTimeout(resolve, isMobile ? 300 : 100));
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Check if we're in a user gesture context
+      console.log('📱 Checking user gesture context...');
+      
+      // Trigger voice loading with a silent utterance
+      console.log('📱 Forcing voice initialization...');
+      try {
+        const initUtterance = new SpeechSynthesisUtterance('');
+        initUtterance.volume = 0; // Silent
+        this.synthesis.speak(initUtterance);
+        this.synthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 300));
+      } catch (error) {
+        console.warn('📱 Voice initialization failed:', error);
+      }
+    } else {
+      // Desktop behavior - standard cancellation
+      if (this.synthesis.speaking || this.synthesis.pending) {
+        console.log('🛑 Cancelling existing speech');
+        this.synthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
     }
 
-    // Force voice loading if needed
-    const voices = this.synthesis.getVoices();
-    if (voices.length === 0) {
-      console.log('📱 No voices loaded, triggering voice loading...');
-      const dummyUtterance = new SpeechSynthesisUtterance('');
-      this.synthesis.speak(dummyUtterance);
-      this.synthesis.cancel();
-      await new Promise(resolve => setTimeout(resolve, 200));
+    // Get available voices
+    let voices = this.synthesis.getVoices();
+    console.log('🎤 Initial voices:', voices.length);
+    
+    // On mobile, wait for voices to load if none are available
+    if (isMobile && voices.length === 0) {
+      console.log('📱 Waiting for voices to load on mobile...');
+      await new Promise((resolve) => {
+        const checkVoices = () => {
+          const currentVoices = this.synthesis.getVoices();
+          if (currentVoices.length > 0) {
+            console.log('📱 Voices loaded:', currentVoices.length);
+            resolve(void 0);
+          } else {
+            setTimeout(checkVoices, 100);
+          }
+        };
+        checkVoices();
+        // Timeout after 2 seconds
+        setTimeout(() => resolve(void 0), 2000);
+      });
+      voices = this.synthesis.getVoices();
     }
-
-    const updatedVoices = this.synthesis.getVoices();
-    console.log('🎤 Available voices:', updatedVoices.length);
+    
+    console.log('🎤 Final available voices:', voices.length);
     
     // Handle missing Tamil voice
     if (options.lang === 'ta-IN' && !this.getBestVoiceForLanguage(options.lang) && !isMobile) {
@@ -192,19 +230,57 @@ export class SpeechUtils {
         isMobile
       });
 
-      utterance.onstart = () => {
-        console.log('▶️ Speech synthesis started');
-      };
-      
-      utterance.onend = () => {
-        console.log('✅ Speech synthesis completed');
-        resolve();
-      };
-      
-      utterance.onerror = (event) => {
-        console.error('❌ Speech synthesis error:', event);
-        reject(new Error(`Speech synthesis failed: ${event.error || 'Unknown error'}`));
-      };
+      // Mobile-specific event handlers with enhanced logging
+      if (isMobile) {
+        utterance.onstart = () => {
+          console.log('📱 Mobile speech synthesis started successfully');
+        };
+        
+        utterance.onend = () => {
+          console.log('📱 Mobile speech synthesis completed successfully');
+          resolve();
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('📱 Mobile speech synthesis error:', event);
+          console.error('📱 Error details:', {
+            error: event.error,
+            type: event.type,
+            target: event.target
+          });
+          
+          // Try to recover from common mobile errors
+          if (event.error === 'not-allowed' || event.error === 'audio-busy') {
+            console.log('📱 Attempting mobile audio recovery...');
+            setTimeout(() => {
+              try {
+                this.synthesis.speak(utterance);
+                console.log('📱 Mobile recovery attempt made');
+              } catch (recoveryError) {
+                console.error('📱 Mobile recovery failed:', recoveryError);
+                reject(new Error(`Mobile speech failed: ${event.error}`));
+              }
+            }, 500);
+          } else {
+            reject(new Error(`Mobile speech failed: ${event.error || 'Unknown mobile error'}`));
+          }
+        };
+      } else {
+        // Desktop event handlers
+        utterance.onstart = () => {
+          console.log('▶️ Desktop speech synthesis started');
+        };
+        
+        utterance.onend = () => {
+          console.log('✅ Desktop speech synthesis completed');
+          resolve();
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('❌ Desktop speech synthesis error:', event);
+          reject(new Error(`Desktop speech failed: ${event.error || 'Unknown error'}`));
+        };
+      }
 
       // Set voice if available
       const voice = this.getBestVoiceForLanguage(options.lang);
@@ -219,11 +295,20 @@ export class SpeechUtils {
         this.synthesis.resume();
       }
 
-      // Start speaking
+      // Start speaking with mobile-specific handling
       console.log('🚀 Starting speech synthesis...');
       try {
-        this.synthesis.speak(utterance);
-        console.log('📢 Speech queued successfully');
+        if (isMobile) {
+          console.log('📱 Queuing mobile speech with enhanced handling');
+          // Add small delay for mobile audio context
+          setTimeout(() => {
+            this.synthesis.speak(utterance);
+            console.log('📱 Mobile speech queued after delay');
+          }, 100);
+        } else {
+          this.synthesis.speak(utterance);
+          console.log('📢 Desktop speech queued successfully');
+        }
       } catch (error) {
         console.error('❌ Failed to queue speech:', error);
         reject(new Error(`Failed to start speech: ${error}`));
