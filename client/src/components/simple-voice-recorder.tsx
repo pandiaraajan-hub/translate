@@ -9,9 +9,10 @@ interface SimpleVoiceRecorderProps {
   onRecognitionResult: (text: string, confidence: number) => void;
   onError: (error: string) => void;
   onTestAudio?: () => void;
+  translatedText?: string;
 }
 
-export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError, onTestAudio }: SimpleVoiceRecorderProps) {
+export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError, onTestAudio, translatedText }: SimpleVoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
 
@@ -108,7 +109,29 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
           </button>
 
           <button
-            onClick={onTestAudio}
+            onClick={async () => {
+              if (translatedText && translatedText.trim()) {
+                console.log('🧪 Testing audio with translation:', translatedText);
+                
+                try {
+                  const { reliableAudio } = await import('@/lib/reliable-audio');
+                  reliableAudio.unlockAudio();
+                  
+                  const success = await reliableAudio.speak(translatedText, 'ta-IN');
+                  console.log('🧪 Audio test result:', success);
+                  
+                  if (!success) {
+                    console.log('🧪 Tamil failed, trying English...');
+                    await reliableAudio.speak(translatedText, 'en-US');
+                  }
+                } catch (error) {
+                  console.error('🧪 Audio test error:', error);
+                  alert('Audio test failed: ' + error);
+                }
+              } else if (onTestAudio) {
+                onTestAudio();
+              }
+            }}
             className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
           >
             Translate Now

@@ -249,6 +249,7 @@ export default function Home() {
           onRecognitionResult={handleRecognitionResult}
           onError={handleRecognitionError}
           onTestAudio={testAudio}
+          translatedText={translatedText}
         />
 
         {/* Processing Indicator - Compact */}
