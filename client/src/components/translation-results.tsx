@@ -140,24 +140,26 @@ export function TranslationResults({
             <div className="flex justify-center gap-2 mt-2">
               <button 
                 onClick={() => {
-                  // Check system audio capabilities
+                  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  const voices = speechSynthesis.getVoices();
+                  
                   console.log('🔊 System Audio Check:');
+                  console.log('- Device type:', isMobile ? 'Mobile' : 'Desktop');
                   console.log('- speechSynthesis available:', 'speechSynthesis' in window);
                   console.log('- speechSynthesis.speaking:', speechSynthesis.speaking);
                   console.log('- speechSynthesis.pending:', speechSynthesis.pending);
                   console.log('- speechSynthesis.paused:', speechSynthesis.paused);
-                  console.log('- Available voices:', speechSynthesis.getVoices().length);
+                  console.log('- Available voices:', voices.length);
+                  console.log('- Voice names:', voices.map(v => v.name).slice(0, 5));
                   
                   alert(`Audio System Status:
+• Device: ${isMobile ? 'Mobile' : 'Desktop'}
 • Speech Synthesis: ${'speechSynthesis' in window ? 'Available' : 'Not Available'}
 • Currently Speaking: ${speechSynthesis.speaking ? 'Yes' : 'No'}
-• Available Voices: ${speechSynthesis.getVoices().length}
-• Browser: ${navigator.userAgent.includes('Chrome') ? 'Chrome' : 'Other'}
+• Available Voices: ${voices.length}
+• User Agent: ${navigator.userAgent.substring(0, 50)}...
 
-Make sure:
-1. System volume is not muted
-2. Browser audio is enabled
-3. Try headphones if speakers don't work`);
+${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device volume\n• Try different browsers' : 'Desktop Tips:\n• Check system volume\n• Try headphones\n• Check browser permissions'}`);
                 }}
                 className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
               >
@@ -228,6 +230,38 @@ Make sure:
                   className="px-3 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
                 >
                   🇮🇳 Tamil Test
+                </button>
+                <button 
+                  onClick={() => {
+                    // Mobile-optimized speech test
+                    console.log('📱 Mobile speech test starting');
+                    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    
+                    // Cancel any existing speech
+                    speechSynthesis.cancel();
+                    
+                    // Create simple test utterance
+                    const testText = isMobile ? 'Mobile test' : 'Desktop test';
+                    const utterance = new SpeechSynthesisUtterance(testText);
+                    utterance.lang = 'en-US';
+                    utterance.rate = isMobile ? 0.8 : 1.0;
+                    utterance.volume = 1.0;
+                    utterance.pitch = 1.0;
+                    
+                    utterance.onstart = () => console.log('📱 Mobile test speech started');
+                    utterance.onend = () => console.log('📱 Mobile test speech ended');
+                    utterance.onerror = (e) => {
+                      console.error('📱 Mobile test failed:', e);
+                      alert(`Mobile speech test failed: ${e.error || 'Unknown error'}`);
+                    };
+                    
+                    // Immediate speech for mobile
+                    speechSynthesis.speak(utterance);
+                    console.log('📱 Mobile test queued');
+                  }}
+                  className="px-3 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
+                >
+                  📱 Mobile Test
                 </button>
                 </div>
               </div>

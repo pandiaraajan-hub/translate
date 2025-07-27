@@ -132,6 +132,8 @@ export class SpeechUtils {
 
   async speak(options: SpeechSynthesisOptions): Promise<void> {
     console.log('🔊 Speech synthesis requested:', { text: options.text, lang: options.lang });
+    console.log('📱 User agent:', navigator.userAgent);
+    console.log('📱 Is mobile:', /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     
     if (!this.isSynthesisSupported()) {
       const error = 'Speech synthesis is not supported in this browser';
@@ -139,28 +141,55 @@ export class SpeechUtils {
       throw new Error(error);
     }
 
-    // Ensure synthesis is ready - don't cancel if already speaking
-    if (this.synthesis.speaking) {
-      console.log('🛑 Speech already in progress, waiting...');
-      await new Promise(resolve => {
-        const checkComplete = () => {
-          if (!this.synthesis.speaking) {
-            resolve(void 0);
-          } else {
-            setTimeout(checkComplete, 100);
-          }
-        };
-        checkComplete();
-      });
+    // Mobile browsers need user interaction - ensure we're in a user gesture context
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      console.log('📱 Mobile device detected, using mobile-optimized speech synthesis');
+      
+      // For mobile, cancel any existing speech first
+      if (this.synthesis.speaking || this.synthesis.pending) {
+        console.log('📱 Cancelling existing speech for mobile');
+        this.synthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Force voice loading on mobile
+      const voices = this.synthesis.getVoices();
+      if (voices.length === 0) {
+        console.log('📱 No voices loaded, triggering voice loading...');
+        // Trigger voice loading by creating a dummy utterance
+        const dummyUtterance = new SpeechSynthesisUtterance('');
+        this.synthesis.speak(dummyUtterance);
+        this.synthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    } else {
+      // Desktop behavior - wait for completion
+      if (this.synthesis.speaking) {
+        console.log('🛑 Speech already in progress, waiting...');
+        await new Promise(resolve => {
+          const checkComplete = () => {
+            if (!this.synthesis.speaking) {
+              resolve(void 0);
+            } else {
+              setTimeout(checkComplete, 100);
+            }
+          };
+          checkComplete();
+        });
+      }
     }
 
-    // Check if we have a voice for this language
+    // Check voices after potential loading
     const voices = this.synthesis.getVoices();
     const availableVoice = this.getBestVoiceForLanguage(options.lang);
     
-    // If no voice is available for Tamil, use English with a notification
-    if (options.lang === 'ta-IN' && !availableVoice) {
-      console.log('⚠️ No Tamil voice available, providing English notification');
+    console.log('📱 Voices available after check:', voices.length);
+    console.log('📱 Selected voice for', options.lang, ':', availableVoice?.name || 'default');
+    
+    // Handle missing Tamil voice with better mobile support
+    if (options.lang === 'ta-IN' && !availableVoice && !isMobile) {
+      console.log('⚠️ No Tamil voice available on desktop, providing English notification');
       const notification = new SpeechSynthesisUtterance('Tamil voice not available on this device');
       notification.lang = 'en-US';
       notification.rate = 1.0;
@@ -168,7 +197,7 @@ export class SpeechUtils {
       
       return new Promise((resolve) => {
         notification.onend = () => resolve();
-        notification.onerror = () => resolve(); // Continue even if notification fails
+        notification.onerror = () => resolve();
         this.synthesis.speak(notification);
       });
     }
@@ -254,6 +283,27 @@ export class SpeechUtils {
           console.log('🎯 Selected voice:', voice.name, 'for', options.lang);
           utterance.voice = voice;
         }
+      }
+
+      // Mobile-specific settings
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        console.log('📱 Applying mobile-specific settings');
+        utterance.rate = Math.min(utterance.rate, 1.0); // Slower rate for mobile
+        utterance.volume = 1.0; // Full volume for mobile
+        
+        // Add small delay for mobile browsers
+        setTimeout(() => {
+          console.log('📱 Mobile speech starting after delay');
+          try {
+            this.synthesis.speak(utterance);
+            console.log('📢 Mobile speech queued successfully');
+          } catch (error) {
+            console.error('❌ Mobile speech failed:', error);
+            reject(new Error(`Mobile speech failed: ${error}`));
+          }
+        }, 100);
+        return; // Exit early for mobile
       }
 
       // Check if speech synthesis is ready
