@@ -110,10 +110,10 @@ export function VoiceRecorder({
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="text-center space-y-6">
+      <CardContent className="p-4 sm:p-6">
+        <div className="text-center space-y-4 sm:space-y-6">
           <div className="space-y-2">
-            <h2 className="text-lg font-medium text-gray-900">Voice Recording</h2>
+            <h2 className="text-base sm:text-lg font-medium text-gray-900">Voice Recording</h2>
             <p className="text-sm text-gray-500">
               Tap the microphone and speak clearly in {SUPPORTED_LANGUAGES[sourceLanguage].name}
             </p>
@@ -137,14 +137,15 @@ export function VoiceRecorder({
           <div className="flex justify-center">
             <Button
               size="lg"
-              className={`w-20 h-20 rounded-full text-white text-2xl transition-all duration-200 ripple ${
+              data-recording-button
+              className={`w-24 h-24 sm:w-20 sm:h-20 rounded-full text-white text-2xl transition-all duration-200 ripple ${
                 isRecording 
-                  ? 'bg-red-500 hover:bg-red-600 recording-pulse' 
-                  : 'bg-primary hover:bg-blue-700'
+                  ? 'bg-red-500 hover:bg-red-600 recording-pulse active:bg-red-700' 
+                  : 'bg-primary hover:bg-blue-700 active:bg-blue-800'
               }`}
               onClick={handleToggleRecording}
             >
-              {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+              {isRecording ? <Square className="h-7 w-7 sm:h-6 sm:w-6" /> : <Mic className="h-7 w-7 sm:h-6 sm:w-6" />}
             </Button>
           </div>
 

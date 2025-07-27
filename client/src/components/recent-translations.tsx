@@ -104,7 +104,7 @@ export function RecentTranslations({ onSelectTranslation }: RecentTranslationsPr
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-medium text-gray-900">Recent Translations</h3>
           <Button

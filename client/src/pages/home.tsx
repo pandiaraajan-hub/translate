@@ -122,26 +122,26 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[hsl(var(--surface))]">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Languages className="text-white h-5 w-5" />
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Languages className="text-white h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <h1 className="text-xl font-medium text-gray-900">VoiceBridge</h1>
-                <p className="text-sm text-gray-500">Multi-Language Voice Translator</p>
+                <h1 className="text-lg sm:text-xl font-medium text-gray-900">VoiceBridge</h1>
+                <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Multi-Language Voice Translator</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
-              <Settings className="h-5 w-5 text-gray-600" />
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-8 w-8 sm:h-10 sm:w-10">
+              <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-20">
         {/* Language Selector */}
         <LanguageSelector
           sourceLanguage={sourceLanguage}
@@ -217,13 +217,16 @@ export default function Home() {
         <RecentTranslations onSelectTranslation={handleSelectRecentTranslation} />
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
+      {/* Mobile Floating Action Button */}
+      <div className="fixed bottom-6 right-4 sm:right-6 z-20 sm:hidden">
         <Button
           size="lg"
-          className="w-14 h-14 rounded-full bg-secondary hover:bg-yellow-500 shadow-lg ripple"
+          className="w-16 h-16 rounded-full bg-primary hover:bg-blue-700 shadow-lg ripple active:bg-blue-800"
+          onClick={() => {
+            document.querySelector('[data-recording-button]')?.scrollIntoView({ behavior: 'smooth' });
+          }}
         >
-          <Mic className="h-5 w-5 text-white" />
+          <Mic className="h-6 w-6 text-white" />
         </Button>
       </div>
     </div>

@@ -88,10 +88,10 @@ export function TranslationResults({
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-4 sm:space-y-6 sm:grid sm:grid-cols-2 sm:gap-6">
       {/* Source Text */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium text-gray-900 flex items-center">
               <div className={`language-flag mr-2 ${getFlagColors(sourceLanguage)}`}>
@@ -149,7 +149,7 @@ export function TranslationResults({
 
       {/* Target Text */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium text-gray-900 flex items-center">
               <div className={`language-flag mr-2 ${getFlagColors(targetLanguage)}`}>

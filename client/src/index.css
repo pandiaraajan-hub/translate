@@ -61,6 +61,18 @@
 
   body {
     @apply font-sans antialiased bg-[hsl(var(--surface))] text-foreground;
+    /* Prevent zoom on iOS when inputs are focused */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling for better mobile experience */
+    scroll-behavior: smooth;
+  }
+  
+  /* Improve touch targets on mobile */
+  @media (hover: none) and (pointer: coarse) {
+    button, .clickable {
+      min-height: 44px;
+      min-width: 44px;
+    }
   }
 }
 

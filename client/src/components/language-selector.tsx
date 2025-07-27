@@ -38,18 +38,18 @@ const LanguageButton = ({
   return (
     <Button
       variant="outline"
-      className={`w-full justify-start p-3 h-auto ${
+      className={`w-full justify-start p-3 sm:p-3 h-auto min-h-[48px] text-sm sm:text-base ${
         isSelected
           ? 'border-2 border-primary bg-primary/5 text-primary font-medium'
-          : 'border border-gray-200 hover:border-gray-300 text-gray-700'
+          : 'border border-gray-200 hover:border-gray-300 text-gray-700 active:bg-gray-50'
       }`}
       onClick={onClick}
     >
-      <div className={`language-flag mr-2 ${getFlagColors(language)}`}>
+      <div className={`language-flag mr-2 sm:mr-2 ${getFlagColors(language)}`}>
         {config.flag}
       </div>
-      {config.name}
-      {isSelected && <Check className="ml-auto h-4 w-4" />}
+      <span className="flex-1 text-left">{config.name}</span>
+      {isSelected && <Check className="ml-auto h-4 w-4 flex-shrink-0" />}
     </Button>
   );
 };
@@ -65,14 +65,14 @@ export function LanguageSelector({
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Select Languages</h2>
+      <CardContent className="p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Select Languages</h2>
         
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4">
           {/* Source Language */}
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <label className="text-sm font-medium text-gray-700">From</label>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 gap-2">
               {languages.map((language) => (
                 <LanguageButton
                   key={`source-${language}`}
@@ -85,21 +85,21 @@ export function LanguageSelector({
           </div>
 
           {/* Swap Button */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center order-last sm:order-none">
             <Button
               variant="outline"
               size="icon"
-              className="rounded-full bg-gray-100 hover:bg-gray-200 ripple"
+              className="rounded-full bg-gray-100 hover:bg-gray-200 ripple h-12 w-12 sm:h-10 sm:w-10"
               onClick={onSwapLanguages}
             >
-              <ArrowUpDown className="h-4 w-4 text-gray-600" />
+              <ArrowUpDown className="h-5 w-5 sm:h-4 sm:w-4 text-gray-600" />
             </Button>
           </div>
 
           {/* Target Language */}
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <label className="text-sm font-medium text-gray-700">To</label>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 gap-2">
               {languages.map((language) => (
                 <LanguageButton
                   key={`target-${language}`}
