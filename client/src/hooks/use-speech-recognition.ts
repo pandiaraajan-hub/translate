@@ -23,7 +23,7 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
 
   const startRecording = useCallback((language: LanguageCode) => {
     if (!isSupported) {
-      setError('Speech recognition is not supported in this browser');
+      setError('Speech recognition is not supported in this browser. Please use Chrome, Safari, or Edge.');
       return;
     }
 
@@ -39,11 +39,23 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     speechUtils.startRecognition(
       language,
       (recognitionResult) => {
-        setResult(recognitionResult);
+        if (recognitionResult.transcript.trim()) {
+          setResult(recognitionResult);
+        } else {
+          setError('No speech detected. Please speak clearly and try again.');
+        }
         setIsRecording(false);
       },
       (errorMessage) => {
-        setError(errorMessage);
+        let userFriendlyError = errorMessage;
+        if (errorMessage.includes('not-allowed')) {
+          userFriendlyError = 'Microphone access denied. Please allow microphone access and try again.';
+        } else if (errorMessage.includes('no-speech')) {
+          userFriendlyError = 'No speech detected. Please speak clearly and try again.';
+        } else if (errorMessage.includes('network')) {
+          userFriendlyError = 'Network error. Please check your connection and try again.';
+        }
+        setError(userFriendlyError);
         setIsRecording(false);
       }
     );

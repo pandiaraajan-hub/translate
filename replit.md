@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack translation application built with a React frontend and Express.js backend. The app provides real-time translation between Chinese, English, and Tamil languages using the Google Translate API. It features voice input, text-to-speech capabilities, and translation history management.
+This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between Chinese, English, and Tamil languages using the Google Translate API. It features voice input with automatic speech-to-speech translation, enhanced mobile responsiveness, and intelligent error handling - designed for seamless voice-only communication.
 
 ## User Preferences
 
@@ -30,11 +30,12 @@ Preferred communication style: Simple, everyday language.
 ## Key Components
 
 ### Core Features
-1. **Language Translation**: Real-time translation between Chinese (zh-CN), English (en-US), and Tamil (ta-IN)
-2. **Voice Input**: Web Speech API integration for voice-to-text conversion
-3. **Text-to-Speech**: Browser speech synthesis for audio playback
-4. **Translation History**: Persistent storage of translation sessions
-5. **Language Switching**: Quick swap between source and target languages
+1. **Voice-to-Voice Translation**: Automatic real-time translation between Chinese (zh-CN), English (en-US), and Tamil (ta-IN)
+2. **Automatic Speech Playback**: Translation automatically plays after recording without manual intervention
+3. **Enhanced Speech Recognition**: Improved error handling, confidence tracking, and user-friendly error messages
+4. **Mobile-First Design**: Large touch targets (48px minimum), responsive layout, floating action button for mobile access
+5. **Intelligent Voice Selection**: Automatic selection of best available voice for each language
+6. **Visual Feedback**: Real-time status indicators, recording animations, and confidence display
 
 ### Frontend Components
 - **LanguageSelector**: Language selection interface with visual flag indicators
@@ -49,11 +50,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Data Flow
 
-1. **Translation Request**: User inputs text via typing or voice → Frontend validates and sends to backend
-2. **Translation Processing**: Backend calls Google Translate API → Stores result in database/memory
-3. **Response Handling**: Frontend receives translation → Updates UI and caches with React Query
-4. **History Management**: Recent translations stored and retrievable → Displayed in sidebar component
-5. **Voice Features**: Speech recognition converts voice to text → Text-to-speech plays translated results
+1. **Voice Input**: User presses and holds microphone → Speech recognition activates with visual feedback
+2. **Speech Processing**: Recognition converts speech to text with confidence scoring → Error handling for failed recognition
+3. **Translation Processing**: Backend calls Google Translate API → Stores result and returns to frontend
+4. **Automatic Playback**: Frontend receives translation → Automatically plays translated speech using optimized voice selection
+5. **Visual Feedback**: Real-time status updates throughout the process → Recording animations, confidence indicators, and completion states
 
 ## External Dependencies
 

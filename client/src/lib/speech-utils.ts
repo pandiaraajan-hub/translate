@@ -113,14 +113,23 @@ export class SpeechUtils {
     return new Promise((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(options.text);
       utterance.lang = options.lang;
-      utterance.rate = options.rate || 1;
+      utterance.rate = options.rate || 0.85;
       utterance.pitch = options.pitch || 1;
-      utterance.volume = options.volume || 1;
+      utterance.volume = options.volume || 0.9;
+
+      // Try to use the best available voice for the language
+      const bestVoice = this.getBestVoiceForLanguage(options.lang);
+      if (bestVoice) {
+        utterance.voice = bestVoice;
+      }
 
       utterance.onend = () => resolve();
       utterance.onerror = (event) => reject(new Error(`Speech synthesis error: ${event.error}`));
 
-      this.synthesis.speak(utterance);
+      // Add a small delay to ensure proper cancellation
+      setTimeout(() => {
+        this.synthesis.speak(utterance);
+      }, 50);
     });
   }
 

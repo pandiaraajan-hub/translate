@@ -132,6 +132,11 @@ export function VoiceRecorder({
               {getRecordingStatus()}
             </span>
           </div>
+          {isRecording && (
+            <div className="text-xs text-red-600 font-medium animate-pulse">
+              🎙️ Listening... Release when done speaking
+            </div>
+          )}
 
           {/* Main Recording Button */}
           <div className="flex justify-center">
@@ -154,13 +159,18 @@ export function VoiceRecorder({
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800"
+              className="text-gray-600 hover:text-gray-800 transition-colors"
               onClick={handleClear}
               disabled={!result && !error}
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Clear
             </Button>
+            {result && (
+              <div className="text-xs text-green-600 font-medium">
+                ✓ Recording successful
+              </div>
+            )}
           </div>
 
           {/* Audio Visualization */}

@@ -1,8 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
-import { ArrowDown } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { ArrowDown, Volume2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 interface TranslationResultsProps {
   sourceLanguage: LanguageCode;
@@ -23,6 +23,7 @@ export function TranslationResults({
   const sourceConfig = SUPPORTED_LANGUAGES[sourceLanguage];
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
   const lastTranslatedText = useRef<string>('');
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const getFlagColors = (lang: LanguageCode) => {
     switch (lang) {
@@ -41,12 +42,15 @@ export function TranslationResults({
     if (!text.trim()) return;
 
     try {
+      setIsPlaying(true);
       await speechUtils.speak({
         text,
         lang: languageCode,
       });
     } catch (error) {
       console.error('Speech synthesis error:', error);
+    } finally {
+      setTimeout(() => setIsPlaying(false), 1000);
     }
   };
 
@@ -56,7 +60,10 @@ export function TranslationResults({
         translatedText !== sourceText && 
         translatedText !== lastTranslatedText.current) {
       lastTranslatedText.current = translatedText;
-      handleSpeak(translatedText, targetConfig.code);
+      // Add a small delay to ensure the UI updates before speaking
+      setTimeout(() => {
+        handleSpeak(translatedText, targetConfig.code);
+      }, 500);
     }
   }, [translatedText, sourceText, targetConfig.code]);
 
@@ -84,15 +91,25 @@ export function TranslationResults({
               </div>
             </div>
 
-            {/* Status Message */}
-            <p className="text-sm text-gray-500">
-              {!sourceText.trim() 
-                ? 'Press record to start translation' 
-                : translatedText.trim() 
-                  ? 'Playing translation...' 
-                  : 'Translating...'
-              }
-            </p>
+            {/* Status Message with Visual Feedback */}
+            <div className="flex items-center justify-center space-x-2">
+              {isPlaying && (
+                <Volume2 className="h-4 w-4 text-green-500 animate-pulse" />
+              )}
+              <p className="text-sm text-gray-500">
+                {!sourceText.trim() 
+                  ? 'Press and hold to record your voice' 
+                  : isPlaying
+                    ? 'Playing translation...'
+                    : translatedText.trim() 
+                      ? 'Translation complete'
+                      : 'Translating your speech...'
+                }
+              </p>
+              {!sourceText.trim() && !translatedText.trim() && (
+                <div className="animate-bounce">🎤</div>
+              )}
+            </div>
 
             {/* Confidence Indicator */}
             {confidence && (

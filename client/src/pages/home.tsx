@@ -90,6 +90,14 @@ export default function Home() {
 
   const handleRecognitionError = useCallback((errorMessage: string) => {
     setError(errorMessage);
+    setIsProcessing(false);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setError(null);
+    setSourceText('');
+    setTranslatedText('');
+    setConfidence(undefined);
   }, []);
 
 
@@ -171,14 +179,24 @@ export default function Home() {
             <AlertDescription className="space-y-3">
               <div className="flex items-center justify-between">
                 <span>{error}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={dismissError}
-                  className="text-destructive hover:text-destructive/80"
-                >
-                  ×
-                </Button>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRetry}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Try Again
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={dismissError}
+                    className="text-destructive hover:text-destructive/80"
+                  >
+                    ×
+                  </Button>
+                </div>
               </div>
               
               {error.includes('No speech detected') && (
