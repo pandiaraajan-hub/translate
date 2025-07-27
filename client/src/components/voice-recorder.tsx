@@ -248,13 +248,12 @@ export function VoiceRecorder({
             </div>
 
             {/* Recording Button - Press and Hold */}
-            <Button
-              size="lg"
+            <button
               data-recording-button
-              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white transition-all duration-200 ripple select-none ${
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white transition-all duration-200 ripple select-none flex items-center justify-center font-medium ${
                 isRecording 
                   ? 'bg-red-500 hover:bg-red-600 recording-pulse active:bg-red-700' 
-                  : 'bg-primary hover:bg-blue-700 active:bg-blue-800'
+                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
               }`}
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
@@ -264,7 +263,7 @@ export function VoiceRecorder({
               onTouchCancel={handleTouchEnd}
             >
               {isRecording ? <Square className="h-5 w-5 sm:h-6 sm:w-6" /> : <Mic className="h-5 w-5 sm:h-6 sm:w-6" />}
-            </Button>
+            </button>
 
             {/* Audio Visualization - Right Side */}
             <div className="flex items-end justify-center space-x-1 h-10 sm:h-12">
