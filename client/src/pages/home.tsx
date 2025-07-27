@@ -181,6 +181,7 @@ export default function Home() {
   }, [sourceLanguage, targetLanguage, sourceText, translatedText]);
 
   const handleRecognitionResult = useCallback((text: string, recognitionConfidence: number) => {
+    console.log('🏠 Home handleRecognitionResult called with:', text, recognitionConfidence);
     setSourceText(text);
     setConfidence(recognitionConfidence);
     setError(null);

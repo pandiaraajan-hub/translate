@@ -36,14 +36,18 @@ export function VoiceRecorder({
 
   // Handle recognition result
   useEffect(() => {
+    console.log('🎤 VoiceRecorder result effect:', result);
     if (result) {
+      console.log('🎤 Calling onRecognitionResult with:', result.transcript, result.confidence);
       onRecognitionResult(result.transcript, result.confidence);
     }
   }, [result, onRecognitionResult]);
 
   // Handle recognition error
   useEffect(() => {
+    console.log('🎤 VoiceRecorder error effect:', error);
     if (error) {
+      console.log('🎤 Calling onError with:', error);
       onError(error);
     }
   }, [error, onError]);
