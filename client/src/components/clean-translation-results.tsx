@@ -101,6 +101,34 @@ export function CleanTranslationResults({
               Speech confidence: {Math.round(confidence * 100)}%
             </div>
           )}
+
+          {/* Audio Test Button - temporarily for debugging */}
+          {translatedText.trim() && (
+            <button 
+              onClick={async () => {
+                console.log('🧪 Testing audio with translation:', translatedText);
+                
+                try {
+                  const { reliableAudio } = await import('@/lib/reliable-audio');
+                  reliableAudio.unlockAudio();
+                  
+                  const success = await reliableAudio.speak(translatedText, 'ta-IN');
+                  console.log('🧪 Audio test result:', success);
+                  
+                  if (!success) {
+                    console.log('🧪 Tamil failed, trying English...');
+                    await reliableAudio.speak(translatedText, 'en-US');
+                  }
+                } catch (error) {
+                  console.error('🧪 Audio test error:', error);
+                  alert('Audio test failed: ' + error);
+                }
+              }}
+              className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              🔊 Test Audio
+            </button>
+          )}
         </div>
       </CardContent>
     </Card>

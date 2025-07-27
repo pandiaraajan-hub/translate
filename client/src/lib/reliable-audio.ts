@@ -42,16 +42,24 @@ class ReliableAudio {
         utterance.volume = 1.0;
         utterance.pitch = 1.0;
         
-        // Get available voices
+        // Get available voices with retry
         let voices = speechSynthesis.getVoices();
         console.log('🎤 Available voices:', voices.length);
         
-        // If no voices, try to load them
+        // If no voices, trigger loading and wait
         if (voices.length === 0) {
-          speechSynthesis.addEventListener('voiceschanged', () => {
-            voices = speechSynthesis.getVoices();
-            console.log('🎤 Voices loaded:', voices.length);
-          });
+          console.log('🎤 No voices found, triggering voice loading...');
+          
+          // Trigger voice loading
+          const dummy = new SpeechSynthesisUtterance('');
+          dummy.volume = 0;
+          speechSynthesis.speak(dummy);
+          speechSynthesis.cancel();
+          
+          // Wait a bit and try again
+          await new Promise(resolve => setTimeout(resolve, 100));
+          voices = speechSynthesis.getVoices();
+          console.log('🎤 Voices after loading attempt:', voices.length);
         }
         
         // Find best voice
