@@ -59,11 +59,12 @@ export function TranslationResults({
     if (translatedText.trim() && 
         translatedText !== sourceText && 
         translatedText !== lastTranslatedText.current) {
+      console.log('Auto-playing translation:', translatedText, 'in language:', targetConfig.code);
       lastTranslatedText.current = translatedText;
       // Add a small delay to ensure the UI updates before speaking
       setTimeout(() => {
         handleSpeak(translatedText, targetConfig.code);
-      }, 500);
+      }, 800);
     }
   }, [translatedText, sourceText, targetConfig.code]);
 

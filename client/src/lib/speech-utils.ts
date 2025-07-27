@@ -107,29 +107,58 @@ export class SpeechUtils {
       throw new Error('Speech synthesis is not supported in this browser');
     }
 
+    console.log('Speaking text:', options.text, 'in language:', options.lang);
+
     // Cancel any ongoing speech
     this.synthesis.cancel();
+
+    // Wait for voices to be loaded if not already
+    const voices = this.synthesis.getVoices();
+    if (voices.length === 0) {
+      // Wait for voices to load
+      await new Promise(resolve => {
+        const checkVoices = () => {
+          if (this.synthesis.getVoices().length > 0) {
+            resolve(void 0);
+          } else {
+            setTimeout(checkVoices, 100);
+          }
+        };
+        checkVoices();
+      });
+    }
 
     return new Promise((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(options.text);
       utterance.lang = options.lang;
       utterance.rate = options.rate || 0.85;
       utterance.pitch = options.pitch || 1;
-      utterance.volume = options.volume || 0.9;
+      utterance.volume = options.volume || 1.0;
 
       // Try to use the best available voice for the language
       const bestVoice = this.getBestVoiceForLanguage(options.lang);
       if (bestVoice) {
+        console.log('Using voice:', bestVoice.name, 'for language:', options.lang);
         utterance.voice = bestVoice;
+      } else {
+        console.log('No specific voice found for language:', options.lang, 'using default');
       }
 
-      utterance.onend = () => resolve();
-      utterance.onerror = (event) => reject(new Error(`Speech synthesis error: ${event.error}`));
+      utterance.onstart = () => console.log('Speech started');
+      utterance.onend = () => {
+        console.log('Speech ended');
+        resolve();
+      };
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        reject(new Error(`Speech synthesis error: ${event.error}`));
+      };
 
       // Add a small delay to ensure proper cancellation
       setTimeout(() => {
+        console.log('Starting speech synthesis...');
         this.synthesis.speak(utterance);
-      }, 50);
+      }, 100);
     });
   }
 

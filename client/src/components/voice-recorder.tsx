@@ -138,12 +138,31 @@ export function VoiceRecorder({
     return cleanupAudio;
   }, [isRecording]);
 
-  const handleToggleRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
+  const handleMouseDown = () => {
+    if (!isRecording) {
       clearError();
       startRecording(sourceLanguage);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (isRecording) {
+      stopRecording();
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (!isRecording) {
+      clearError();
+      startRecording(sourceLanguage);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (isRecording) {
+      stopRecording();
     }
   };
 
@@ -153,9 +172,9 @@ export function VoiceRecorder({
   };
 
   const getRecordingStatus = () => {
-    if (isRecording) return 'Recording... Speak now';
+    if (isRecording) return 'Recording... Keep holding';
     if (result) return 'Recording complete';
-    return `Ready to record in ${SUPPORTED_LANGUAGES[sourceLanguage].name}`;
+    return `Press and hold to record in ${SUPPORTED_LANGUAGES[sourceLanguage].name}`;
   };
 
   const getRecordingStatusColor = () => {
@@ -207,7 +226,12 @@ export function VoiceRecorder({
           </div>
           {isRecording && (
             <div className="text-xs text-red-600 font-medium animate-pulse">
-              🎙️ Listening... Release when done speaking
+              🎙️ Recording... Release button when done
+            </div>
+          )}
+          {!isRecording && (
+            <div className="text-xs text-gray-500">
+              Press and hold to record
             </div>
           )}
 
@@ -226,16 +250,21 @@ export function VoiceRecorder({
               ))}
             </div>
 
-            {/* Recording Button - Smaller for mobile */}
+            {/* Recording Button - Press and Hold */}
             <Button
               size="lg"
               data-recording-button
-              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white transition-all duration-200 ripple ${
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white transition-all duration-200 ripple select-none ${
                 isRecording 
                   ? 'bg-red-500 hover:bg-red-600 recording-pulse active:bg-red-700' 
                   : 'bg-primary hover:bg-blue-700 active:bg-blue-800'
               }`}
-              onClick={handleToggleRecording}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchEnd}
             >
               {isRecording ? <Square className="h-5 w-5 sm:h-6 sm:w-6" /> : <Mic className="h-5 w-5 sm:h-6 sm:w-6" />}
             </Button>
