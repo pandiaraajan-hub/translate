@@ -196,17 +196,26 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
                   if (isMobile) {
                     console.log('🎯 Testing mobile audio with direct touch...');
                     forceMobileAudio.enableAudioFromTouch();
-                    forceMobileAudio.speakImmediately('Mobile audio test', 'en-US');
+                    
+                    // If there's a translation, play it; otherwise play test message
+                    if (translatedText.trim()) {
+                      console.log('🎯 Playing actual translation:', translatedText);
+                      forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+                    } else {
+                      console.log('🎯 Playing test message');
+                      forceMobileAudio.speakImmediately('Mobile audio test', 'en-US');
+                    }
                   } else {
                     console.log('🖥️ Testing desktop audio...');
-                    const utterance = new SpeechSynthesisUtterance('Desktop audio test');
+                    const testText = translatedText.trim() || 'Desktop audio test';
+                    const utterance = new SpeechSynthesisUtterance(testText);
                     utterance.rate = 0.8;
                     speechSynthesis.speak(utterance);
                   }
                 }}
                 className="px-4 py-2 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
               >
-                🔊 Test Audio Now
+                {translatedText.trim() ? '🔊 Play Translation' : '🔊 Test Audio'}
               </button>
             </div>
 
@@ -236,7 +245,7 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
                     className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                     disabled={isPlaying}
                   >
-                    {isPlaying ? 'Playing...' : '🔊 Test Audio'}
+                    {isPlaying ? 'Playing...' : '🔊 Play Translation'}
                   </button>
                 <button 
                   onClick={() => {
