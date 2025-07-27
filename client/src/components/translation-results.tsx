@@ -187,6 +187,29 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
               </button>
             </div>
 
+            {/* Mobile Audio Test Button - Always Visible */}
+            <div className="flex justify-center mb-2">
+              <button 
+                onClick={(e) => {
+                  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  
+                  if (isMobile) {
+                    console.log('🎯 Testing mobile audio with direct touch...');
+                    forceMobileAudio.enableAudioFromTouch();
+                    forceMobileAudio.speakImmediately('Mobile audio test', 'en-US');
+                  } else {
+                    console.log('🖥️ Testing desktop audio...');
+                    const utterance = new SpeechSynthesisUtterance('Desktop audio test');
+                    utterance.rate = 0.8;
+                    speechSynthesis.speak(utterance);
+                  }
+                }}
+                className="px-4 py-2 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                🔊 Test Audio Now
+              </button>
+            </div>
+
             {/* Voice Status and Test Buttons */}
             {translatedText.trim() && (
               <div className="space-y-2">
