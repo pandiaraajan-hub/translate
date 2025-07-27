@@ -89,21 +89,34 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
           </div>
         )}
 
-        <button
-          className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
-            isRecording 
-              ? 'bg-red-500 animate-pulse' 
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
-          onMouseDown={(e) => handleTouchStart(e as any)}
-          onMouseUp={(e) => handleTouchEnd(e as any)}
-          onMouseLeave={(e) => handleTouchEnd(e as any)}
-        >
-          {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center justify-center gap-4">
+          <button
+            className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
+              isRecording 
+                ? 'bg-red-500 animate-pulse' 
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+            onMouseDown={(e) => handleTouchStart(e as any)}
+            onMouseUp={(e) => handleTouchEnd(e as any)}
+            onMouseLeave={(e) => handleTouchEnd(e as any)}
+          >
+            {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+          </button>
+
+          <button
+            onClick={() => {
+              // Test audio functionality
+              const utterance = new SpeechSynthesisUtterance("Audio test");
+              speechSynthesis.speak(utterance);
+            }}
+            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Translate Now
+          </button>
+        </div>
       </CardContent>
     </Card>
   );
