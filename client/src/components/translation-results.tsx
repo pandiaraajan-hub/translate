@@ -105,17 +105,16 @@ export function TranslationResults({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      {/* Compact Translation Button */}
-      <div className="flex justify-center mb-3">
-        <button 
-          onClick={(e) => {
-            console.log('🎯 Translate button clicked');
-            console.log('🎯 Translation available:', translatedText);
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (translatedText.trim()) {
+      {/* Translate Now Button - Only when translation available */}
+      {translatedText.trim() && (
+        <div className="flex justify-center mb-3">
+          <button 
+            onClick={(e) => {
+              console.log('🎯 Translate Now button clicked');
+              const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+              
               if (isMobile) {
-                console.log('🎯 Mobile - playing translation');
+                console.log('🎯 Mobile - playing translation with direct touch');
                 forceMobileAudio.enableAudioFromTouch();
                 forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
               } else {
@@ -124,26 +123,13 @@ export function TranslationResults({
                 utterance.rate = 0.8;
                 speechSynthesis.speak(utterance);
               }
-            } else {
-              const message = 'Record something first';
-              if (isMobile) {
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately(message, 'en-US');
-              } else {
-                const utterance = new SpeechSynthesisUtterance(message);
-                speechSynthesis.speak(utterance);
-              }
-            }
-          }}
-          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-            translatedText.trim() 
-              ? 'bg-green-600 hover:bg-green-700 text-white' 
-              : 'bg-gray-400 hover:bg-gray-500 text-white'
-          }`}
-        >
-          {translatedText.trim() ? '🔊 Play' : '🎤 Record'}
-        </button>
-      </div>
+            }}
+            className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            🔊 Translate Now
+          </button>
+        </div>
+      )}
 
       {/* Simple Translation Status */}
       <Card>
