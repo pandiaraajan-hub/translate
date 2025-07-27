@@ -172,14 +172,35 @@ export class SpeechUtils {
 
   getBestVoiceForLanguage(languageCode: string): SpeechSynthesisVoice | null {
     const voices = this.getAvailableVoices();
+    console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
     
     // Try to find an exact match
     let voice = voices.find(v => v.lang === languageCode);
+    console.log('Exact match for', languageCode, ':', voice?.name);
     
     // If no exact match, try to find a voice with the same language prefix
     if (!voice) {
       const langPrefix = languageCode.split('-')[0];
       voice = voices.find(v => v.lang.startsWith(langPrefix));
+      console.log('Prefix match for', langPrefix, ':', voice?.name);
+    }
+    
+    // If still no match, try some common alternatives
+    if (!voice) {
+      const alternatives = {
+        'zh-CN': ['zh-CN', 'zh', 'cmn-CN'],
+        'en-US': ['en-US', 'en', 'en-GB'],
+        'ta-IN': ['ta-IN', 'ta']
+      };
+      
+      const alts = alternatives[languageCode as keyof typeof alternatives] || [];
+      for (const alt of alts) {
+        voice = voices.find(v => v.lang === alt || v.lang.startsWith(alt));
+        if (voice) {
+          console.log('Alternative match for', languageCode, ':', voice.name);
+          break;
+        }
+      }
     }
     
     return voice || null;

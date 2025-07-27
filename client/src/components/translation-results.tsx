@@ -39,16 +39,33 @@ export function TranslationResults({
   };
 
   const handleSpeak = async (text: string, languageCode: string) => {
-    if (!text.trim()) return;
+    if (!text.trim()) {
+      console.log('No text to speak');
+      return;
+    }
+
+    console.log('handleSpeak called with:', { text, languageCode });
 
     try {
       setIsPlaying(true);
+      
+      // Check if speech synthesis is available
+      if (!speechUtils.isSynthesisSupported()) {
+        console.error('Speech synthesis not supported');
+        alert('Speech synthesis is not supported in this browser');
+        return;
+      }
+
+      console.log('Starting speech synthesis...');
       await speechUtils.speak({
         text,
         lang: languageCode,
       });
+      console.log('Speech synthesis completed');
+      
     } catch (error) {
       console.error('Speech synthesis error:', error);
+      alert(`Speech error: ${error.message}`);
     } finally {
       setTimeout(() => setIsPlaying(false), 1000);
     }
@@ -116,6 +133,19 @@ export function TranslationResults({
             {confidence && (
               <div className="text-xs text-gray-400 bg-gray-50 rounded-lg p-2">
                 Speech confidence: {Math.round(confidence * 100)}%
+              </div>
+            )}
+
+            {/* Test Audio Button */}
+            {translatedText.trim() && (
+              <div className="flex justify-center mt-2">
+                <button 
+                  onClick={() => handleSpeak(translatedText, targetConfig.code)}
+                  className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                  disabled={isPlaying}
+                >
+                  {isPlaying ? 'Playing...' : '🔊 Test Audio'}
+                </button>
               </div>
             )}
           </div>
