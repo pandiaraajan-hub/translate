@@ -104,13 +104,31 @@ export function CleanTranslationResults({
             </div>
           )}
 
-          {/* Translate Now Button */}
-          {translatedText.trim() && onTestAudio && (
+          {/* Audio Test Button - temporarily for debugging */}
+          {translatedText.trim() && (
             <button 
-              onClick={onTestAudio}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+              onClick={async () => {
+                console.log('🧪 Testing audio with translation:', translatedText);
+                
+                try {
+                  const { reliableAudio } = await import('@/lib/reliable-audio');
+                  reliableAudio.unlockAudio();
+                  
+                  const success = await reliableAudio.speak(translatedText, 'ta-IN');
+                  console.log('🧪 Audio test result:', success);
+                  
+                  if (!success) {
+                    console.log('🧪 Tamil failed, trying English...');
+                    await reliableAudio.speak(translatedText, 'en-US');
+                  }
+                } catch (error) {
+                  console.error('🧪 Audio test error:', error);
+                  alert('Audio test failed: ' + error);
+                }
+              }}
+              className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
             >
-              Translate Now
+              🔊 Test Audio
             </button>
           )}
         </div>
