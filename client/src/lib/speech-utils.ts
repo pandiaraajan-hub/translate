@@ -1,6 +1,6 @@
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
 
-export interface SpeechRecognitionResult {
+export interface SpeechResult {
   transcript: string;
   confidence: number;
 }
@@ -13,10 +13,61 @@ export interface SpeechSynthesisOptions {
   volume?: number;
 }
 
+// Type declarations for Speech Recognition API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionApiResult;
+  [index: number]: SpeechRecognitionApiResult;
+}
+
+interface SpeechRecognitionApiResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  maxAlternatives: number;
+  start(): void;
+  stop(): void;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+}
+
+declare var SpeechRecognition: {
+  prototype: SpeechRecognition;
+  new(): SpeechRecognition;
+};
+
+declare var webkitSpeechRecognition: {
+  prototype: SpeechRecognition;
+  new(): SpeechRecognition;
+};
+
 declare global {
   interface Window {
     SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof webkitSpeechRecognition;
   }
 }
 
@@ -48,7 +99,7 @@ export class SpeechUtils {
 
   async startRecognition(
     language: LanguageCode,
-    onResult: (result: SpeechRecognitionResult) => void,
+    onResult: (result: SpeechResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
     if (!this.recognition) {

@@ -46,6 +46,48 @@ class ReliableAudio {
         let voices = speechSynthesis.getVoices();
         console.log('🎤 Available voices:', voices.length);
         
+        // Store reference to 'this' for use in nested functions
+        const self = this;
+        
+        // Function to continue with voice setup after voices are loaded
+        const continueWithVoiceSetup = () => {
+          // Find best voice
+          const bestVoice = self.findBestVoice(voices, lang);
+          if (bestVoice) {
+            utterance.voice = bestVoice;
+            console.log('🎤 Using voice:', bestVoice.name, bestVoice.lang);
+          } else {
+            console.log('🎤 Using default voice');
+          }
+          
+          // Set up event handlers
+          utterance.onstart = () => {
+            console.log('🎤 Speech started successfully');
+          };
+          
+          utterance.onend = () => {
+            console.log('🎤 Speech completed successfully');
+            resolve(true);
+          };
+          
+          utterance.onerror = (e) => {
+            console.error('🎤 Speech error:', e.error);
+            resolve(false);
+          };
+          
+          // Start speaking
+          console.log('🎤 Starting speechSynthesis.speak()');
+          speechSynthesis.speak(utterance);
+          
+          // Fallback timeout
+          setTimeout(() => {
+            if (!speechSynthesis.speaking) {
+              console.log('🎤 Speech timeout - may have failed silently');
+              resolve(false);
+            }
+          }, 2000);
+        };
+        
         // If no voices, trigger loading and wait
         if (voices.length === 0) {
           console.log('🎤 No voices found, triggering voice loading...');
@@ -57,46 +99,15 @@ class ReliableAudio {
           speechSynthesis.cancel();
           
           // Wait a bit and try again
-          await new Promise(resolve => setTimeout(resolve, 100));
-          voices = speechSynthesis.getVoices();
-          console.log('🎤 Voices after loading attempt:', voices.length);
+          setTimeout(() => {
+            voices = speechSynthesis.getVoices();
+            console.log('🎤 Voices after loading attempt:', voices.length);
+            continueWithVoiceSetup();
+          }, 100);
+          return; // Exit early to prevent immediate execution
         }
         
-        // Find best voice
-        const bestVoice = this.findBestVoice(voices, lang);
-        if (bestVoice) {
-          utterance.voice = bestVoice;
-          console.log('🎤 Using voice:', bestVoice.name, bestVoice.lang);
-        } else {
-          console.log('🎤 Using default voice');
-        }
-        
-        // Set up event handlers
-        utterance.onstart = () => {
-          console.log('🎤 Speech started successfully');
-        };
-        
-        utterance.onend = () => {
-          console.log('🎤 Speech completed successfully');
-          resolve(true);
-        };
-        
-        utterance.onerror = (e) => {
-          console.error('🎤 Speech error:', e.error);
-          resolve(false);
-        };
-        
-        // Start speaking
-        console.log('🎤 Starting speechSynthesis.speak()');
-        speechSynthesis.speak(utterance);
-        
-        // Fallback timeout
-        setTimeout(() => {
-          if (!speechSynthesis.speaking) {
-            console.log('🎤 Speech timeout - may have failed silently');
-            resolve(false);
-          }
-        }, 2000);
+        continueWithVoiceSetup();
         
       }, 100);
     });
