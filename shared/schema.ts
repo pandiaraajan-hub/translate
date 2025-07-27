@@ -25,7 +25,8 @@ export type Translation = typeof translations.$inferSelect;
 export const SUPPORTED_LANGUAGES = {
   english: { code: 'en-US', name: 'English', flag: 'EN' },
   tamil: { code: 'ta-IN', name: 'Tamil', flag: 'த' },
-  chinese: { code: 'zh-CN', name: 'Chinese', flag: '中' }
+  chinese: { code: 'zh-CN', name: 'Chinese', flag: '中' },
+  malay: { code: 'ms-MY', name: 'Malay', flag: 'MY' }
 } as const;
 
 export type LanguageCode = keyof typeof SUPPORTED_LANGUAGES;

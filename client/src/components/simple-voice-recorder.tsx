@@ -100,11 +100,13 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
                   const { reliableAudio } = await import('@/lib/reliable-audio');
                   reliableAudio.unlockAudio();
                   
-                  const success = await reliableAudio.speak(translatedText, 'ta-IN');
+                  // Try to speak in the target language first
+                  const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
+                  const success = await reliableAudio.speak(translatedText, targetLangCode);
                   console.log('🧪 Audio test result:', success);
                   
                   if (!success) {
-                    console.log('🧪 Tamil failed, trying English...');
+                    console.log(`🧪 ${targetLanguage} failed, trying English...`);
                     await reliableAudio.speak(translatedText, 'en-US');
                   }
                 } catch (error) {
