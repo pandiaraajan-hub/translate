@@ -228,33 +228,7 @@ export default function Home() {
               <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
             </Button>
           </div>
-          
-          {/* Mobile Audio Controls - Always Visible */}
-          <div className="flex justify-center gap-2 mt-3 pt-2 border-t">
-            {!mobileAudioActivated ? (
-              <Button
-                onClick={activateMobileAudio}
-                className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2"
-                size="sm"
-              >
-                <Smartphone className="h-4 w-4" />
-                Activate Mobile Audio
-              </Button>
-            ) : (
-              <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                ✅ Mobile Audio Ready
-              </div>
-            )}
-            
-            <Button
-              onClick={testAudio}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              🎵 Test Audio
-            </Button>
-          </div>
+
         </div>
       </header>
 
