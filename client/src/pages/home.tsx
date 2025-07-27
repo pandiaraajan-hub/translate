@@ -112,27 +112,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--surface))]">
-      {/* Header */}
+      {/* Header - Compact */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
+        <div className="max-w-4xl mx-auto px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Languages className="text-white h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Languages className="text-white h-3 w-3 sm:h-4 sm:w-4" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-medium text-gray-900">VoiceBridge</h1>
-                <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Multi-Language Voice Translator</p>
+                <h1 className="text-base sm:text-lg font-medium text-gray-900">VoiceBridge</h1>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-8 w-8 sm:h-10 sm:w-10">
-              <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-20">
+      <main className="max-w-4xl mx-auto px-3 py-3 sm:px-4 sm:py-4 space-y-3 sm:space-y-4 pb-6">
         {/* Language Selector */}
         <LanguageSelector
           sourceLanguage={sourceLanguage}
@@ -149,14 +148,14 @@ export default function Home() {
           onError={handleRecognitionError}
         />
 
-        {/* Processing Indicator */}
+        {/* Processing Indicator - Compact */}
         {(isTranslating || isProcessing) && (
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center space-x-3">
-                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-gray-600">
-                  <span className="processing-dots">Processing translation</span>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-gray-600 text-sm">
+                  <span className="processing-dots">Translating</span>
                 </span>
               </div>
             </CardContent>
@@ -217,18 +216,7 @@ export default function Home() {
 
       </main>
 
-      {/* Mobile Floating Action Button */}
-      <div className="fixed bottom-6 right-4 sm:right-6 z-20 sm:hidden">
-        <Button
-          size="lg"
-          className="w-16 h-16 rounded-full bg-primary hover:bg-blue-700 shadow-lg ripple active:bg-blue-800"
-          onClick={() => {
-            document.querySelector('[data-recording-button]')?.scrollIntoView({ behavior: 'smooth' });
-          }}
-        >
-          <Mic className="h-6 w-6 text-white" />
-        </Button>
-      </div>
+
     </div>
   );
 }

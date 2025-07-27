@@ -38,7 +38,7 @@ const LanguageButton = ({
   return (
     <Button
       variant="outline"
-      className={`w-full justify-start p-3 sm:p-3 h-auto min-h-[48px] text-sm sm:text-base ${
+      className={`w-full justify-start p-2 sm:p-3 h-auto min-h-[40px] sm:min-h-[48px] text-xs sm:text-sm ${
         isSelected
           ? 'border-2 border-primary bg-primary/5 text-primary font-medium'
           : 'border border-gray-200 hover:border-gray-300 text-gray-700 active:bg-gray-50'
@@ -65,8 +65,8 @@ export function LanguageSelector({
 
   return (
     <Card>
-      <CardContent className="p-4 sm:p-6">
-        <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Select Languages</h2>
+      <CardContent className="p-3 sm:p-4">
+        <h2 className="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Select Languages</h2>
         
         <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4">
           {/* Source Language */}

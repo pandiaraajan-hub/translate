@@ -186,15 +186,12 @@ export function VoiceRecorder({
 
   return (
     <Card>
-      <CardContent className="p-4 sm:p-6">
-        <div className="text-center space-y-4 sm:space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-base sm:text-lg font-medium text-gray-900">Voice Recording</h2>
-            <p className="text-sm text-gray-500">
-              Tap the microphone and speak clearly in {SUPPORTED_LANGUAGES[sourceLanguage].name}
-            </p>
-            <p className="text-xs text-gray-400">
-              Make sure your microphone is enabled and speak close to your device
+      <CardContent className="p-3 sm:p-4">
+        <div className="text-center space-y-3 sm:space-y-4">
+          <div className="space-y-1">
+            <h2 className="text-sm sm:text-base font-medium text-gray-900">Voice Recording</h2>
+            <p className="text-xs sm:text-sm text-gray-500">
+              Speak clearly in {SUPPORTED_LANGUAGES[sourceLanguage].name}
             </p>
           </div>
 
@@ -215,63 +212,63 @@ export function VoiceRecorder({
           )}
 
           {/* Main Recording Button with Audio Visualization */}
-          <div className="flex items-center justify-center space-x-4 sm:space-x-6">
+          <div className="flex items-center justify-center space-x-3 sm:space-x-4">
             {/* Audio Visualization - Left Side */}
-            <div className="flex items-end justify-center space-x-1 h-12 sm:h-16">
-              {audioLevels.slice(0, 5).map((level, index) => (
+            <div className="flex items-end justify-center space-x-1 h-10 sm:h-12">
+              {audioLevels.slice(0, 4).map((level, index) => (
                 <div
                   key={index}
                   className={`w-1 rounded-full transition-all duration-200 ${
                     isRecording ? 'bg-red-500' : 'bg-gray-300'
                   }`}
-                  style={{ height: `${Math.max(level, 6)}px` }}
+                  style={{ height: `${Math.max(level * 0.6, 4)}px` }}
                 />
               ))}
             </div>
 
-            {/* Recording Button */}
+            {/* Recording Button - Smaller for mobile */}
             <Button
               size="lg"
               data-recording-button
-              className={`w-24 h-24 sm:w-20 sm:h-20 rounded-full text-white text-2xl transition-all duration-200 ripple ${
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white transition-all duration-200 ripple ${
                 isRecording 
                   ? 'bg-red-500 hover:bg-red-600 recording-pulse active:bg-red-700' 
                   : 'bg-primary hover:bg-blue-700 active:bg-blue-800'
               }`}
               onClick={handleToggleRecording}
             >
-              {isRecording ? <Square className="h-7 w-7 sm:h-6 sm:w-6" /> : <Mic className="h-7 w-7 sm:h-6 sm:w-6" />}
+              {isRecording ? <Square className="h-5 w-5 sm:h-6 sm:w-6" /> : <Mic className="h-5 w-5 sm:h-6 sm:w-6" />}
             </Button>
 
             {/* Audio Visualization - Right Side */}
-            <div className="flex items-end justify-center space-x-1 h-12 sm:h-16">
-              {audioLevels.slice(5).map((level, index) => (
+            <div className="flex items-end justify-center space-x-1 h-10 sm:h-12">
+              {audioLevels.slice(6).map((level, index) => (
                 <div
-                  key={index + 5}
+                  key={index + 6}
                   className={`w-1 rounded-full transition-all duration-200 ${
                     isRecording ? 'bg-red-500' : 'bg-gray-300'
                   }`}
-                  style={{ height: `${Math.max(level, 6)}px` }}
+                  style={{ height: `${Math.max(level * 0.6, 4)}px` }}
                 />
               ))}
             </div>
           </div>
 
-          {/* Recording Controls */}
-          <div className="flex items-center justify-center space-x-4">
+          {/* Recording Controls - Compact */}
+          <div className="flex items-center justify-center space-x-3">
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800 transition-colors"
+              className="text-gray-600 hover:text-gray-800 transition-colors text-xs px-2 py-1"
               onClick={handleClear}
               disabled={!result && !error}
             >
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="h-3 w-3 mr-1" />
               Clear
             </Button>
             {result && (
               <div className="text-xs text-green-600 font-medium">
-                ✓ Recording successful
+                ✓ Success
               </div>
             )}
           </div>

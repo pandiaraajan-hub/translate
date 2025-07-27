@@ -68,11 +68,11 @@ export function TranslationResults({
   }, [translatedText, sourceText, targetConfig.code]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       {/* Simple Translation Status */}
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
+        <CardContent className="p-3 sm:p-4">
+          <div className="text-center space-y-3">
             <div className="flex items-center justify-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div className={`language-flag ${getFlagColors(sourceLanguage)} text-xl`}>
