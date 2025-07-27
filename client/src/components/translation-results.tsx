@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
-import { ArrowDown, Volume2 } from 'lucide-react';
+import { mobileAudio } from '@/lib/mobile-audio';
+import { ArrowDown, Volume2, Smartphone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface TranslationResultsProps {
@@ -24,6 +25,8 @@ export function TranslationResults({
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
   const lastTranslatedText = useRef<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [mobileAudioActivated, setMobileAudioActivated] = useState(false);
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const getFlagColors = (lang: LanguageCode) => {
     switch (lang) {
@@ -38,6 +41,21 @@ export function TranslationResults({
     }
   };
 
+  const activateMobileAudio = async () => {
+    console.log('📱 Activating mobile audio...');
+    try {
+      const success = await mobileAudio.activateAudio();
+      setMobileAudioActivated(success);
+      if (success) {
+        console.log('📱 Mobile audio activated successfully');
+      } else {
+        console.error('📱 Mobile audio activation failed');
+      }
+    } catch (error) {
+      console.error('📱 Mobile audio activation error:', error);
+    }
+  };
+
   const handleSpeak = async (text: string, languageCode: string) => {
     if (!text.trim()) {
       console.log('No text to speak');
@@ -49,18 +67,23 @@ export function TranslationResults({
     try {
       setIsPlaying(true);
       
-      // Check if speech synthesis is available
-      if (!speechUtils.isSynthesisSupported()) {
-        console.error('Speech synthesis not supported');
-        alert('Speech synthesis is not supported in this browser');
-        return;
-      }
+      // Use mobile audio manager for mobile devices
+      if (isMobile) {
+        await mobileAudio.createMobileSpeech(text, languageCode);
+      } else {
+        // Check if speech synthesis is available
+        if (!speechUtils.isSynthesisSupported()) {
+          console.error('Speech synthesis not supported');
+          alert('Speech synthesis is not supported in this browser');
+          return;
+        }
 
-      console.log('Starting speech synthesis...');
-      await speechUtils.speak({
-        text,
-        lang: languageCode,
-      });
+        console.log('Starting speech synthesis...');
+        await speechUtils.speak({
+          text,
+          lang: languageCode,
+        });
+      }
       console.log('Speech synthesis completed');
       
     } catch (error) {
@@ -133,6 +156,19 @@ export function TranslationResults({
             {confidence && (
               <div className="text-xs text-gray-400 bg-gray-50 rounded-lg p-2">
                 Speech confidence: {Math.round(confidence * 100)}%
+              </div>
+            )}
+
+            {/* Mobile Audio Activation */}
+            {isMobile && !mobileAudioActivated && (
+              <div className="flex justify-center mb-4">
+                <button
+                  onClick={activateMobileAudio}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2"
+                >
+                  <Smartphone className="h-4 w-4" />
+                  Activate Mobile Audio
+                </button>
               </div>
             )}
 
