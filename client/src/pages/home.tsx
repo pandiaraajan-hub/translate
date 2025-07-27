@@ -51,14 +51,24 @@ export default function Home() {
           description: 'Voice output enabled. Recording translations will now play audio.',
         });
         
-        // Test with confirmation message
+        // Test with confirmation message - multiple attempts
         setTimeout(async () => {
           try {
-            await directMobileSpeech.speak('Mobile audio is ready', 'en-US');
+            console.log('📱 Attempting confirmation speech...');
+            await directMobileSpeech.speak('Audio is working', 'en-US');
+            console.log('📱 Confirmation speech successful');
           } catch (testError) {
             console.warn('📱 Confirmation message failed:', testError);
+            // Try backup approach
+            setTimeout(async () => {
+              try {
+                await directMobileSpeech.speak('Ready', 'en-US');
+              } catch (backupError) {
+                console.warn('📱 Backup confirmation failed:', backupError);
+              }
+            }, 1000);
           }
-        }, 800);
+        }, 1200);
         
       } else {
         toast({

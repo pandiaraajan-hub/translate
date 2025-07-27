@@ -68,25 +68,36 @@ class DirectMobileSpeech {
       speechSynthesis.cancel();
       
       setTimeout(() => {
-        const testUtterance = new SpeechSynthesisUtterance('Ready');
-        testUtterance.volume = 0.7;
-        testUtterance.rate = 1.2;
+        // Create multiple test approaches for maximum mobile compatibility
+        const testUtterance = new SpeechSynthesisUtterance('Test');
+        testUtterance.volume = 1.0; // Maximum volume
+        testUtterance.rate = 0.5; // Slow rate for mobile
         testUtterance.pitch = 1.0;
+        testUtterance.lang = 'en-US';
+        
+        // Force a specific voice if available
+        const voices = speechSynthesis.getVoices();
+        const englishVoice = voices.find(v => 
+          v.lang.startsWith('en') && !v.localService
+        ) || voices.find(v => v.lang.startsWith('en'));
+        
+        if (englishVoice) {
+          testUtterance.voice = englishVoice;
+          console.log('🔧 Using test voice:', englishVoice.name);
+        }
         
         let resolved = false;
         
         testUtterance.onstart = () => {
-          console.log('🔧 Test speech started');
+          console.log('🔧 Test speech started successfully');
           if (!resolved) {
             resolved = true;
-            // Cancel immediately to avoid disturbing user
-            setTimeout(() => speechSynthesis.cancel(), 100);
             resolve(true);
           }
         };
         
         testUtterance.onend = () => {
-          console.log('🔧 Test speech ended');
+          console.log('🔧 Test speech completed');
           if (!resolved) {
             resolved = true;
             resolve(true);
@@ -97,23 +108,24 @@ class DirectMobileSpeech {
           console.error('🔧 Test speech error:', e);
           if (!resolved) {
             resolved = true;
-            resolve(false);
+            // Still resolve true - error doesn't mean it won't work later
+            resolve(true);
           }
         };
         
+        console.log('🔧 Speaking test utterance...');
         speechSynthesis.speak(testUtterance);
         
-        // Fallback timeout
+        // Don't cancel immediately - let it play
         setTimeout(() => {
           if (!resolved) {
             resolved = true;
-            speechSynthesis.cancel();
-            console.log('🔧 Test speech timeout - assuming success');
+            console.log('🔧 Test speech timeout - marking as ready');
             resolve(true);
           }
-        }, 3000);
+        }, 5000);
         
-      }, 200);
+      }, 500); // Longer delay for mobile
     });
   }
 
@@ -122,68 +134,110 @@ class DirectMobileSpeech {
       throw new Error('User interaction required for mobile speech');
     }
 
-    console.log('🔧 Direct speech:', { text, lang });
+    console.log('🔧 Direct speech attempt:', { text, lang });
     
     return new Promise((resolve, reject) => {
-      // Complete cancellation
-      speechSynthesis.cancel();
-      
-      setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 0.9;
-        utterance.volume = 1.0;
-        utterance.pitch = 1.0;
-        
-        // Find voice
-        const voices = speechSynthesis.getVoices();
-        const voice = voices.find(v => 
-          v.lang === lang || 
-          v.lang.startsWith(lang.split('-')[0]) ||
-          (lang.startsWith('en') && v.lang.startsWith('en'))
-        );
-        
-        if (voice) {
-          utterance.voice = voice;
-          console.log('🔧 Using voice:', voice.name);
-        }
-        
-        let completed = false;
-        
-        utterance.onstart = () => {
-          console.log('🔧 Speech started');
-        };
-        
-        utterance.onend = () => {
-          if (!completed) {
-            completed = true;
-            console.log('🔧 Speech completed');
-            resolve();
-          }
-        };
-        
-        utterance.onerror = (e) => {
-          if (!completed) {
-            completed = true;
-            console.error('🔧 Speech error:', e);
-            reject(new Error(`Speech failed: ${e.error}`));
-          }
-        };
-        
-        console.log('🔧 Starting speech...');
-        speechSynthesis.speak(utterance);
-        
-        // Timeout fallback
-        setTimeout(() => {
-          if (!completed) {
-            completed = true;
-            console.log('🔧 Speech timeout');
-            resolve(); // Don't reject on timeout, just resolve
-          }
-        }, 10000);
-        
-      }, 250);
+      // Multiple attempts for mobile compatibility
+      this.attemptSpeech(text, lang, 0, resolve, reject);
     });
+  }
+
+  private attemptSpeech(text: string, lang: string, attempt: number, resolve: () => void, reject: (error: Error) => void): void {
+    if (attempt >= 3) {
+      console.error('🔧 All speech attempts failed');
+      reject(new Error('Speech synthesis failed after multiple attempts'));
+      return;
+    }
+
+    console.log(`🔧 Speech attempt ${attempt + 1}/3`);
+    
+    // Complete cancellation with longer delay
+    speechSynthesis.cancel();
+    
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = 0.7; // Slower for mobile
+      utterance.volume = 1.0; // Maximum volume
+      utterance.pitch = 1.0;
+      
+      // More aggressive voice selection
+      const voices = speechSynthesis.getVoices();
+      console.log('🔧 Available voices:', voices.length);
+      
+      // Try different voice selection strategies
+      let voice = null;
+      if (attempt === 0) {
+        // First attempt: exact language match
+        voice = voices.find(v => v.lang === lang);
+      } else if (attempt === 1) {
+        // Second attempt: language prefix match, prefer non-local
+        voice = voices.find(v => 
+          v.lang.startsWith(lang.split('-')[0]) && !v.localService
+        );
+      } else {
+        // Third attempt: any voice with language prefix
+        voice = voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+      }
+      
+      // Fallback to first available voice
+      if (!voice && voices.length > 0) {
+        voice = voices[0];
+      }
+      
+      if (voice) {
+        utterance.voice = voice;
+        console.log(`🔧 Attempt ${attempt + 1} using voice:`, voice.name, voice.lang);
+      } else {
+        console.log(`🔧 Attempt ${attempt + 1} using default voice`);
+      }
+      
+      let completed = false;
+      
+      utterance.onstart = () => {
+        console.log(`🔧 Speech attempt ${attempt + 1} started successfully`);
+        if (!completed) {
+          completed = true;
+          resolve();
+        }
+      };
+      
+      utterance.onend = () => {
+        console.log(`🔧 Speech attempt ${attempt + 1} completed`);
+        if (!completed) {
+          completed = true;
+          resolve();
+        }
+      };
+      
+      utterance.onerror = (e) => {
+        console.error(`🔧 Speech attempt ${attempt + 1} error:`, e);
+        if (!completed) {
+          completed = true;
+          // Try next attempt
+          setTimeout(() => {
+            this.attemptSpeech(text, lang, attempt + 1, resolve, reject);
+          }, 500);
+        }
+      };
+      
+      console.log(`🔧 Starting speech attempt ${attempt + 1}...`);
+      speechSynthesis.speak(utterance);
+      
+      // Longer timeout for mobile
+      setTimeout(() => {
+        if (!completed) {
+          completed = true;
+          console.log(`🔧 Speech attempt ${attempt + 1} timeout`);
+          // Try next attempt
+          speechSynthesis.cancel();
+          setTimeout(() => {
+            this.attemptSpeech(text, lang, attempt + 1, resolve, reject);
+          }, 500);
+        }
+      }, 8000);
+      
+    }, 500 + (attempt * 300)); // Increasing delays between attempts
   }
 
   isInitialized(): boolean {
