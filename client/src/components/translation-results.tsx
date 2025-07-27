@@ -136,9 +136,38 @@ export function TranslationResults({
               </div>
             )}
 
+            {/* Audio System Check */}
+            <div className="flex justify-center gap-2 mt-2">
+              <button 
+                onClick={() => {
+                  // Check system audio capabilities
+                  console.log('🔊 System Audio Check:');
+                  console.log('- speechSynthesis available:', 'speechSynthesis' in window);
+                  console.log('- speechSynthesis.speaking:', speechSynthesis.speaking);
+                  console.log('- speechSynthesis.pending:', speechSynthesis.pending);
+                  console.log('- speechSynthesis.paused:', speechSynthesis.paused);
+                  console.log('- Available voices:', speechSynthesis.getVoices().length);
+                  
+                  alert(`Audio System Status:
+• Speech Synthesis: ${'speechSynthesis' in window ? 'Available' : 'Not Available'}
+• Currently Speaking: ${speechSynthesis.speaking ? 'Yes' : 'No'}
+• Available Voices: ${speechSynthesis.getVoices().length}
+• Browser: ${navigator.userAgent.includes('Chrome') ? 'Chrome' : 'Other'}
+
+Make sure:
+1. System volume is not muted
+2. Browser audio is enabled
+3. Try headphones if speakers don't work`);
+                }}
+                className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                🔧 Audio Check
+              </button>
+            </div>
+
             {/* Test Audio Button */}
             {translatedText.trim() && (
-              <div className="flex justify-center gap-2 mt-2">
+              <div className="flex justify-center gap-2 mt-1">
                 <button 
                   onClick={() => handleSpeak(translatedText, targetConfig.code)}
                   className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
@@ -147,10 +176,28 @@ export function TranslationResults({
                   {isPlaying ? 'Playing...' : '🔊 Test Audio'}
                 </button>
                 <button 
-                  onClick={() => handleSpeak('Hello world test', 'en-US')}
+                  onClick={() => {
+                    // Test with simple English first
+                    console.log('🧪 Testing basic English speech');
+                    const utterance = new SpeechSynthesisUtterance('Hello, this is a test');
+                    utterance.rate = 1.0;
+                    utterance.volume = 1.0;
+                    utterance.lang = 'en-US';
+                    
+                    utterance.onstart = () => console.log('✅ Basic test speech started');
+                    utterance.onend = () => console.log('✅ Basic test speech ended');
+                    utterance.onerror = (e) => console.error('❌ Basic test failed:', e);
+                    
+                    // Cancel any ongoing speech
+                    speechSynthesis.cancel();
+                    
+                    // Speak directly
+                    speechSynthesis.speak(utterance);
+                    console.log('📢 Basic test queued');
+                  }}
                   className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
                 >
-                  🧪 Test English
+                  🧪 Basic Test
                 </button>
               </div>
             )}

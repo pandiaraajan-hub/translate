@@ -194,11 +194,30 @@ export class SpeechUtils {
         }
       }
 
+      // Check if speech synthesis is ready
+      if (this.synthesis.paused) {
+        console.log('🔄 Resuming paused synthesis');
+        this.synthesis.resume();
+      }
+
       // Start speaking immediately
       console.log('🚀 Starting speech synthesis...');
+      console.log('🔊 System volume check - synthesis.speaking:', this.synthesis.speaking);
+      console.log('🔊 System volume check - synthesis.pending:', this.synthesis.pending);
+      console.log('🔊 System volume check - synthesis.paused:', this.synthesis.paused);
+      
       try {
         this.synthesis.speak(utterance);
         console.log('📢 Speech queued successfully');
+        
+        // Add timeout to detect if speech never starts
+        setTimeout(() => {
+          if (!this.synthesis.speaking) {
+            console.warn('⚠️ Speech may not have started - checking system audio');
+            reject(new Error('Speech synthesis may be blocked by browser or system audio is muted'));
+          }
+        }, 1000);
+        
       } catch (error) {
         console.error('❌ Failed to queue speech:', error);
         reject(new Error(`Failed to start speech: ${error}`));
