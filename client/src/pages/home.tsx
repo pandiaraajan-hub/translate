@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { LanguageSelector } from '@/components/language-selector';
-import { VoiceRecorder } from '@/components/voice-recorder';
+import { SimpleVoiceRecorder } from '@/components/simple-voice-recorder';
 import { TranslationResults } from '@/components/translation-results';
 
 import { useTranslation } from '@/hooks/use-translation';
@@ -269,7 +269,7 @@ export default function Home() {
         />
 
         {/* Voice Recorder */}
-        <VoiceRecorder
+        <SimpleVoiceRecorder
           sourceLanguage={sourceLanguage}
           onRecognitionResult={handleRecognitionResult}
           onError={handleRecognitionError}
