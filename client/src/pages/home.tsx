@@ -5,7 +5,7 @@ import { CleanTranslationResults } from '@/components/clean-translation-results'
 
 import { useTranslation } from '@/hooks/use-translation';
 import { type LanguageCode, SUPPORTED_LANGUAGES } from '@shared/schema';
-import { Settings, Languages, Mic, Smartphone } from 'lucide-react';
+import { Settings, Languages, Mic, Smartphone, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -210,63 +210,31 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--surface))]">
-      {/* Header - Compact */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-3 py-2 sm:px-4 sm:py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Languages className="text-white h-3 w-3 sm:h-4 sm:w-4" />
-              </div>
-              <div>
-                <h1 className="text-base sm:text-lg font-medium text-gray-900">VoiceBridge</h1>
-                <p className="text-xs text-gray-500">Pandi Tech</p>
-              </div>
-            </div>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
-              <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
-            </Button>
-          </div>
-          
-          {/* Mobile Audio Controls - Always Visible */}
-          <div className="flex justify-center gap-2 mt-3 pt-2 border-t">
-            {!mobileAudioActivated ? (
-              <Button
-                onClick={activateMobileAudio}
-                className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2"
-                size="sm"
-              >
-                <Smartphone className="h-4 w-4" />
-                Activate Mobile Audio
-              </Button>
-            ) : (
-              <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                ✅ Mobile Audio Ready
-              </div>
-            )}
-            
-            <Button
-              onClick={testAudio}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              🎵 Test Audio
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Simple Header */}
+        <div className="text-center">
+          <h1 className="text-xl font-medium text-gray-900">VoiceBridge</h1>
+          <p className="text-sm text-gray-500">Pandi Tech</p>
         </div>
-      </header>
 
-      <main className="max-w-4xl mx-auto px-3 py-3 sm:px-4 sm:py-4 space-y-3 sm:space-y-4 pb-6">
-        {/* Language Selector */}
-        <LanguageSelector
-          sourceLanguage={sourceLanguage}
-          targetLanguage={targetLanguage}
-          onSourceLanguageChange={handleSourceLanguageChange}
-          onTargetLanguageChange={handleTargetLanguageChange}
-          onSwapLanguages={handleSwapLanguages}
-        />
+        {/* Compact Language Selector */}
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <span className={`px-3 py-1 rounded-full ${sourceLanguage === 'tamil' ? 'bg-orange-100 text-orange-700' : sourceLanguage === 'chinese' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+            {SUPPORTED_LANGUAGES[sourceLanguage].flag} {SUPPORTED_LANGUAGES[sourceLanguage].name}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSwapLanguages}
+            className="px-2"
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+          <span className={`px-3 py-1 rounded-full ${targetLanguage === 'tamil' ? 'bg-orange-100 text-orange-700' : targetLanguage === 'chinese' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+            {SUPPORTED_LANGUAGES[targetLanguage].flag} {SUPPORTED_LANGUAGES[targetLanguage].name}
+          </span>
+        </div>
 
         {/* Voice Recorder */}
         <SimpleVoiceRecorder
@@ -276,29 +244,22 @@ export default function Home() {
           onError={handleRecognitionError}
         />
 
-        {/* Processing Indicator - Compact */}
-        {(isTranslating || isProcessing) && (
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-gray-600 text-sm">
-                  <span className="processing-dots">Translating</span>
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Mobile Audio Activation */}
+        {isMobile && !mobileAudioActivated && (
+          <Button
+            onClick={activateMobileAudio}
+            className="w-full bg-green-600 hover:bg-green-700"
+          >
+            Enable Audio
+          </Button>
         )}
 
-        {/* Translation Results */}
-        <CleanTranslationResults
-          sourceLanguage={sourceLanguage}
-          targetLanguage={targetLanguage}
-          sourceText={sourceText}
-          translatedText={translatedText}
-          confidence={confidence}
-          isPlaying={false}
-        />
+        {/* Simple Results */}
+        {translatedText && (
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <p className="text-gray-900">{translatedText}</p>
+          </div>
+        )}
 
         {/* Error Display */}
         {error && (
@@ -340,11 +301,7 @@ export default function Home() {
             </AlertDescription>
           </Alert>
         )}
-
-
-      </main>
-
-
+      </div>
     </div>
   );
 }
