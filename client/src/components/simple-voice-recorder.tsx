@@ -113,6 +113,26 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
           >
             Translate Now
           </button>
+
+          <button 
+            onClick={async () => {
+              console.log('🧪 Testing audio with translation');
+              
+              try {
+                const { reliableAudio } = await import('@/lib/reliable-audio');
+                reliableAudio.unlockAudio();
+                
+                const success = await reliableAudio.speak('Audio test', 'en-US');
+                console.log('🧪 Audio test result:', success);
+              } catch (error) {
+                console.error('🧪 Audio test error:', error);
+                alert('Audio test failed: ' + error);
+              }
+            }}
+            className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            🔊 Test Audio
+          </button>
         </div>
       </CardContent>
     </Card>
