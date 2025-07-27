@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
 import { mobileAudio } from '@/lib/mobile-audio';
-import { ArrowDown, Volume2, Smartphone } from 'lucide-react';
+import { ArrowDown, Volume2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface TranslationResultsProps {
@@ -25,24 +25,9 @@ export function TranslationResults({
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
   const lastTranslatedText = useRef<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [mobileAudioActivated, setMobileAudioActivated] = useState(false);
-  const [showMobileButton, setShowMobileButton] = useState(false);
-  
-  // Enhanced mobile detection
   const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
     (typeof window !== 'undefined' && window.innerWidth <= 768) ||
     ('ontouchstart' in window);
-
-  // Show mobile button for all users for now (debugging)
-  useEffect(() => {
-    console.log('📱 Mobile detection:', {
-      userAgent: navigator.userAgent,
-      isMobile: isMobile,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
-      touchSupport: 'ontouchstart' in window
-    });
-    setShowMobileButton(true); // Show for all users to debug
-  }, [isMobile]);
 
   const getFlagColors = (lang: LanguageCode) => {
     switch (lang) {
@@ -57,20 +42,7 @@ export function TranslationResults({
     }
   };
 
-  const activateMobileAudio = async () => {
-    console.log('📱 Activating mobile audio...');
-    try {
-      const success = await mobileAudio.activateAudio();
-      setMobileAudioActivated(success);
-      if (success) {
-        console.log('📱 Mobile audio activated successfully');
-      } else {
-        console.error('📱 Mobile audio activation failed');
-      }
-    } catch (error) {
-      console.error('📱 Mobile audio activation error:', error);
-    }
-  };
+
 
   const handleSpeak = async (text: string, languageCode: string) => {
     if (!text.trim()) {
@@ -175,27 +147,7 @@ export function TranslationResults({
               </div>
             )}
 
-            {/* Mobile Audio Activation */}
-            {showMobileButton && !mobileAudioActivated && (
-              <div className="flex justify-center mb-4">
-                <button
-                  onClick={activateMobileAudio}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2 font-medium"
-                >
-                  <Smartphone className="h-4 w-4" />
-                  📱 Activate Mobile Audio
-                </button>
-              </div>
-            )}
-            
-            {/* Show activation status */}
-            {mobileAudioActivated && (
-              <div className="flex justify-center mb-2">
-                <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                  ✅ Mobile Audio Activated
-                </div>
-              </div>
-            )}
+
 
             {/* Audio System Check */}
             <div className="flex justify-center gap-2 mt-2">
