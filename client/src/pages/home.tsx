@@ -5,10 +5,14 @@ import { CleanTranslationResults } from '@/components/clean-translation-results'
 
 import { useTranslation } from '@/hooks/use-translation';
 import { type LanguageCode, SUPPORTED_LANGUAGES } from '@shared/schema';
-import { Settings, Languages, Mic, Smartphone, ArrowUpDown } from 'lucide-react';
+import { Settings, Languages, Mic, Smartphone, ArrowUpDown, X, Volume2, Sliders } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { mobileAudio } from '@/lib/mobile-audio';
 import { speechUtils } from '@/lib/speech-utils';
@@ -23,6 +27,10 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [mobileAudioActivated, setMobileAudioActivated] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [speechRate, setSpeechRate] = useState(0.7);
+  const [speechPitch, setSpeechPitch] = useState(1.0);
+  const [autoPlayTranslation, setAutoPlayTranslation] = useState(true);
 
   const { translate, isTranslating, translationError, translationResult } = useTranslation();
   const { toast } = useToast();
@@ -224,9 +232,98 @@ export default function Home() {
                 <p className="text-xs text-gray-500">Pandi Tech</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
-              <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
-            </Button>
+            <Dialog open={showSettings} onOpenChange={setShowSettings}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
+                  <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Sliders className="h-5 w-5" />
+                    <span>Voice Settings</span>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 py-4">
+                  {/* Speech Rate */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium flex items-center space-x-2">
+                      <Volume2 className="h-4 w-4" />
+                      <span>Speech Speed</span>
+                    </Label>
+                    <div className="space-y-2">
+                      <Slider
+                        value={[speechRate]}
+                        onValueChange={(value) => setSpeechRate(value[0])}
+                        min={0.3}
+                        max={1.2}
+                        step={0.1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Slow (0.3x)</span>
+                        <span>Current: {speechRate}x</span>
+                        <span>Fast (1.2x)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Speech Pitch */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium flex items-center space-x-2">
+                      <Mic className="h-4 w-4" />
+                      <span>Voice Pitch</span>
+                    </Label>
+                    <div className="space-y-2">
+                      <Slider
+                        value={[speechPitch]}
+                        onValueChange={(value) => setSpeechPitch(value[0])}
+                        min={0.5}
+                        max={1.5}
+                        step={0.1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Low (0.5)</span>
+                        <span>Current: {speechPitch}</span>
+                        <span>High (1.5)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Auto-play Toggle */}
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="auto-play" className="text-sm font-medium">
+                      Auto-play Translations
+                    </Label>
+                    <Switch
+                      id="auto-play"
+                      checked={autoPlayTranslation}
+                      onCheckedChange={setAutoPlayTranslation}
+                    />
+                  </div>
+
+                  {/* Test Voice Button */}
+                  <Button
+                    onClick={() => {
+                      const testText = "Testing voice settings with current configuration";
+                      speechUtils.speak({
+                        text: testText,
+                        lang: 'en-US',
+                        rate: speechRate,
+                        pitch: speechPitch
+                      });
+                    }}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Volume2 className="h-4 w-4 mr-2" />
+                    Test Voice Settings
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
         </div>
@@ -250,6 +347,9 @@ export default function Home() {
           onError={handleRecognitionError}
           onTestAudio={testAudio}
           translatedText={translatedText}
+          speechRate={speechRate}
+          speechPitch={speechPitch}
+          autoPlay={autoPlayTranslation}
         />
 
         {/* Processing Indicator - Compact */}

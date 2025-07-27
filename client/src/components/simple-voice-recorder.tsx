@@ -10,9 +10,22 @@ interface SimpleVoiceRecorderProps {
   onError: (error: string) => void;
   onTestAudio?: () => void;
   translatedText?: string;
+  speechRate?: number;
+  speechPitch?: number;
+  autoPlay?: boolean;
 }
 
-export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError, onTestAudio, translatedText }: SimpleVoiceRecorderProps) {
+export function SimpleVoiceRecorder({ 
+  sourceLanguage, 
+  targetLanguage, 
+  onRecognitionResult, 
+  onError, 
+  onTestAudio, 
+  translatedText,
+  speechRate = 0.7,
+  speechPitch = 1.0,
+  autoPlay = true
+}: SimpleVoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
 
@@ -100,15 +113,18 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
                   const { reliableAudio } = await import('@/lib/reliable-audio');
                   reliableAudio.unlockAudio();
                   
-                  // Try to speak in the target language first
+                  // Use speech utils with custom settings
+                  const { speechUtils } = await import('@/lib/speech-utils');
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
-                  const success = await reliableAudio.speak(translatedText, targetLangCode);
-                  console.log('🧪 Audio test result:', success);
                   
-                  if (!success) {
-                    console.log(`🧪 ${targetLanguage} failed, trying English...`);
-                    await reliableAudio.speak(translatedText, 'en-US');
-                  }
+                  await speechUtils.speak({
+                    text: translatedText,
+                    lang: targetLangCode,
+                    rate: speechRate,
+                    pitch: speechPitch
+                  });
+                  
+                  console.log('🧪 Audio played with custom settings:', { rate: speechRate, pitch: speechPitch });
                 } catch (error) {
                   console.error('🧪 Audio test error:', error);
                   alert('Audio test failed: ' + error);
