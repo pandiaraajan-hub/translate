@@ -33,20 +33,37 @@ export default function Home() {
 
   const activateMobileAudio = async () => {
     console.log('📱 Activating mobile audio...');
+    
+    // Show immediate feedback
+    toast({
+      title: 'Activating Mobile Audio',
+      description: 'Initializing audio system...',
+    });
+
     try {
       const success = await mobileAudio.activateAudio();
       setMobileAudioActivated(success);
       if (success) {
         console.log('📱 Mobile audio activated successfully');
         toast({
-          title: 'Mobile Audio Activated',
-          description: 'Voice output is now enabled for mobile devices',
+          title: 'Mobile Audio Ready!',
+          description: 'Voice output is now enabled. Try recording a translation.',
         });
+        
+        // Auto-test audio after activation
+        setTimeout(async () => {
+          try {
+            await mobileAudio.createMobileSpeech('Mobile audio is now working', 'en-US');
+          } catch (testError) {
+            console.warn('📱 Auto-test failed:', testError);
+          }
+        }, 500);
+        
       } else {
         console.error('📱 Mobile audio activation failed');
         toast({
           title: 'Mobile Audio Failed',
-          description: 'Could not activate mobile audio. Try again.',
+          description: 'Could not activate mobile audio. Ensure volume is up and try again.',
           variant: 'destructive',
         });
       }
