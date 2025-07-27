@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { Mic, Square, Trash2, Play } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface VoiceRecorderProps {
   sourceLanguage: LanguageCode;
@@ -27,7 +27,11 @@ export function VoiceRecorder({
     clearError,
   } = useSpeechRecognition();
 
-  const [audioLevels, setAudioLevels] = useState<number[]>(Array(10).fill(0));
+  const [audioLevels, setAudioLevels] = useState<number[]>(Array(10).fill(8));
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   // Handle recognition result
   useEffect(() => {
@@ -43,22 +47,92 @@ export function VoiceRecorder({
     }
   }, [error, onError]);
 
-  // Simulate audio visualization during recording
+  // Real audio visualization based on microphone input
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isRecording) {
-      interval = setInterval(() => {
-        setAudioLevels(levels => 
-          levels.map(() => Math.random() * 40 + 10)
-        );
-      }, 100);
-    } else {
-      setAudioLevels(Array(10).fill(10));
-    }
+    const startAudioVisualization = async () => {
+      if (!isRecording) {
+        // Stop audio visualization
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+        if (audioContextRef.current) {
+          audioContextRef.current.close();
+        }
+        setAudioLevels(Array(10).fill(8));
+        return;
+      }
+
+      try {
+        // Get microphone access
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        streamRef.current = stream;
+
+        // Create audio context and analyser
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = audioContext;
+        
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        analyserRef.current = analyser;
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        // Animation loop for real-time audio visualization
+        const updateAudioLevels = () => {
+          if (!analyserRef.current || !isRecording) return;
+
+          analyser.getByteFrequencyData(dataArray);
+          
+          // Generate bar heights based on frequency bins
+          const newLevels = Array(10).fill(0).map((_, index) => {
+            const binIndex = Math.floor((index / 10) * dataArray.length);
+            const value = dataArray[binIndex] || 0;
+            // Scale to appropriate height (8-48px range)
+            return Math.max(8, Math.min(48, (value / 255) * 40 + 8));
+          });
+
+          setAudioLevels(newLevels);
+          
+          if (isRecording) {
+            animationFrameRef.current = requestAnimationFrame(updateAudioLevels);
+          }
+        };
+
+        updateAudioLevels();
+
+      } catch (error) {
+        console.error('Error accessing microphone for visualization:', error);
+        // Fallback to basic animation if mic access fails
+        const interval = setInterval(() => {
+          if (!isRecording) return;
+          setAudioLevels(levels => 
+            levels.map(() => Math.random() * 32 + 8)
+          );
+        }, 100);
+
+        return () => clearInterval(interval);
+      }
+    };
+
+    startAudioVisualization();
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
     };
   }, [isRecording]);
 
