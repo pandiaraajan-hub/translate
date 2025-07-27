@@ -141,27 +141,63 @@ export function TranslationResults({
         </div>
       )}
 
-      {/* Fallback button for mobile debugging */}
-      <div className="flex justify-center mb-3">
+      {/* Mobile Speech Recognition Test */}
+      <div className="flex justify-center gap-2 mb-3">
         <button 
           onClick={(e) => {
-            console.log('🔧 Debug button clicked - always visible');
-            console.log('🔧 Current translation:', translatedText);
+            console.log('🧪 Testing mobile speech recognition directly...');
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            console.log('🧪 Device type:', isMobile ? 'Mobile' : 'Desktop');
+            console.log('🧪 SpeechRecognition available:', 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+            
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+              const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+              const recognition = new SpeechRecognition();
+              recognition.lang = 'en-US';
+              recognition.continuous = false;
+              recognition.interimResults = true;
+              
+              recognition.onstart = () => {
+                console.log('🧪 Speech recognition started successfully');
+              };
+              
+              recognition.onresult = (event: any) => {
+                const transcript = event.results[0][0].transcript;
+                console.log('🧪 Speech recognition result:', transcript);
+                alert(`Speech recognized: "${transcript}"`);
+              };
+              
+              recognition.onerror = (event: any) => {
+                console.log('🧪 Speech recognition error:', event.error);
+                alert(`Speech error: ${event.error}`);
+              };
+              
+              recognition.start();
+              console.log('🧪 Recognition start requested');
+            } else {
+              alert('Speech recognition not supported');
+            }
+          }}
+          className="px-3 py-1 text-xs bg-purple-500 text-white rounded"
+        >
+          🧪 Test Speech
+        </button>
+        
+        <button 
+          onClick={(e) => {
+            console.log('🔧 Debug audio button clicked');
             const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (translatedText.trim()) {
               if (isMobile) {
-                console.log('🔧 Mobile - playing available translation');
                 forceMobileAudio.enableAudioFromTouch();
                 forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
               } else {
-                console.log('🔧 Desktop - playing available translation');
                 const utterance = new SpeechSynthesisUtterance(translatedText);
                 utterance.rate = 0.8;
                 speechSynthesis.speak(utterance);
               }
             } else {
-              console.log('🔧 No translation available yet');
               if (isMobile) {
                 forceMobileAudio.enableAudioFromTouch();
                 forceMobileAudio.speakImmediately('No translation yet', 'en-US');
@@ -173,7 +209,7 @@ export function TranslationResults({
           }}
           className="px-3 py-1 text-xs bg-red-500 text-white rounded"
         >
-          🔧 Debug Play
+          🔧 Debug Audio
         </button>
       </div>
 
