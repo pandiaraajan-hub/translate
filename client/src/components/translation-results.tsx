@@ -105,12 +105,21 @@ export function TranslationResults({
 
   return (
     <div className="space-y-3 sm:space-y-4">
+      {/* Mobile Debug Info */}
+      <div className="bg-yellow-100 p-2 mb-2 text-xs rounded">
+        <div>Translation: "{translatedText}"</div>
+        <div>Length: {translatedText.length}</div>
+        <div>Trimmed: {translatedText.trim().length}</div>
+        <div>Show Button: {translatedText.trim() ? 'YES' : 'NO'}</div>
+      </div>
+
       {/* Translate Now Button - Only when translation available */}
       {translatedText.trim() && (
         <div className="flex justify-center mb-3">
           <button 
             onClick={(e) => {
               console.log('🎯 Translate Now button clicked');
+              console.log('🎯 Translation text:', translatedText);
               const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
               
               if (isMobile) {
@@ -130,6 +139,42 @@ export function TranslationResults({
           </button>
         </div>
       )}
+
+      {/* Fallback button for mobile debugging */}
+      <div className="flex justify-center mb-3">
+        <button 
+          onClick={(e) => {
+            console.log('🔧 Debug button clicked - always visible');
+            console.log('🔧 Current translation:', translatedText);
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (translatedText.trim()) {
+              if (isMobile) {
+                console.log('🔧 Mobile - playing available translation');
+                forceMobileAudio.enableAudioFromTouch();
+                forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+              } else {
+                console.log('🔧 Desktop - playing available translation');
+                const utterance = new SpeechSynthesisUtterance(translatedText);
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+              }
+            } else {
+              console.log('🔧 No translation available yet');
+              if (isMobile) {
+                forceMobileAudio.enableAudioFromTouch();
+                forceMobileAudio.speakImmediately('No translation yet', 'en-US');
+              } else {
+                const utterance = new SpeechSynthesisUtterance('No translation yet');
+                speechSynthesis.speak(utterance);
+              }
+            }
+          }}
+          className="px-3 py-1 text-xs bg-red-500 text-white rounded"
+        >
+          🔧 Debug Play
+        </button>
+      </div>
 
       {/* Simple Translation Status */}
       <Card>
