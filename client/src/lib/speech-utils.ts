@@ -377,66 +377,72 @@ export class SpeechUtils {
 
   getBestVoiceForLanguage(languageCode: string): SpeechSynthesisVoice | null {
     const voices = this.getAvailableVoices();
-    console.log('🔍 Searching for voice for:', languageCode);
+    console.log('🔍 Searching for MALE voice for:', languageCode);
+    console.log('🎤 All available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
     
-    // Check if any Tamil voices exist
-    const tamilVoices = voices.filter(v => v.lang.includes('ta') || v.name.toLowerCase().includes('tamil'));
-    console.log('🇮🇳 Tamil voices found:', tamilVoices.map(v => ({ name: v.name, lang: v.lang })));
-    
-    // For Tamil, if no Tamil voice exists, use Hindi male voice as fallback
-    if (languageCode === 'ta-IN') {
-      let voice = voices.find(v => v.lang === 'ta-IN' || v.lang === 'ta');
-      if (!voice) {
-        console.log('⚠️ No Tamil voice found, trying Hindi male voice as fallback');
-        // Prefer male Hindi voices for Indian accent
-        voice = voices.find(v => (v.lang === 'hi-IN' || v.lang.startsWith('hi')) && 
-                               (v.name.toLowerCase().includes('male') || 
-                                v.name.toLowerCase().includes('man') ||
-                                v.name.toLowerCase().includes('ravi') ||
-                                v.name.toLowerCase().includes('prabhat'))) ||
-               voices.find(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
-        if (voice) {
-          console.log('🔄 Using Hindi male voice for Tamil:', voice.name);
-          return voice;
-        }
-      }
-      if (voice) {
-        console.log('✅ Found Tamil voice:', voice.name);
-        return voice;
-      }
-    }
-    
-    // Try to find an exact match
-    let voice = voices.find(v => v.lang === languageCode);
-    console.log('Exact match for', languageCode, ':', voice?.name);
-    
-    // If no exact match, try to find a voice with the same language prefix
-    if (!voice) {
-      const langPrefix = languageCode.split('-')[0];
-      voice = voices.find(v => v.lang.startsWith(langPrefix));
-      console.log('Prefix match for', langPrefix, ':', voice?.name);
-    }
-    
-    // If still no match, try some common alternatives
-    if (!voice) {
-      const alternatives = {
-        'zh-CN': ['zh-CN', 'zh', 'cmn-CN', 'zh-Hans'],
-        'en-US': ['en-US', 'en', 'en-GB'],
-        'ta-IN': ['ta-IN', 'ta', 'hi-IN', 'hi'], // Hindi male as fallback for Tamil
-        'ms-MY': ['ms-MY', 'ms', 'en-US', 'en'] // English as fallback for Malay
-      };
+    // Helper function to check if a voice is likely male
+    const isMaleVoice = (voice: SpeechSynthesisVoice): boolean => {
+      const name = voice.name.toLowerCase();
+      const maleKeywords = ['male', 'man', 'ravi', 'prabhat', 'amit', 'raj', 'suresh', 'kumar', 'david', 'mark', 'john', 'alex'];
+      const femaleKeywords = ['female', 'woman', 'priya', 'kavya', 'sunita', 'meera', 'sara', 'emma', 'alice', 'susan'];
       
-      const alts = alternatives[languageCode as keyof typeof alternatives] || [];
-      for (const alt of alts) {
-        voice = voices.find(v => v.lang === alt || v.lang.startsWith(alt.split('-')[0]));
-        if (voice) {
-          console.log('Alternative match for', languageCode, ':', voice.name);
-          break;
+      // Check for explicit male indicators
+      if (maleKeywords.some(keyword => name.includes(keyword))) return true;
+      
+      // Check for explicit female indicators
+      if (femaleKeywords.some(keyword => name.includes(keyword))) return false;
+      
+      // Default assumption: if no clear indicator, prefer it (many male voices don't specify)
+      return true;
+    };
+
+    // For ALL languages, prioritize male voices
+    let candidateVoices: SpeechSynthesisVoice[] = [];
+
+    // For Tamil, try Tamil first, then Hindi male
+    if (languageCode === 'ta-IN') {
+      candidateVoices = voices.filter(v => v.lang === 'ta-IN' || v.lang === 'ta');
+      if (candidateVoices.length === 0) {
+        console.log('⚠️ No Tamil voice found, using Hindi male voice');
+        candidateVoices = voices.filter(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+      }
+    } else {
+      // For other languages, find exact matches first
+      candidateVoices = voices.filter(v => v.lang === languageCode);
+      
+      if (candidateVoices.length === 0) {
+        const langPrefix = languageCode.split('-')[0];
+        candidateVoices = voices.filter(v => v.lang.startsWith(langPrefix));
+      }
+      
+      // Fallback alternatives
+      if (candidateVoices.length === 0) {
+        const alternatives = {
+          'zh-CN': ['zh-CN', 'zh', 'cmn-CN', 'zh-Hans'],
+          'en-US': ['en-US', 'en', 'en-GB'],
+          'ms-MY': ['ms-MY', 'ms', 'en-US', 'en']
+        };
+        
+        const alts = alternatives[languageCode as keyof typeof alternatives] || [];
+        for (const alt of alts) {
+          candidateVoices = voices.filter(v => v.lang === alt || v.lang.startsWith(alt.split('-')[0]));
+          if (candidateVoices.length > 0) break;
         }
       }
     }
-    
-    return voice || null;
+
+    // From candidate voices, prefer male voices
+    const maleVoices = candidateVoices.filter(isMaleVoice);
+    const selectedVoice = maleVoices.length > 0 ? maleVoices[0] : candidateVoices[0];
+
+    if (selectedVoice) {
+      console.log('✅ Selected voice:', selectedVoice.name, 'for', languageCode, 
+                  '(Male:', isMaleVoice(selectedVoice) ? 'Yes' : 'No', ')');
+    } else {
+      console.log('❌ No voice found for:', languageCode);
+    }
+
+    return selectedVoice || null;
   }
 }
 
