@@ -225,37 +225,7 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
               </button>
             </div>
 
-            {/* MAIN MOBILE AUDIO BUTTON - ALWAYS VISIBLE */}
-            <div className="flex justify-center my-4 bg-yellow-50 p-3 rounded-lg border-2 border-yellow-200">
-              <button 
-                onClick={(e) => {
-                  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                  
-                  if (isMobile) {
-                    console.log('🎯 Mobile: Testing audio with direct touch...');
-                    forceMobileAudio.enableAudioFromTouch();
-                    
-                    // If there's a translation, play it; otherwise play test message
-                    if (translatedText.trim()) {
-                      console.log('🎯 Mobile: Playing actual translation:', translatedText);
-                      forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
-                    } else {
-                      console.log('🎯 Mobile: Playing test message');
-                      forceMobileAudio.speakImmediately('Mobile audio test', 'en-US');
-                    }
-                  } else {
-                    console.log('🖥️ Desktop: Testing audio...');
-                    const testText = translatedText.trim() || 'Desktop audio test';
-                    const utterance = new SpeechSynthesisUtterance(testText);
-                    utterance.rate = 0.8;
-                    speechSynthesis.speak(utterance);
-                  }
-                }}
-                className="px-6 py-3 text-lg font-bold bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors shadow-lg border-2 border-green-800"
-              >
-                {translatedText.trim() ? '🔊 PLAY TRANSLATION' : '🔊 TEST AUDIO'}
-              </button>
-            </div>
+
 
             {/* Voice Status and Test Buttons */}
             {translatedText.trim() && (
