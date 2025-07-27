@@ -91,11 +91,18 @@ export function VoiceRecorder({
   if (!isSupported) {
     return (
       <Card>
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-6 text-center space-y-4">
           <p className="text-red-600">
-            Speech recognition is not supported in this browser. 
-            Please use Chrome, Firefox, or Safari for the best experience.
+            Speech recognition is not supported in this browser.
           </p>
+          <div className="text-sm text-gray-600 space-y-2">
+            <p><strong>Recommended browsers:</strong></p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Google Chrome (recommended)</li>
+              <li>Microsoft Edge</li>
+              <li>Safari (on macOS/iOS)</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     );
@@ -108,7 +115,10 @@ export function VoiceRecorder({
           <div className="space-y-2">
             <h2 className="text-lg font-medium text-gray-900">Voice Recording</h2>
             <p className="text-sm text-gray-500">
-              Tap the microphone and speak in {SUPPORTED_LANGUAGES[sourceLanguage].name}
+              Tap the microphone and speak clearly in {SUPPORTED_LANGUAGES[sourceLanguage].name}
+            </p>
+            <p className="text-xs text-gray-400">
+              Make sure your microphone is enabled and speak close to your device
             </p>
           </div>
 

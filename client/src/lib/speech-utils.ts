@@ -33,6 +33,7 @@ export class SpeechUtils {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
+      this.recognition.maxAlternatives = 1;
     }
   }
 
@@ -68,7 +69,28 @@ export class SpeechUtils {
     };
 
     this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      onError(`Speech recognition error: ${event.error}`);
+      let errorMessage = 'Speech recognition error';
+      
+      switch (event.error) {
+        case 'no-speech':
+          errorMessage = 'No speech detected. Please speak clearly into your microphone and try again.';
+          break;
+        case 'audio-capture':
+          errorMessage = 'Microphone access denied. Please allow microphone permissions and try again.';
+          break;
+        case 'not-allowed':
+          errorMessage = 'Microphone permission denied. Please enable microphone access in your browser settings.';
+          break;
+        case 'network':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        case 'aborted':
+          return; // Don't show error for user-initiated stops
+        default:
+          errorMessage = `Speech recognition error: ${event.error}`;
+      }
+      
+      onError(errorMessage);
     };
 
     this.recognition.start();

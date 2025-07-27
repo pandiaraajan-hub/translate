@@ -185,16 +185,30 @@ export default function Home() {
         {/* Error Display */}
         {error && (
           <Alert variant="destructive">
-            <AlertDescription className="flex items-center justify-between">
-              {error}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={dismissError}
-                className="text-destructive hover:text-destructive/80"
-              >
-                ×
-              </Button>
+            <AlertDescription className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span>{error}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={dismissError}
+                  className="text-destructive hover:text-destructive/80"
+                >
+                  ×
+                </Button>
+              </div>
+              
+              {error.includes('No speech detected') && (
+                <div className="mt-3 p-3 bg-red-50 rounded-md text-sm">
+                  <p className="font-medium text-red-800 mb-2">Troubleshooting Tips:</p>
+                  <ul className="text-red-700 space-y-1 list-disc list-inside">
+                    <li>Make sure your microphone is not muted</li>
+                    <li>Speak clearly and close to your device</li>
+                    <li>Check if browser has microphone permission</li>
+                    <li>Try speaking a bit louder or for longer</li>
+                  </ul>
+                </div>
+              )}
             </AlertDescription>
           </Alert>
         )}
