@@ -13,6 +13,13 @@ export interface SpeechSynthesisOptions {
   volume?: number;
 }
 
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
 export class SpeechUtils {
   private recognition: SpeechRecognition | null = null;
   private synthesis: SpeechSynthesis;
@@ -50,7 +57,7 @@ export class SpeechUtils {
     const langConfig = SUPPORTED_LANGUAGES[language];
     this.recognition.lang = langConfig.code;
 
-    this.recognition.onresult = (event) => {
+    this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       const result = event.results[0];
       if (result.isFinal) {
         onResult({
@@ -60,7 +67,7 @@ export class SpeechUtils {
       }
     };
 
-    this.recognition.onerror = (event) => {
+    this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       onError(`Speech recognition error: ${event.error}`);
     };
 

@@ -20,6 +20,7 @@ export class MemStorage implements IStorage {
       ...insertTranslation,
       id,
       createdAt: new Date(),
+      confidence: insertTranslation.confidence || null,
     };
     this.translations.set(id, translation);
     return translation;
