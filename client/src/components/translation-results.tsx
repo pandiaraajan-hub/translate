@@ -184,6 +184,38 @@ export function TranslationResults({
         </button>
         
         <button 
+          onTouchStart={(e) => {
+            console.log('🔬 App-style test touch start');
+            e.preventDefault();
+            // Simulate what our main app does
+            console.log('🔬 Calling speechUtils.startRecognition...');
+            import('@/lib/speech-utils').then(({ speechUtils }) => {
+              speechUtils.startRecognition(
+                'english',
+                (result) => {
+                  console.log('🔬 App-style recognition result:', result.transcript);
+                  alert(`App-style result: "${result.transcript}"`);
+                },
+                (error) => {
+                  console.log('🔬 App-style recognition error:', error);
+                  alert(`App-style error: ${error}`);
+                }
+              );
+            });
+          }}
+          onTouchEnd={(e) => {
+            console.log('🔬 App-style test touch end');
+            e.preventDefault();
+            import('@/lib/speech-utils').then(({ speechUtils }) => {
+              speechUtils.stopRecognition();
+            });
+          }}
+          className="px-3 py-1 text-xs bg-orange-500 text-white rounded"
+        >
+          🔬 App Test
+        </button>
+        
+        <button 
           onClick={(e) => {
             console.log('🔧 Debug audio button clicked');
             const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);

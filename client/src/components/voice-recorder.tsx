@@ -156,17 +156,27 @@ export function VoiceRecorder({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    console.log('📱 Touch start event triggered');
     e.preventDefault();
+    e.stopPropagation();
     if (!isRecording) {
+      console.log('📱 Starting recording from touch start');
       clearError();
       startRecording(sourceLanguage);
+    } else {
+      console.log('📱 Already recording, ignoring touch start');
     }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    console.log('📱 Touch end event triggered');
     e.preventDefault();
+    e.stopPropagation();
     if (isRecording) {
+      console.log('📱 Stopping recording from touch end');
       stopRecording();
+    } else {
+      console.log('📱 Not recording, ignoring touch end');
     }
   };
 
