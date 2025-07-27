@@ -32,6 +32,7 @@ export function VoiceRecorder({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const isCleaningUpRef = useRef(false);
 
   // Handle recognition result
   useEffect(() => {
@@ -49,19 +50,30 @@ export function VoiceRecorder({
 
   // Real audio visualization based on microphone input
   useEffect(() => {
+    const cleanupAudio = () => {
+      if (isCleaningUpRef.current) return;
+      isCleaningUpRef.current = true;
+
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      analyserRef.current = null;
+      setAudioLevels(Array(10).fill(8));
+      isCleaningUpRef.current = false;
+    };
+
     const startAudioVisualization = async () => {
       if (!isRecording) {
-        // Stop audio visualization
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
-        }
-        if (audioContextRef.current) {
-          audioContextRef.current.close();
-        }
-        setAudioLevels(Array(10).fill(8));
+        cleanupAudio();
         return;
       }
 
@@ -123,17 +135,7 @@ export function VoiceRecorder({
 
     startAudioVisualization();
 
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
+    return cleanupAudio;
   }, [isRecording]);
 
   const handleToggleRecording = () => {
