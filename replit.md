@@ -22,8 +22,8 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
 - **Runtime**: Node.js with ES modules
-- **Database**: PostgreSQL with Drizzle ORM (configured but using in-memory storage currently)
-- **Session Management**: In-memory storage with fallback to PostgreSQL capability
+- **Database**: PostgreSQL with Drizzle ORM (actively storing translation data)
+- **Session Management**: PostgreSQL database storage for persistent translation history
 - **External APIs**: Google Translate API integration
 - **Build Process**: esbuild for production bundling
 

@@ -1,5 +1,6 @@
-import { type Translation, type InsertTranslation } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { translations, type Translation, type InsertTranslation } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   createTranslation(translation: InsertTranslation): Promise<Translation>;
@@ -7,35 +8,26 @@ export interface IStorage {
   clearTranslations(): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private translations: Map<string, Translation>;
-
-  constructor() {
-    this.translations = new Map();
-  }
-
+export class DatabaseStorage implements IStorage {
   async createTranslation(insertTranslation: InsertTranslation): Promise<Translation> {
-    const id = randomUUID();
-    const translation: Translation = {
-      ...insertTranslation,
-      id,
-      createdAt: new Date(),
-      confidence: insertTranslation.confidence || null,
-    };
-    this.translations.set(id, translation);
+    const [translation] = await db
+      .insert(translations)
+      .values(insertTranslation)
+      .returning();
     return translation;
   }
 
   async getRecentTranslations(limit = 10): Promise<Translation[]> {
-    const allTranslations = Array.from(this.translations.values());
-    return allTranslations
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+    return await db
+      .select()
+      .from(translations)
+      .orderBy(desc(translations.createdAt))
+      .limit(limit);
   }
 
   async clearTranslations(): Promise<void> {
-    this.translations.clear();
+    await db.delete(translations);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
