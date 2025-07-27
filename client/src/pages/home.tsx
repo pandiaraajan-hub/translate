@@ -2,9 +2,9 @@ import { useState, useCallback, useEffect } from 'react';
 import { LanguageSelector } from '@/components/language-selector';
 import { VoiceRecorder } from '@/components/voice-recorder';
 import { TranslationResults } from '@/components/translation-results';
-import { RecentTranslations } from '@/components/recent-translations';
+
 import { useTranslation } from '@/hooks/use-translation';
-import { type LanguageCode, type Translation, SUPPORTED_LANGUAGES } from '@shared/schema';
+import { type LanguageCode, SUPPORTED_LANGUAGES } from '@shared/schema';
 import { Settings, Languages, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -92,24 +92,7 @@ export default function Home() {
     setError(errorMessage);
   }, []);
 
-  const handleSelectRecentTranslation = useCallback((translation: Translation) => {
-    // Find the language codes for the selected translation
-    const sourceLang = Object.entries(SUPPORTED_LANGUAGES).find(
-      ([_, config]) => config.code === translation.sourceLanguage
-    )?.[0] as LanguageCode;
-    
-    const targetLang = Object.entries(SUPPORTED_LANGUAGES).find(
-      ([_, config]) => config.code === translation.targetLanguage
-    )?.[0] as LanguageCode;
 
-    if (sourceLang && targetLang) {
-      setSourceLanguage(sourceLang);
-      setTargetLanguage(targetLang);
-      setSourceText(translation.sourceText);
-      setTranslatedText(translation.translatedText);
-      setConfidence(parseFloat(translation.confidence || '0'));
-    }
-  }, []);
 
   const handleSourceTextChange = useCallback((text: string) => {
     setSourceText(text);
@@ -213,8 +196,7 @@ export default function Home() {
           </Alert>
         )}
 
-        {/* Recent Translations */}
-        <RecentTranslations onSelectTranslation={handleSelectRecentTranslation} />
+
       </main>
 
       {/* Mobile Floating Action Button */}
