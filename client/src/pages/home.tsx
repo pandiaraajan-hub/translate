@@ -5,11 +5,13 @@ import { TranslationResults } from '@/components/translation-results';
 
 import { useTranslation } from '@/hooks/use-translation';
 import { type LanguageCode, SUPPORTED_LANGUAGES } from '@shared/schema';
-import { Settings, Languages, Mic } from 'lucide-react';
+import { Settings, Languages, Mic, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { mobileAudio } from '@/lib/mobile-audio';
+import { speechUtils } from '@/lib/speech-utils';
 
 export default function Home() {
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
@@ -19,9 +21,70 @@ export default function Home() {
   const [confidence, setConfidence] = useState<number | undefined>();
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [mobileAudioActivated, setMobileAudioActivated] = useState(false);
 
   const { translate, isTranslating, translationError, translationResult } = useTranslation();
   const { toast } = useToast();
+
+  // Mobile detection
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (typeof window !== 'undefined' && window.innerWidth <= 768) ||
+    ('ontouchstart' in window);
+
+  const activateMobileAudio = async () => {
+    console.log('📱 Activating mobile audio...');
+    try {
+      const success = await mobileAudio.activateAudio();
+      setMobileAudioActivated(success);
+      if (success) {
+        console.log('📱 Mobile audio activated successfully');
+        toast({
+          title: 'Mobile Audio Activated',
+          description: 'Voice output is now enabled for mobile devices',
+        });
+      } else {
+        console.error('📱 Mobile audio activation failed');
+        toast({
+          title: 'Mobile Audio Failed',
+          description: 'Could not activate mobile audio. Try again.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('📱 Mobile audio activation error:', error);
+      toast({
+        title: 'Mobile Audio Error',
+        description: `Activation failed: ${error}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const testAudio = async () => {
+    try {
+      if (isMobile) {
+        console.log('📱 Testing mobile audio...');
+        await mobileAudio.createMobileSpeech('Mobile audio test successful', 'en-US');
+      } else {
+        console.log('🖥️ Testing desktop audio...');
+        await speechUtils.speak({
+          text: 'Desktop audio test successful',
+          lang: 'en-US'
+        });
+      }
+      toast({
+        title: 'Audio Test',
+        description: 'Audio test completed! Did you hear the sound?',
+      });
+    } catch (error) {
+      console.error('Audio test failed:', error);
+      toast({
+        title: 'Audio Test Failed',
+        description: `Error: ${error}`,
+        variant: 'destructive',
+      });
+    }
+  };
 
   // Handle translation when source text changes
   useEffect(() => {
@@ -126,6 +189,33 @@ export default function Home() {
             </div>
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
               <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
+            </Button>
+          </div>
+          
+          {/* Mobile Audio Controls - Always Visible */}
+          <div className="flex justify-center gap-2 mt-3 pt-2 border-t">
+            {!mobileAudioActivated ? (
+              <Button
+                onClick={activateMobileAudio}
+                className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2"
+                size="sm"
+              >
+                <Smartphone className="h-4 w-4" />
+                Activate Mobile Audio
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                ✅ Mobile Audio Ready
+              </div>
+            )}
+            
+            <Button
+              onClick={testAudio}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              🎵 Test Audio
             </Button>
           </div>
         </div>
