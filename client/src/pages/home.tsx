@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { LanguageSelector } from '@/components/language-selector';
 import { SimpleVoiceRecorder } from '@/components/simple-voice-recorder';
-import { TranslationResults } from '@/components/translation-results';
+import { CleanTranslationResults } from '@/components/clean-translation-results';
 
 import { useTranslation } from '@/hooks/use-translation';
 import { type LanguageCode, SUPPORTED_LANGUAGES } from '@shared/schema';
@@ -290,13 +290,13 @@ export default function Home() {
         )}
 
         {/* Translation Results */}
-        <TranslationResults
+        <CleanTranslationResults
           sourceLanguage={sourceLanguage}
           targetLanguage={targetLanguage}
           sourceText={sourceText}
           translatedText={translatedText}
           confidence={confidence}
-          onSourceTextChange={handleSourceTextChange}
+          isPlaying={false}
         />
 
         {/* Error Display */}

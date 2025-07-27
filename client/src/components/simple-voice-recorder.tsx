@@ -13,7 +13,6 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
   const [lastResult, setLastResult] = useState<string>('');
 
   const handleTouchStart = async (e: React.TouchEvent) => {
-    console.log('🎯 Simple recorder: Touch start');
     e.preventDefault();
     e.stopPropagation();
     
@@ -28,27 +27,23 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
       speechUtils.startRecognition(
         'english',
         async (result) => {
-          console.log('🎯 Simple recorder: Speech recognized:', result.transcript);
           setLastResult(`Heard: "${result.transcript}"`);
           
           // Call the parent's callback
           onRecognitionResult(result.transcript, result.confidence || 0.9);
         },
         (error) => {
-          console.log('🎯 Simple recorder: Speech error:', error);
           setLastResult(`Error: ${error}`);
           onError(error);
         }
       );
       
     } catch (error) {
-      console.error('🎯 Simple recorder: Setup error:', error);
       setIsRecording(false);
     }
   };
 
   const handleTouchEnd = async (e: React.TouchEvent) => {
-    console.log('🎯 Simple recorder: Touch end');
     e.preventDefault();
     e.stopPropagation();
     
@@ -60,7 +55,7 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
       const { speechUtils } = await import('@/lib/speech-utils');
       speechUtils.stopRecognition();
     } catch (error) {
-      console.error('🎯 Simple recorder: Stop error:', error);
+      // Handle error silently
     }
   };
 

@@ -141,109 +141,7 @@ export function TranslationResults({
         </div>
       )}
 
-      {/* Mobile Speech Recognition Test */}
-      <div className="flex justify-center gap-2 mb-3">
-        <button 
-          onClick={(e) => {
-            console.log('🧪 Testing mobile speech recognition directly...');
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            console.log('🧪 Device type:', isMobile ? 'Mobile' : 'Desktop');
-            console.log('🧪 SpeechRecognition available:', 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
-            
-            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-              const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-              const recognition = new SpeechRecognition();
-              recognition.lang = 'en-US';
-              recognition.continuous = false;
-              recognition.interimResults = true;
-              
-              recognition.onstart = () => {
-                console.log('🧪 Speech recognition started successfully');
-              };
-              
-              recognition.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                console.log('🧪 Speech recognition result:', transcript);
-                alert(`Speech recognized: "${transcript}"`);
-              };
-              
-              recognition.onerror = (event: any) => {
-                console.log('🧪 Speech recognition error:', event.error);
-                alert(`Speech error: ${event.error}`);
-              };
-              
-              recognition.start();
-              console.log('🧪 Recognition start requested');
-            } else {
-              alert('Speech recognition not supported');
-            }
-          }}
-          className="px-3 py-1 text-xs bg-purple-500 text-white rounded"
-        >
-          🧪 Test Speech
-        </button>
-        
-        <button 
-          onTouchStart={(e) => {
-            console.log('🔬 App-style test touch start');
-            e.preventDefault();
-            // Simulate what our main app does
-            console.log('🔬 Calling speechUtils.startRecognition...');
-            import('@/lib/speech-utils').then(({ speechUtils }) => {
-              speechUtils.startRecognition(
-                'english',
-                (result) => {
-                  console.log('🔬 App-style recognition result:', result.transcript);
-                  alert(`App-style result: "${result.transcript}"`);
-                },
-                (error) => {
-                  console.log('🔬 App-style recognition error:', error);
-                  alert(`App-style error: ${error}`);
-                }
-              );
-            });
-          }}
-          onTouchEnd={(e) => {
-            console.log('🔬 App-style test touch end');
-            e.preventDefault();
-            import('@/lib/speech-utils').then(({ speechUtils }) => {
-              speechUtils.stopRecognition();
-            });
-          }}
-          className="px-3 py-1 text-xs bg-orange-500 text-white rounded"
-        >
-          🔬 App Test
-        </button>
-        
-        <button 
-          onClick={(e) => {
-            console.log('🔧 Debug audio button clicked');
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (translatedText.trim()) {
-              if (isMobile) {
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
-              } else {
-                const utterance = new SpeechSynthesisUtterance(translatedText);
-                utterance.rate = 0.8;
-                speechSynthesis.speak(utterance);
-              }
-            } else {
-              if (isMobile) {
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately('No translation yet', 'en-US');
-              } else {
-                const utterance = new SpeechSynthesisUtterance('No translation yet');
-                speechSynthesis.speak(utterance);
-              }
-            }
-          }}
-          className="px-3 py-1 text-xs bg-red-500 text-white rounded"
-        >
-          🔧 Debug Audio
-        </button>
-      </div>
+
 
       {/* Simple Translation Status */}
       <Card>
@@ -296,36 +194,7 @@ export function TranslationResults({
 
 
 
-            {/* Audio System Check */}
-            <div className="flex justify-center gap-2 mt-2">
-              <button 
-                onClick={() => {
-                  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                  const voices = speechSynthesis.getVoices();
-                  
-                  console.log('🔊 System Audio Check:');
-                  console.log('- Device type:', isMobile ? 'Mobile' : 'Desktop');
-                  console.log('- speechSynthesis available:', 'speechSynthesis' in window);
-                  console.log('- speechSynthesis.speaking:', speechSynthesis.speaking);
-                  console.log('- speechSynthesis.pending:', speechSynthesis.pending);
-                  console.log('- speechSynthesis.paused:', speechSynthesis.paused);
-                  console.log('- Available voices:', voices.length);
-                  console.log('- Voice names:', voices.map(v => v.name).slice(0, 5));
-                  
-                  alert(`Audio System Status:
-• Device: ${isMobile ? 'Mobile' : 'Desktop'}
-• Speech Synthesis: ${'speechSynthesis' in window ? 'Available' : 'Not Available'}
-• Currently Speaking: ${speechSynthesis.speaking ? 'Yes' : 'No'}
-• Available Voices: ${voices.length}
-• User Agent: ${navigator.userAgent.substring(0, 50)}...
 
-${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device volume\n• Try different browsers' : 'Desktop Tips:\n• Check system volume\n• Try headphones\n• Check browser permissions'}`);
-                }}
-                className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                🔧 Audio Check
-              </button>
-            </div>
 
 
 
