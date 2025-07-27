@@ -21,6 +21,10 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
     setIsRecording(true);
     
     try {
+      // Initialize mobile audio on touch start
+      const { forceMobileAudio } = await import('@/lib/force-mobile-audio');
+      forceMobileAudio.enableAudioFromTouch();
+      
       // Import speech utils dynamically
       const { speechUtils } = await import('@/lib/speech-utils');
       
@@ -46,34 +50,51 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
             
             setLastResult(`Translation: "${translation.translatedText}"`);
             
-            // Play Tamil audio immediately with mobile support
+            // Play Tamil audio immediately 
             if (translation.translatedText) {
-              const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+              console.log('🔊 Starting Tamil audio playback for:', translation.translatedText);
               
-              if (isMobile) {
-                // Use force-mobile-audio for reliable mobile playback
-                const { forceMobileAudio } = await import('@/lib/force-mobile-audio');
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately(translation.translatedText, 'ta');
-              } else {
-                // Desktop playback
+              // Wait a moment for speech recognition to fully stop
+              setTimeout(() => {
                 speechSynthesis.cancel();
+                
                 const utterance = new SpeechSynthesisUtterance(translation.translatedText);
                 utterance.lang = 'ta-IN';
                 utterance.rate = 0.8;
                 utterance.volume = 1.0;
+                utterance.pitch = 1.0;
                 
+                // Find best voice for Tamil/Hindi/English fallback
                 const voices = speechSynthesis.getVoices();
+                console.log('🔊 Available voices:', voices.length);
+                
                 const tamilVoice = voices.find(v => v.lang.includes('ta')) || 
                                  voices.find(v => v.lang.includes('hi')) ||
-                                 voices.find(v => v.lang.includes('en'));
+                                 voices.find(v => v.lang.includes('en') && v.name.includes('Google'));
                 
                 if (tamilVoice) {
                   utterance.voice = tamilVoice;
+                  console.log('🔊 Using voice:', tamilVoice.name, tamilVoice.lang);
+                } else {
+                  console.log('🔊 Using default voice');
                 }
                 
+                utterance.onstart = () => {
+                  console.log('🔊 Tamil audio started successfully');
+                };
+                
+                utterance.onend = () => {
+                  console.log('🔊 Tamil audio completed');
+                };
+                
+                utterance.onerror = (e) => {
+                  console.error('🔊 Tamil audio error:', e);
+                };
+                
+                console.log('🔊 Attempting to speak Tamil text now...');
                 speechSynthesis.speak(utterance);
-              }
+                
+              }, 500); // Small delay to ensure speech recognition has stopped
             }
             
           } catch (error) {

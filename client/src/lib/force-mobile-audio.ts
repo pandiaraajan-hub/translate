@@ -9,6 +9,12 @@ class ForceMobileAudio {
     console.log('🎯 Enabling audio from direct touch...');
     this.isEnabled = true;
     
+    // Create a dummy utterance to wake up speechSynthesis on mobile
+    const dummy = new SpeechSynthesisUtterance('');
+    dummy.volume = 0;
+    speechSynthesis.speak(dummy);
+    speechSynthesis.cancel();
+    
     // If there's pending text, speak it immediately
     if (this.pendingText) {
       this.speakImmediately(this.pendingText, this.pendingLang || 'en-US');
