@@ -12,8 +12,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
-  const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('chinese');
-  const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('english');
+  const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
+  const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('tamil');
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [confidence, setConfidence] = useState<number | undefined>();
