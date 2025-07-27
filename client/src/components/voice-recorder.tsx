@@ -138,8 +138,22 @@ export function VoiceRecorder({
             </div>
           )}
 
-          {/* Main Recording Button */}
-          <div className="flex justify-center">
+          {/* Main Recording Button with Audio Visualization */}
+          <div className="flex items-center justify-center space-x-4 sm:space-x-6">
+            {/* Audio Visualization - Left Side */}
+            <div className="flex items-end justify-center space-x-1 h-12 sm:h-16">
+              {audioLevels.slice(0, 5).map((level, index) => (
+                <div
+                  key={index}
+                  className={`w-1 rounded-full transition-all duration-200 ${
+                    isRecording ? 'bg-red-500' : 'bg-gray-300'
+                  }`}
+                  style={{ height: `${Math.max(level, 6)}px` }}
+                />
+              ))}
+            </div>
+
+            {/* Recording Button */}
             <Button
               size="lg"
               data-recording-button
@@ -152,6 +166,19 @@ export function VoiceRecorder({
             >
               {isRecording ? <Square className="h-7 w-7 sm:h-6 sm:w-6" /> : <Mic className="h-7 w-7 sm:h-6 sm:w-6" />}
             </Button>
+
+            {/* Audio Visualization - Right Side */}
+            <div className="flex items-end justify-center space-x-1 h-12 sm:h-16">
+              {audioLevels.slice(5).map((level, index) => (
+                <div
+                  key={index + 5}
+                  className={`w-1 rounded-full transition-all duration-200 ${
+                    isRecording ? 'bg-red-500' : 'bg-gray-300'
+                  }`}
+                  style={{ height: `${Math.max(level, 6)}px` }}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Recording Controls */}
@@ -173,18 +200,7 @@ export function VoiceRecorder({
             )}
           </div>
 
-          {/* Audio Visualization */}
-          <div className="flex items-end justify-center space-x-1 h-12">
-            {audioLevels.map((level, index) => (
-              <div
-                key={index}
-                className={`w-1 rounded-full transition-all duration-200 ${
-                  isRecording ? 'bg-primary' : 'bg-gray-300'
-                }`}
-                style={{ height: `${Math.max(level, 4)}px` }}
-              />
-            ))}
-          </div>
+
         </div>
       </CardContent>
     </Card>
