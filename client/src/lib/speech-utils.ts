@@ -154,7 +154,25 @@ export class SpeechUtils {
       });
     }
 
-    // Simple test first - try speaking without waiting for voices
+    // Check if we have a voice for this language
+    const voices = this.synthesis.getVoices();
+    const availableVoice = this.getBestVoiceForLanguage(options.lang);
+    
+    // If no voice is available for Tamil, use English with a notification
+    if (options.lang === 'ta-IN' && !availableVoice) {
+      console.log('⚠️ No Tamil voice available, providing English notification');
+      const notification = new SpeechSynthesisUtterance('Tamil voice not available on this device');
+      notification.lang = 'en-US';
+      notification.rate = 1.0;
+      notification.volume = 1.0;
+      
+      return new Promise((resolve) => {
+        notification.onend = () => resolve();
+        notification.onerror = () => resolve(); // Continue even if notification fails
+        this.synthesis.speak(notification);
+      });
+    }
+    
     return new Promise((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(options.text);
       
@@ -279,7 +297,28 @@ export class SpeechUtils {
 
   getBestVoiceForLanguage(languageCode: string): SpeechSynthesisVoice | null {
     const voices = this.getAvailableVoices();
-    console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
+    console.log('🔍 Searching for voice for:', languageCode);
+    
+    // Check if any Tamil voices exist
+    const tamilVoices = voices.filter(v => v.lang.includes('ta') || v.name.toLowerCase().includes('tamil'));
+    console.log('🇮🇳 Tamil voices found:', tamilVoices.map(v => ({ name: v.name, lang: v.lang })));
+    
+    // For Tamil, if no Tamil voice exists, use Hindi as fallback (similar pronunciation)
+    if (languageCode === 'ta-IN') {
+      let voice = voices.find(v => v.lang === 'ta-IN' || v.lang === 'ta');
+      if (!voice) {
+        console.log('⚠️ No Tamil voice found, trying Hindi as fallback');
+        voice = voices.find(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+        if (voice) {
+          console.log('🔄 Using Hindi voice for Tamil:', voice.name);
+          return voice;
+        }
+      }
+      if (voice) {
+        console.log('✅ Found Tamil voice:', voice.name);
+        return voice;
+      }
+    }
     
     // Try to find an exact match
     let voice = voices.find(v => v.lang === languageCode);
@@ -295,14 +334,14 @@ export class SpeechUtils {
     // If still no match, try some common alternatives
     if (!voice) {
       const alternatives = {
-        'zh-CN': ['zh-CN', 'zh', 'cmn-CN'],
+        'zh-CN': ['zh-CN', 'zh', 'cmn-CN', 'zh-Hans'],
         'en-US': ['en-US', 'en', 'en-GB'],
-        'ta-IN': ['ta-IN', 'ta']
+        'ta-IN': ['ta-IN', 'ta', 'hi-IN', 'hi'] // Hindi as fallback for Tamil
       };
       
       const alts = alternatives[languageCode as keyof typeof alternatives] || [];
       for (const alt of alts) {
-        voice = voices.find(v => v.lang === alt || v.lang.startsWith(alt));
+        voice = voices.find(v => v.lang === alt || v.lang.startsWith(alt.split('-')[0]));
         if (voice) {
           console.log('Alternative match for', languageCode, ':', voice.name);
           break;

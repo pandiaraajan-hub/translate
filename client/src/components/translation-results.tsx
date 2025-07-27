@@ -65,7 +65,7 @@ export function TranslationResults({
       
     } catch (error) {
       console.error('Speech synthesis error:', error);
-      alert(`Speech error: ${error.message}`);
+      alert(`Speech error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setTimeout(() => setIsPlaying(false), 1000);
     }
@@ -165,37 +165,71 @@ Make sure:
               </button>
             </div>
 
-            {/* Test Audio Button */}
+            {/* Voice Status and Test Buttons */}
             {translatedText.trim() && (
-              <div className="flex justify-center gap-2 mt-1">
-                <button 
-                  onClick={() => handleSpeak(translatedText, targetConfig.code)}
-                  className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                  disabled={isPlaying}
-                >
-                  {isPlaying ? 'Playing...' : '🔊 Test Audio'}
-                </button>
+              <div className="space-y-2">
+                {/* Voice availability notice */}
+                {targetLanguage === 'tamil' && (
+                  <div className="text-xs text-amber-600 bg-amber-50 rounded px-2 py-1 text-center">
+                    Tamil voice may not be available on this device
+                  </div>
+                )}
+                
+                <div className="flex justify-center gap-2">
+                  <button 
+                    onClick={() => handleSpeak(translatedText, targetConfig.code)}
+                    className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                    disabled={isPlaying}
+                  >
+                    {isPlaying ? 'Playing...' : '🔊 Test Audio'}
+                  </button>
                 <button 
                   onClick={() => {
-                    // Test with simple English first
-                    console.log('🧪 Testing basic English speech');
-                    const utterance = new SpeechSynthesisUtterance('Hello, this is a test');
-                    utterance.rate = 1.0;
-                    utterance.volume = 1.0;
-                    utterance.lang = 'en-US';
+                    // Test Tamil directly with different approaches
+                    console.log('🇮🇳 Testing Tamil speech synthesis directly');
                     
-                    utterance.onstart = () => console.log('✅ Basic test speech started');
-                    utterance.onend = () => console.log('✅ Basic test speech ended');
-                    utterance.onerror = (e) => console.error('❌ Basic test failed:', e);
+                    // Try 1: Direct Tamil
+                    const tamilText = translatedText || 'வணக்கம்';
+                    const utterance1 = new SpeechSynthesisUtterance(tamilText);
+                    utterance1.lang = 'ta-IN';
+                    utterance1.rate = 0.8;
+                    utterance1.volume = 1.0;
                     
-                    // Don't cancel - just queue the speech
-                    speechSynthesis.speak(utterance);
-                    console.log('📢 Basic test queued');
+                    // Try to find any voice that might work
+                    const voices = speechSynthesis.getVoices();
+                    const hindiVoice = voices.find(v => v.lang.includes('hi') || v.name.includes('Hindi'));
+                    const tamilVoice = voices.find(v => v.lang.includes('ta') || v.name.includes('Tamil'));
+                    
+                    if (tamilVoice) {
+                      utterance1.voice = tamilVoice;
+                      console.log('🎯 Using Tamil voice:', tamilVoice.name);
+                    } else if (hindiVoice) {
+                      utterance1.voice = hindiVoice;
+                      console.log('🔄 Using Hindi voice for Tamil:', hindiVoice.name);
+                    } else {
+                      console.log('⚠️ No Tamil or Hindi voice found, using default');
+                    }
+                    
+                    utterance1.onstart = () => console.log('▶️ Tamil test started');
+                    utterance1.onend = () => console.log('✅ Tamil test completed');
+                    utterance1.onerror = (e) => {
+                      console.error('❌ Tamil test failed:', e);
+                      // Try fallback with English pronunciation
+                      const fallback = new SpeechSynthesisUtterance('Hello');
+                      fallback.lang = 'en-US';
+                      fallback.onstart = () => console.log('▶️ Fallback English started');
+                      fallback.onend = () => console.log('✅ Fallback completed');
+                      speechSynthesis.speak(fallback);
+                    };
+                    
+                    speechSynthesis.speak(utterance1);
+                    console.log('📢 Tamil test queued');
                   }}
-                  className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                  className="px-3 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
                 >
-                  🧪 Basic Test
+                  🇮🇳 Tamil Test
                 </button>
+                </div>
               </div>
             )}
           </div>
