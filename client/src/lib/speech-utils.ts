@@ -139,11 +139,19 @@ export class SpeechUtils {
       throw new Error(error);
     }
 
-    // Check if synthesis is speaking and cancel
+    // Ensure synthesis is ready - don't cancel if already speaking
     if (this.synthesis.speaking) {
-      console.log('🛑 Cancelling previous speech');
-      this.synthesis.cancel();
-      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('🛑 Speech already in progress, waiting...');
+      await new Promise(resolve => {
+        const checkComplete = () => {
+          if (!this.synthesis.speaking) {
+            resolve(void 0);
+          } else {
+            setTimeout(checkComplete, 100);
+          }
+        };
+        checkComplete();
+      });
     }
 
     // Simple test first - try speaking without waiting for voices
@@ -176,7 +184,43 @@ export class SpeechUtils {
       
       utterance.onerror = (event) => {
         console.error('❌ Speech synthesis error:', event);
-        reject(new Error(`Speech synthesis failed: ${event.error || 'Unknown error'}`));
+        if (event.error === 'interrupted') {
+          console.log('🔄 Speech was interrupted, creating new utterance and retrying...');
+          // Create a completely new utterance for retry
+          setTimeout(() => {
+            try {
+              const retryUtterance = new SpeechSynthesisUtterance(options.text);
+              retryUtterance.lang = options.lang;
+              retryUtterance.rate = options.rate || 0.9;
+              retryUtterance.pitch = options.pitch || 1;
+              retryUtterance.volume = options.volume || 1.0;
+              
+              // Set voice if available
+              if (voices.length > 0) {
+                const voice = this.getBestVoiceForLanguage(options.lang);
+                if (voice) retryUtterance.voice = voice;
+              }
+              
+              retryUtterance.onstart = () => console.log('▶️ Retry speech started');
+              retryUtterance.onend = () => {
+                console.log('✅ Retry speech completed');
+                resolve();
+              };
+              retryUtterance.onerror = (retryEvent) => {
+                console.error('❌ Retry also failed:', retryEvent);
+                reject(new Error(`Speech synthesis failed even after retry: ${retryEvent.error}`));
+              };
+              
+              this.synthesis.speak(retryUtterance);
+              console.log('🔄 New utterance created and queued for retry');
+            } catch (retryError) {
+              console.error('❌ Failed to create retry utterance:', retryError);
+              reject(new Error(`Speech synthesis failed after retry: ${event.error}`));
+            }
+          }, 300);
+        } else {
+          reject(new Error(`Speech synthesis failed: ${event.error || 'Unknown error'}`));
+        }
       };
 
       utterance.onpause = () => console.log('⏸️ Speech paused');
@@ -210,13 +254,13 @@ export class SpeechUtils {
         this.synthesis.speak(utterance);
         console.log('📢 Speech queued successfully');
         
-        // Add timeout to detect if speech never starts
+        // Add timeout to detect if speech never starts (but don't reject immediately)
         setTimeout(() => {
           if (!this.synthesis.speaking) {
-            console.warn('⚠️ Speech may not have started - checking system audio');
-            reject(new Error('Speech synthesis may be blocked by browser or system audio is muted'));
+            console.warn('⚠️ Speech may not have started - but continuing...');
+            // Don't reject here, let the onend/onerror handle it
           }
-        }, 1000);
+        }, 500);
         
       } catch (error) {
         console.error('❌ Failed to queue speech:', error);

@@ -188,10 +188,7 @@ Make sure:
                     utterance.onend = () => console.log('✅ Basic test speech ended');
                     utterance.onerror = (e) => console.error('❌ Basic test failed:', e);
                     
-                    // Cancel any ongoing speech
-                    speechSynthesis.cancel();
-                    
-                    // Speak directly
+                    // Don't cancel - just queue the speech
                     speechSynthesis.speak(utterance);
                     console.log('📢 Basic test queued');
                   }}
