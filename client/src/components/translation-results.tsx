@@ -3,6 +3,7 @@ import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
 import { mobileAudio } from '@/lib/mobile-audio';
 import { directMobileSpeech } from '@/lib/direct-mobile-speech';
+import { forceMobileAudio } from '@/lib/force-mobile-audio';
 import { ArrowDown, Volume2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -198,7 +199,17 @@ ${isMobile ? 'Mobile Tips:\n• Tap to ensure user interaction\n• Check device
                 
                 <div className="flex justify-center gap-2">
                   <button 
-                    onClick={() => handleSpeak(translatedText, targetConfig.code)}
+                    onClick={(e) => {
+                      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                      
+                      // For mobile: use direct touch event to enable audio
+                      if (isMobile) {
+                        forceMobileAudio.enableAudioFromTouch();
+                        forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+                      } else {
+                        handleSpeak(translatedText, targetConfig.code);
+                      }
+                    }}
                     className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                     disabled={isPlaying}
                   >
