@@ -206,6 +206,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-base sm:text-lg font-medium text-gray-900">VoiceBridge</h1>
+                <p className="text-xs text-gray-500">Pandi Tech</p>
               </div>
             </div>
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
