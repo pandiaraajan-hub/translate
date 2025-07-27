@@ -406,6 +406,16 @@ export class SpeechUtils {
         console.log('⚠️ No Tamil voice found, using Hindi male voice');
         candidateVoices = voices.filter(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
       }
+    } else if (languageCode === 'hi-IN') {
+      // For Hindi, find Hindi voices
+      candidateVoices = voices.filter(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+    } else if (languageCode === 'bn-IN') {
+      // For Bengali, find Bengali voices, fallback to Hindi
+      candidateVoices = voices.filter(v => v.lang === 'bn-IN' || v.lang.startsWith('bn'));
+      if (candidateVoices.length === 0) {
+        console.log('⚠️ No Bengali voice found, using Hindi male voice');
+        candidateVoices = voices.filter(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+      }
     } else {
       // For other languages, find exact matches first
       candidateVoices = voices.filter(v => v.lang === languageCode);
@@ -420,7 +430,9 @@ export class SpeechUtils {
         const alternatives = {
           'zh-CN': ['zh-CN', 'zh', 'cmn-CN', 'zh-Hans'],
           'en-US': ['en-US', 'en', 'en-GB'],
-          'ms-MY': ['ms-MY', 'ms', 'en-US', 'en']
+          'ms-MY': ['ms-MY', 'ms', 'en-US', 'en'],
+          'hi-IN': ['hi-IN', 'hi', 'en-US', 'en'],
+          'bn-IN': ['bn-IN', 'bn', 'hi-IN', 'hi', 'en-US', 'en']
         };
         
         const alts = alternatives[languageCode as keyof typeof alternatives] || [];

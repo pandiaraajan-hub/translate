@@ -26,7 +26,9 @@ export const SUPPORTED_LANGUAGES = {
   english: { code: 'en-US', name: 'English', flag: 'EN' },
   tamil: { code: 'ta-IN', name: 'Tamil', flag: 'த' },
   chinese: { code: 'zh-CN', name: 'Chinese', flag: '中' },
-  malay: { code: 'ms-MY', name: 'Malay', flag: 'MY' }
+  malay: { code: 'ms-MY', name: 'Malay', flag: 'MY' },
+  hindi: { code: 'hi-IN', name: 'Hindi', flag: 'हि' },
+  bengali: { code: 'bn-IN', name: 'Bengali', flag: 'বা' }
 } as const;
 
 export type LanguageCode = keyof typeof SUPPORTED_LANGUAGES;
