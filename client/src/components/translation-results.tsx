@@ -99,7 +99,7 @@ export function TranslationResults({
                 <span className="font-medium text-gray-700">{sourceConfig.name}</span>
               </div>
               
-              <ArrowDown className="h-5 w-5 text-gray-400 transform rotate-90" />
+              <ArrowDown className="h-5 w-5 text-gray-400 transform -rotate-90" />
               
               <div className="flex items-center space-x-2">
                 <div className={`language-flag ${getFlagColors(targetLanguage)} text-xl`}>
