@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { mobileAudio } from '@/lib/mobile-audio';
 import { speechUtils } from '@/lib/speech-utils';
+import { directMobileSpeech } from '@/lib/direct-mobile-speech';
 
 export default function Home() {
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
@@ -32,46 +33,45 @@ export default function Home() {
     ('ontouchstart' in window);
 
   const activateMobileAudio = async () => {
-    console.log('📱 Activating mobile audio...');
+    console.log('📱 Activating direct mobile speech...');
     
-    // Show immediate feedback
     toast({
       title: 'Activating Mobile Audio',
-      description: 'Initializing audio system...',
+      description: 'Initializing speech system...',
     });
 
     try {
-      const success = await mobileAudio.activateAudio();
+      const success = await directMobileSpeech.initialize();
       setMobileAudioActivated(success);
+      
       if (success) {
-        console.log('📱 Mobile audio activated successfully');
+        console.log('📱 Direct mobile speech activated');
         toast({
           title: 'Mobile Audio Ready!',
-          description: 'Voice output is now enabled. Try recording a translation.',
+          description: 'Voice output enabled. Recording translations will now play audio.',
         });
         
-        // Auto-test audio after activation
+        // Test with confirmation message
         setTimeout(async () => {
           try {
-            await mobileAudio.createMobileSpeech('Mobile audio is now working', 'en-US');
+            await directMobileSpeech.speak('Mobile audio is ready', 'en-US');
           } catch (testError) {
-            console.warn('📱 Auto-test failed:', testError);
+            console.warn('📱 Confirmation message failed:', testError);
           }
-        }, 500);
+        }, 800);
         
       } else {
-        console.error('📱 Mobile audio activation failed');
         toast({
-          title: 'Mobile Audio Failed',
-          description: 'Could not activate mobile audio. Ensure volume is up and try again.',
+          title: 'Mobile Audio Setup Failed',
+          description: 'Check device volume and try again. Some browsers may block audio.',
           variant: 'destructive',
         });
       }
     } catch (error) {
-      console.error('📱 Mobile audio activation error:', error);
+      console.error('📱 Direct mobile speech error:', error);
       toast({
-        title: 'Mobile Audio Error',
-        description: `Activation failed: ${error}`,
+        title: 'Audio System Error',
+        description: 'Failed to initialize mobile audio. Try refreshing the page.',
         variant: 'destructive',
       });
     }
@@ -80,8 +80,12 @@ export default function Home() {
   const testAudio = async () => {
     try {
       if (isMobile) {
-        console.log('📱 Testing mobile audio...');
-        await mobileAudio.createMobileSpeech('Mobile audio test successful', 'en-US');
+        console.log('📱 Testing direct mobile speech...');
+        if (directMobileSpeech.isInitialized()) {
+          await directMobileSpeech.speak('Audio test successful', 'en-US');
+        } else {
+          throw new Error('Mobile audio not initialized. Please activate it first.');
+        }
       } else {
         console.log('🖥️ Testing desktop audio...');
         await speechUtils.speak({
@@ -90,14 +94,14 @@ export default function Home() {
         });
       }
       toast({
-        title: 'Audio Test',
-        description: 'Audio test completed! Did you hear the sound?',
+        title: 'Audio Test Complete',
+        description: 'Did you hear the test message?',
       });
     } catch (error) {
       console.error('Audio test failed:', error);
       toast({
         title: 'Audio Test Failed',
-        description: `Error: ${error}`,
+        description: String(error),
         variant: 'destructive',
       });
     }

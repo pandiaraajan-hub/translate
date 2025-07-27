@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
 import { mobileAudio } from '@/lib/mobile-audio';
+import { directMobileSpeech } from '@/lib/direct-mobile-speech';
 import { ArrowDown, Volume2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -55,9 +56,14 @@ export function TranslationResults({
     try {
       setIsPlaying(true);
       
-      // Use mobile audio manager for mobile devices
+      // Use direct mobile speech for mobile devices
       if (isMobile) {
-        await mobileAudio.createMobileSpeech(text, languageCode);
+        if (directMobileSpeech.isInitialized()) {
+          await directMobileSpeech.speak(text, languageCode);
+        } else {
+          console.log('📱 Mobile speech not initialized, using fallback');
+          await speechUtils.speak({ text, lang: languageCode });
+        }
       } else {
         // Check if speech synthesis is available
         if (!speechUtils.isSynthesisSupported()) {
