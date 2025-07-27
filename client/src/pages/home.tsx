@@ -273,6 +273,7 @@ export default function Home() {
           translatedText={translatedText}
           confidence={confidence}
           isPlaying={false}
+          onTestAudio={testAudio}
         />
 
         {/* Error Display */}

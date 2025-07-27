@@ -10,6 +10,7 @@ interface CleanTranslationResultsProps {
   translatedText: string;
   confidence?: number;
   isPlaying: boolean;
+  onTestAudio?: () => void;
 }
 
 export function CleanTranslationResults({
@@ -18,7 +19,8 @@ export function CleanTranslationResults({
   sourceText,
   translatedText,
   confidence,
-  isPlaying
+  isPlaying,
+  onTestAudio
 }: CleanTranslationResultsProps) {
   const sourceConfig = SUPPORTED_LANGUAGES[sourceLanguage];
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
@@ -102,31 +104,13 @@ export function CleanTranslationResults({
             </div>
           )}
 
-          {/* Audio Test Button - temporarily for debugging */}
-          {translatedText.trim() && (
+          {/* Translate Now Button */}
+          {translatedText.trim() && onTestAudio && (
             <button 
-              onClick={async () => {
-                console.log('🧪 Testing audio with translation:', translatedText);
-                
-                try {
-                  const { reliableAudio } = await import('@/lib/reliable-audio');
-                  reliableAudio.unlockAudio();
-                  
-                  const success = await reliableAudio.speak(translatedText, 'ta-IN');
-                  console.log('🧪 Audio test result:', success);
-                  
-                  if (!success) {
-                    console.log('🧪 Tamil failed, trying English...');
-                    await reliableAudio.speak(translatedText, 'en-US');
-                  }
-                } catch (error) {
-                  console.error('🧪 Audio test error:', error);
-                  alert('Audio test failed: ' + error);
-                }
-              }}
-              className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+              onClick={onTestAudio}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
             >
-              🔊 Test Audio
+              Translate Now
             </button>
           )}
         </div>
