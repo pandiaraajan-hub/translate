@@ -383,14 +383,20 @@ export class SpeechUtils {
     const tamilVoices = voices.filter(v => v.lang.includes('ta') || v.name.toLowerCase().includes('tamil'));
     console.log('🇮🇳 Tamil voices found:', tamilVoices.map(v => ({ name: v.name, lang: v.lang })));
     
-    // For Tamil, if no Tamil voice exists, use Hindi as fallback (similar pronunciation)
+    // For Tamil, if no Tamil voice exists, use Hindi male voice as fallback
     if (languageCode === 'ta-IN') {
       let voice = voices.find(v => v.lang === 'ta-IN' || v.lang === 'ta');
       if (!voice) {
-        console.log('⚠️ No Tamil voice found, trying Hindi as fallback');
-        voice = voices.find(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+        console.log('⚠️ No Tamil voice found, trying Hindi male voice as fallback');
+        // Prefer male Hindi voices for Indian accent
+        voice = voices.find(v => (v.lang === 'hi-IN' || v.lang.startsWith('hi')) && 
+                               (v.name.toLowerCase().includes('male') || 
+                                v.name.toLowerCase().includes('man') ||
+                                v.name.toLowerCase().includes('ravi') ||
+                                v.name.toLowerCase().includes('prabhat'))) ||
+               voices.find(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
         if (voice) {
-          console.log('🔄 Using Hindi voice for Tamil:', voice.name);
+          console.log('🔄 Using Hindi male voice for Tamil:', voice.name);
           return voice;
         }
       }
@@ -416,7 +422,8 @@ export class SpeechUtils {
       const alternatives = {
         'zh-CN': ['zh-CN', 'zh', 'cmn-CN', 'zh-Hans'],
         'en-US': ['en-US', 'en', 'en-GB'],
-        'ta-IN': ['ta-IN', 'ta', 'hi-IN', 'hi'] // Hindi as fallback for Tamil
+        'ta-IN': ['ta-IN', 'ta', 'hi-IN', 'hi'], // Hindi male as fallback for Tamil
+        'ms-MY': ['ms-MY', 'ms', 'en-US', 'en'] // English as fallback for Malay
       };
       
       const alts = alternatives[languageCode as keyof typeof alternatives] || [];
