@@ -271,6 +271,7 @@ export default function Home() {
         {/* Voice Recorder */}
         <SimpleVoiceRecorder
           sourceLanguage={sourceLanguage}
+          targetLanguage={targetLanguage}
           onRecognitionResult={handleRecognitionResult}
           onError={handleRecognitionError}
         />

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Mic, Square } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 
 interface SimpleVoiceRecorderProps {
-  sourceLanguage: string;
+  sourceLanguage: LanguageCode;
+  targetLanguage: LanguageCode;
   onRecognitionResult: (text: string, confidence: number) => void;
   onError: (error: string) => void;
 }
 
-export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onError }: SimpleVoiceRecorderProps) {
+export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError }: SimpleVoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
 
@@ -29,43 +31,12 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
       const { speechUtils } = await import('@/lib/speech-utils');
       
       speechUtils.startRecognition(
-        'english',
+        sourceLanguage,
         async (result) => {
           setLastResult(`Heard: "${result.transcript}"`);
           
-          // Call the parent's callback
+          // Call the parent's callback - this will trigger translation in the parent component
           onRecognitionResult(result.transcript, result.confidence || 0.9);
-          
-          // Automatically translate and play audio
-          try {
-            const { apiRequest } = await import('@/lib/queryClient');
-            const translation = await apiRequest('/api/translate', {
-              method: 'POST',
-              body: {
-                text: result.transcript,
-                sourceLanguage: 'english',
-                targetLanguage: 'tamil'
-              }
-            });
-            
-            setLastResult(`Translation: "${translation.translatedText}"`);
-            
-            // Play Tamil audio using reliable audio system
-            if (translation.translatedText) {
-              setTimeout(async () => {
-                const { reliableAudio } = await import('@/lib/reliable-audio');
-                const success = await reliableAudio.speak(translation.translatedText, 'ta-IN');
-                
-                if (!success) {
-                  console.log('🔊 Tamil failed, trying English fallback...');
-                  await reliableAudio.speak(translation.translatedText, 'en-US');
-                }
-              }, 300);
-            }
-            
-          } catch (error) {
-            setLastResult('Translation failed');
-          }
         },
         (error) => {
           setLastResult(`Error: ${error}`);
@@ -109,7 +80,7 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
           
           {!isRecording && (
             <div className="text-gray-500">
-              Press and hold to record in English → Tamil
+              Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}
             </div>
           )}
 
@@ -122,9 +93,9 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
-            onMouseDown={handleTouchStart}
-            onMouseUp={handleTouchEnd}
-            onMouseLeave={handleTouchEnd}
+            onMouseDown={(e) => handleTouchStart(e as any)}
+            onMouseUp={(e) => handleTouchEnd(e as any)}
+            onMouseLeave={(e) => handleTouchEnd(e as any)}
           >
             {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
