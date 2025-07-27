@@ -19,12 +19,19 @@ export function useTranslation() {
 
   const translateMutation = useMutation({
     mutationFn: async (request: TranslateRequest): Promise<TranslateResponse> => {
+      console.log('🔍 Translation API request:', request);
       const response = await apiRequest('POST', '/api/translate', request);
-      return response.json();
+      const result = await response.json();
+      console.log('🔍 Translation API response:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('🔍 Translation mutation success:', data);
       // Invalidate translations list to refresh recent translations
       queryClient.invalidateQueries({ queryKey: ['/api/translations'] });
+    },
+    onError: (error) => {
+      console.error('🔍 Translation mutation error:', error);
     },
   });
 

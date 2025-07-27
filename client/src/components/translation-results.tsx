@@ -111,6 +111,7 @@ export function TranslationResults({
         <div>Length: {translatedText.length}</div>
         <div>Trimmed: {translatedText.trim().length}</div>
         <div>Show Button: {translatedText.trim() ? 'YES' : 'NO'}</div>
+        <div>Source Text: "{sourceText}"</div>
       </div>
 
       {/* Translate Now Button - Only when translation available */}

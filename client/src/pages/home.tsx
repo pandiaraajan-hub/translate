@@ -133,9 +133,13 @@ export default function Home() {
 
   // Handle translation result
   useEffect(() => {
+    console.log('🔍 Translation result effect triggered:', translationResult);
     if (translationResult) {
+      console.log('🔍 Setting translated text:', translationResult.translatedText);
       setTranslatedText(translationResult.translatedText);
       setIsProcessing(false);
+    } else {
+      console.log('🔍 No translation result available');
     }
   }, [translationResult]);
 
