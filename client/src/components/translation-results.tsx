@@ -138,13 +138,19 @@ export function TranslationResults({
 
             {/* Test Audio Button */}
             {translatedText.trim() && (
-              <div className="flex justify-center mt-2">
+              <div className="flex justify-center gap-2 mt-2">
                 <button 
                   onClick={() => handleSpeak(translatedText, targetConfig.code)}
                   className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                   disabled={isPlaying}
                 >
                   {isPlaying ? 'Playing...' : '🔊 Test Audio'}
+                </button>
+                <button 
+                  onClick={() => handleSpeak('Hello world test', 'en-US')}
+                  className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  🧪 Test English
                 </button>
               </div>
             )}

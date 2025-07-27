@@ -131,62 +131,78 @@ export class SpeechUtils {
   }
 
   async speak(options: SpeechSynthesisOptions): Promise<void> {
+    console.log('🔊 Speech synthesis requested:', { text: options.text, lang: options.lang });
+    
     if (!this.isSynthesisSupported()) {
-      throw new Error('Speech synthesis is not supported in this browser');
+      const error = 'Speech synthesis is not supported in this browser';
+      console.error('❌', error);
+      throw new Error(error);
     }
 
-    console.log('Speaking text:', options.text, 'in language:', options.lang);
-
-    // Cancel any ongoing speech
-    this.synthesis.cancel();
-
-    // Wait for voices to be loaded if not already
-    const voices = this.synthesis.getVoices();
-    if (voices.length === 0) {
-      // Wait for voices to load
-      await new Promise(resolve => {
-        const checkVoices = () => {
-          if (this.synthesis.getVoices().length > 0) {
-            resolve(void 0);
-          } else {
-            setTimeout(checkVoices, 100);
-          }
-        };
-        checkVoices();
-      });
+    // Check if synthesis is speaking and cancel
+    if (this.synthesis.speaking) {
+      console.log('🛑 Cancelling previous speech');
+      this.synthesis.cancel();
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
+    // Simple test first - try speaking without waiting for voices
     return new Promise((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(options.text);
+      
+      // Set basic properties
       utterance.lang = options.lang;
-      utterance.rate = options.rate || 0.85;
+      utterance.rate = options.rate || 0.9;
       utterance.pitch = options.pitch || 1;
       utterance.volume = options.volume || 1.0;
 
-      // Try to use the best available voice for the language
-      const bestVoice = this.getBestVoiceForLanguage(options.lang);
-      if (bestVoice) {
-        console.log('Using voice:', bestVoice.name, 'for language:', options.lang);
-        utterance.voice = bestVoice;
-      } else {
-        console.log('No specific voice found for language:', options.lang, 'using default');
-      }
+      console.log('📋 Utterance configured:', {
+        text: utterance.text,
+        lang: utterance.lang,
+        rate: utterance.rate,
+        pitch: utterance.pitch,
+        volume: utterance.volume
+      });
 
-      utterance.onstart = () => console.log('Speech started');
+      // Event handlers
+      utterance.onstart = () => {
+        console.log('▶️ Speech synthesis started');
+      };
+      
       utterance.onend = () => {
-        console.log('Speech ended');
+        console.log('✅ Speech synthesis completed');
         resolve();
       };
+      
       utterance.onerror = (event) => {
-        console.error('Speech synthesis error:', event.error);
-        reject(new Error(`Speech synthesis error: ${event.error}`));
+        console.error('❌ Speech synthesis error:', event);
+        reject(new Error(`Speech synthesis failed: ${event.error || 'Unknown error'}`));
       };
 
-      // Add a small delay to ensure proper cancellation
-      setTimeout(() => {
-        console.log('Starting speech synthesis...');
+      utterance.onpause = () => console.log('⏸️ Speech paused');
+      utterance.onresume = () => console.log('▶️ Speech resumed');
+
+      // Check available voices
+      const voices = this.synthesis.getVoices();
+      console.log('🎤 Available voices count:', voices.length);
+      
+      if (voices.length > 0) {
+        const voice = this.getBestVoiceForLanguage(options.lang);
+        if (voice) {
+          console.log('🎯 Selected voice:', voice.name, 'for', options.lang);
+          utterance.voice = voice;
+        }
+      }
+
+      // Start speaking immediately
+      console.log('🚀 Starting speech synthesis...');
+      try {
         this.synthesis.speak(utterance);
-      }, 100);
+        console.log('📢 Speech queued successfully');
+      } catch (error) {
+        console.error('❌ Failed to queue speech:', error);
+        reject(new Error(`Failed to start speech: ${error}`));
+      }
     });
   }
 
