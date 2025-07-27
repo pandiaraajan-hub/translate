@@ -8,9 +8,10 @@ interface SimpleVoiceRecorderProps {
   targetLanguage: LanguageCode;
   onRecognitionResult: (text: string, confidence: number) => void;
   onError: (error: string) => void;
+  onTestAudio?: () => void;
 }
 
-export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError }: SimpleVoiceRecorderProps) {
+export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognitionResult, onError, onTestAudio }: SimpleVoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
 
@@ -107,11 +108,7 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
           </button>
 
           <button
-            onClick={() => {
-              // Test audio functionality
-              const utterance = new SpeechSynthesisUtterance("Audio test");
-              speechSynthesis.speak(utterance);
-            }}
+            onClick={onTestAudio}
             className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
           >
             Translate Now
