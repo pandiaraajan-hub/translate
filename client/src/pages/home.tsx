@@ -218,22 +218,26 @@ export default function Home() {
           <p className="text-sm text-gray-500">Pandi Tech</p>
         </div>
 
-        {/* Compact Language Selector */}
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className={`px-3 py-1 rounded-full ${sourceLanguage === 'tamil' ? 'bg-orange-100 text-orange-700' : sourceLanguage === 'chinese' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-            {SUPPORTED_LANGUAGES[sourceLanguage].flag} {SUPPORTED_LANGUAGES[sourceLanguage].name}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleSwapLanguages}
-            className="px-2"
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-          <span className={`px-3 py-1 rounded-full ${targetLanguage === 'tamil' ? 'bg-orange-100 text-orange-700' : targetLanguage === 'chinese' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-            {SUPPORTED_LANGUAGES[targetLanguage].flag} {SUPPORTED_LANGUAGES[targetLanguage].name}
-          </span>
+        {/* Language Selection */}
+        <div className="space-y-3">
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-3">Select Languages</p>
+            <div className="flex items-center justify-center gap-2 text-sm">
+              <button
+                onClick={() => setSourceLanguage(sourceLanguage === 'english' ? 'tamil' : sourceLanguage === 'tamil' ? 'chinese' : 'english')}
+                className={`px-4 py-2 rounded-full border-2 transition-colors ${sourceLanguage === 'tamil' ? 'border-orange-300 bg-orange-100 text-orange-700' : sourceLanguage === 'chinese' ? 'border-red-300 bg-red-100 text-red-700' : 'border-blue-300 bg-blue-100 text-blue-700'}`}
+              >
+                {SUPPORTED_LANGUAGES[sourceLanguage].flag} {SUPPORTED_LANGUAGES[sourceLanguage].name}
+              </button>
+              <ArrowUpDown className="h-4 w-4 text-gray-400" />
+              <button
+                onClick={() => setTargetLanguage(targetLanguage === 'english' ? 'tamil' : targetLanguage === 'tamil' ? 'chinese' : 'english')}
+                className={`px-4 py-2 rounded-full border-2 transition-colors ${targetLanguage === 'tamil' ? 'border-orange-300 bg-orange-100 text-orange-700' : targetLanguage === 'chinese' ? 'border-red-300 bg-red-100 text-red-700' : 'border-blue-300 bg-blue-100 text-blue-700'}`}
+              >
+                {SUPPORTED_LANGUAGES[targetLanguage].flag} {SUPPORTED_LANGUAGES[targetLanguage].name}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Voice Recorder */}
