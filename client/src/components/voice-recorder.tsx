@@ -207,23 +207,6 @@ export function VoiceRecorder({
     <Card>
       <CardContent className="p-3 sm:p-4">
         <div className="text-center space-y-3 sm:space-y-4">
-          <div className="space-y-1">
-            <h2 className="text-sm sm:text-base font-medium text-gray-900">Voice Recording</h2>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Speak clearly in {SUPPORTED_LANGUAGES[sourceLanguage].name}
-            </p>
-          </div>
-
-          {/* Recording Status */}
-          <div className="flex items-center justify-center space-x-2 text-sm">
-            <div className={`w-2 h-2 rounded-full ${
-              isRecording ? 'bg-red-500 recording-pulse' : 
-              result ? 'bg-green-500' : 'bg-gray-400'
-            }`} />
-            <span className={getRecordingStatusColor()}>
-              {getRecordingStatus()}
-            </span>
-          </div>
           {isRecording && (
             <div className="text-xs text-red-600 font-medium animate-pulse">
               🎙️ Recording... Release button when done
