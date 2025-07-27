@@ -105,42 +105,54 @@ export function TranslationResults({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      {/* Translate Now Button - Always visible for testing */}
-      <div className="flex justify-center mb-3">
-        <button 
-          onClick={(e) => {
-            console.log('🎯 Translate Now button clicked');
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (translatedText.trim()) {
-              // Play translation if available
-              if (isMobile) {
-                console.log('🎯 Mobile - playing translation with direct touch');
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+      {/* Mobile Translation Button - Prominent and Always Visible */}
+      <div className="w-full bg-blue-50 border-2 border-blue-200 rounded-lg p-3 mb-4">
+        <div className="text-center">
+          <p className="text-sm text-blue-800 mb-2 font-medium">
+            Translation Text: "{translatedText || 'None yet'}"
+          </p>
+          <button 
+            onClick={(e) => {
+              console.log('🎯 Mobile Translation Button clicked');
+              console.log('🎯 Available translation text:', translatedText);
+              console.log('🎯 Translation text length:', translatedText.length);
+              const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+              
+              if (translatedText.trim()) {
+                // Play translation if available
+                if (isMobile) {
+                  console.log('🎯 Mobile device - using direct touch audio');
+                  forceMobileAudio.enableAudioFromTouch();
+                  forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+                } else {
+                  console.log('🖥️ Desktop device - using standard audio');
+                  const utterance = new SpeechSynthesisUtterance(translatedText);
+                  utterance.rate = 0.8;
+                  speechSynthesis.speak(utterance);
+                }
               } else {
-                console.log('🖥️ Desktop - playing translation');
-                const utterance = new SpeechSynthesisUtterance(translatedText);
-                utterance.rate = 0.8;
-                speechSynthesis.speak(utterance);
+                // Play instruction message if no translation
+                const message = 'Please record your voice first';
+                if (isMobile) {
+                  console.log('🎯 Mobile - playing instruction message');
+                  forceMobileAudio.enableAudioFromTouch();
+                  forceMobileAudio.speakImmediately(message, 'en-US');
+                } else {
+                  console.log('🖥️ Desktop - playing instruction message');
+                  const utterance = new SpeechSynthesisUtterance(message);
+                  speechSynthesis.speak(utterance);
+                }
               }
-            } else {
-              // Play test message if no translation
-              if (isMobile) {
-                console.log('🎯 Mobile - playing test message');
-                forceMobileAudio.enableAudioFromTouch();
-                forceMobileAudio.speakImmediately('Please record something first', 'en-US');
-              } else {
-                console.log('🖥️ Desktop - playing test message');
-                const utterance = new SpeechSynthesisUtterance('Please record something first');
-                speechSynthesis.speak(utterance);
-              }
-            }
-          }}
-          className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          {translatedText.trim() ? '🔊 Translate Now' : '🔊 Record First'}
-        </button>
+            }}
+            className={`w-full px-6 py-3 text-lg font-bold rounded-lg transition-colors ${
+              translatedText.trim() 
+                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                : 'bg-gray-400 hover:bg-gray-500 text-white'
+            }`}
+          >
+            {translatedText.trim() ? '🔊 PLAY TRANSLATION' : '🎤 RECORD FIRST'}
+          </button>
+        </div>
       </div>
 
       {/* Simple Translation Status */}
