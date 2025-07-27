@@ -258,9 +258,59 @@ export function VoiceRecorder({
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              onTouchCancel={handleTouchEnd}
+              onTouchStart={(e) => {
+                console.log('🎯 Main button touch start - using WORKING method');
+                e.preventDefault();
+                e.stopPropagation();
+                // Use the EXACT same approach as the working orange test button
+                import('@/lib/speech-utils').then(({ speechUtils }) => {
+                  speechUtils.startRecognition(
+                    'english',
+                    (result) => {
+                      console.log('🎯 Main button recognition success:', result.transcript);
+                      // Trigger translation via API
+                      import('@/lib/queryClient').then(({ apiRequest }) => {
+                        apiRequest('/api/translate', {
+                          method: 'POST',
+                          body: {
+                            text: result.transcript,
+                            sourceLanguage: 'english',
+                            targetLanguage: 'tamil'
+                          }
+                        }).then((translation) => {
+                          console.log('🎯 Translation result:', translation);
+                          // Play the translation
+                          if ('speechSynthesis' in window && translation.translatedText) {
+                            const utterance = new SpeechSynthesisUtterance(translation.translatedText);
+                            utterance.lang = 'ta-IN';
+                            speechSynthesis.speak(utterance);
+                            console.log('🎯 Playing translation:', translation.translatedText);
+                          }
+                        }).catch(console.error);
+                      });
+                    },
+                    (error) => {
+                      console.log('🎯 Main button recognition error:', error);
+                    }
+                  );
+                });
+              }}
+              onTouchEnd={(e) => {
+                console.log('🎯 Main button touch end');
+                e.preventDefault();
+                e.stopPropagation();
+                import('@/lib/speech-utils').then(({ speechUtils }) => {
+                  speechUtils.stopRecognition();
+                });
+              }}
+              onTouchCancel={(e) => {
+                console.log('🎯 Main button touch cancel');
+                e.preventDefault();
+                e.stopPropagation();
+                import('@/lib/speech-utils').then(({ speechUtils }) => {
+                  speechUtils.stopRecognition();
+                });
+              }}
             >
               {isRecording ? <Square className="h-5 w-5 sm:h-6 sm:w-6" /> : <Mic className="h-5 w-5 sm:h-6 sm:w-6" />}
             </button>
