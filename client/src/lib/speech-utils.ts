@@ -268,7 +268,7 @@ export class SpeechUtils {
     return new Promise<void>((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(options.text);
       utterance.lang = options.lang;
-      utterance.rate = isMobile ? Math.min(options.rate || 0.9, 1.0) : (options.rate || 0.9);
+      utterance.rate = isMobile ? Math.min(options.rate || 0.7, 0.8) : (options.rate || 0.7);
       utterance.pitch = options.pitch || 1.0;
       utterance.volume = 1.0; // Always full volume
 
