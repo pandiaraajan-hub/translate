@@ -105,6 +105,38 @@ export function TranslationResults({
 
   return (
     <div className="space-y-3 sm:space-y-4">
+      {/* URGENT: Top Priority Mobile Audio Button */}
+      <div className="w-full bg-red-100 border-4 border-red-500 rounded-xl p-4 text-center">
+        <h3 className="text-lg font-bold text-red-800 mb-2">MOBILE AUDIO TEST</h3>
+        <button 
+          onClick={(e) => {
+            console.log('🚨 URGENT BUTTON CLICKED');
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+              console.log('🎯 Mobile detected - using direct speech');
+              forceMobileAudio.enableAudioFromTouch();
+              
+              if (translatedText.trim()) {
+                console.log('🎯 Playing translation:', translatedText);
+                forceMobileAudio.speakImmediately(translatedText, targetConfig.code);
+              } else {
+                console.log('🎯 Playing test message');
+                forceMobileAudio.speakImmediately('Mobile audio test successful', 'en-US');
+              }
+            } else {
+              console.log('🖥️ Desktop detected');
+              const text = translatedText.trim() || 'Desktop audio test';
+              const utterance = new SpeechSynthesisUtterance(text);
+              speechSynthesis.speak(utterance);
+            }
+          }}
+          className="w-full px-8 py-4 text-xl font-bold bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors shadow-lg"
+        >
+          {translatedText.trim() ? '🔊 PLAY TRANSLATION NOW' : '🔊 TEST AUDIO NOW'}
+        </button>
+      </div>
+
       {/* Simple Translation Status */}
       <Card>
         <CardContent className="p-3 sm:p-4">
