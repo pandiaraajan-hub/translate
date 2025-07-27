@@ -23,6 +23,7 @@ declare global {
 export class SpeechUtils {
   private recognition: SpeechRecognition | null = null;
   private synthesis: SpeechSynthesis;
+  private isRecognitionActive: boolean = false;
 
   constructor() {
     this.synthesis = window.speechSynthesis;
@@ -55,12 +56,29 @@ export class SpeechUtils {
       return;
     }
 
+    // Prevent starting if already active
+    if (this.isRecognitionActive) {
+      console.log('Speech recognition already active, skipping start');
+      return;
+    }
+
     const langConfig = SUPPORTED_LANGUAGES[language];
     this.recognition.lang = langConfig.code;
+
+    this.recognition.onstart = () => {
+      console.log('Speech recognition started');
+      this.isRecognitionActive = true;
+    };
+
+    this.recognition.onend = () => {
+      console.log('Speech recognition ended');
+      this.isRecognitionActive = false;
+    };
 
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       const result = event.results[0];
       if (result.isFinal) {
+        this.isRecognitionActive = false;
         onResult({
           transcript: result[0].transcript,
           confidence: result[0].confidence || 0
@@ -69,6 +87,7 @@ export class SpeechUtils {
     };
 
     this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      this.isRecognitionActive = false;
       let errorMessage = 'Speech recognition error';
       
       switch (event.error) {
@@ -85,7 +104,8 @@ export class SpeechUtils {
           errorMessage = 'Network error. Please check your internet connection and try again.';
           break;
         case 'aborted':
-          return; // Don't show error for user-initiated stops
+        case 'already-started':
+          return; // Don't show error for these cases
         default:
           errorMessage = `Speech recognition error: ${event.error}`;
       }
@@ -93,12 +113,20 @@ export class SpeechUtils {
       onError(errorMessage);
     };
 
-    this.recognition.start();
+    try {
+      this.recognition.start();
+    } catch (error) {
+      this.isRecognitionActive = false;
+      console.error('Failed to start recognition:', error);
+      onError('Failed to start speech recognition');
+    }
   }
 
   stopRecognition(): void {
-    if (this.recognition) {
+    if (this.recognition && this.isRecognitionActive) {
+      console.log('Stopping speech recognition');
       this.recognition.stop();
+      this.isRecognitionActive = false;
     }
   }
 
