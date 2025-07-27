@@ -26,7 +26,23 @@ export function TranslationResults({
   const lastTranslatedText = useRef<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [mobileAudioActivated, setMobileAudioActivated] = useState(false);
-  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const [showMobileButton, setShowMobileButton] = useState(false);
+  
+  // Enhanced mobile detection
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (typeof window !== 'undefined' && window.innerWidth <= 768) ||
+    ('ontouchstart' in window);
+
+  // Show mobile button for all users for now (debugging)
+  useEffect(() => {
+    console.log('📱 Mobile detection:', {
+      userAgent: navigator.userAgent,
+      isMobile: isMobile,
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+      touchSupport: 'ontouchstart' in window
+    });
+    setShowMobileButton(true); // Show for all users to debug
+  }, [isMobile]);
 
   const getFlagColors = (lang: LanguageCode) => {
     switch (lang) {
@@ -160,15 +176,24 @@ export function TranslationResults({
             )}
 
             {/* Mobile Audio Activation */}
-            {isMobile && !mobileAudioActivated && (
+            {showMobileButton && !mobileAudioActivated && (
               <div className="flex justify-center mb-4">
                 <button
                   onClick={activateMobileAudio}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2"
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2 font-medium"
                 >
                   <Smartphone className="h-4 w-4" />
-                  Activate Mobile Audio
+                  📱 Activate Mobile Audio
                 </button>
+              </div>
+            )}
+            
+            {/* Show activation status */}
+            {mobileAudioActivated && (
+              <div className="flex justify-center mb-2">
+                <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                  ✅ Mobile Audio Activated
+                </div>
               </div>
             )}
 
