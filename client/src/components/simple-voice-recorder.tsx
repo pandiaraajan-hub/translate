@@ -74,23 +74,6 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
           Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}
         </div>
 
-        {/* Audio Visualization Bar */}
-        {isRecording && (
-          <div className="flex items-center justify-center space-x-1 h-8">
-            {[...Array(12)].map((_, i) => (
-              <div
-                key={i}
-                className="w-1 bg-red-500 rounded-full animate-pulse"
-                style={{
-                  height: `${Math.random() * 20 + 10}px`,
-                  animationDelay: `${i * 0.1}s`,
-                  animationDuration: '0.6s'
-                }}
-              />
-            ))}
-          </div>
-        )}
-
         <div className="flex items-center justify-center gap-4">
           <button
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
@@ -137,6 +120,23 @@ export function SimpleVoiceRecorder({ sourceLanguage, targetLanguage, onRecognit
             Translate Now
           </button>
         </div>
+
+        {/* Audio Visualization Bar - Small and below buttons */}
+        {isRecording && (
+          <div className="flex items-center justify-center space-x-0.5 h-4">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="w-0.5 bg-red-500 rounded-full animate-pulse"
+                style={{
+                  height: `${Math.random() * 12 + 6}px`,
+                  animationDelay: `${i * 0.1}s`,
+                  animationDuration: '0.6s'
+                }}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
