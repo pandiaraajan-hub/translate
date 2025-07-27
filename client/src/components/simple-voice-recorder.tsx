@@ -31,6 +31,54 @@ export function SimpleVoiceRecorder({ sourceLanguage, onRecognitionResult, onErr
           
           // Call the parent's callback
           onRecognitionResult(result.transcript, result.confidence || 0.9);
+          
+          // Automatically translate and play audio
+          try {
+            const { apiRequest } = await import('@/lib/queryClient');
+            const translation = await apiRequest('/api/translate', {
+              method: 'POST',
+              body: {
+                text: result.transcript,
+                sourceLanguage: 'english',
+                targetLanguage: 'tamil'
+              }
+            });
+            
+            setLastResult(`Translation: "${translation.translatedText}"`);
+            
+            // Play Tamil audio immediately with mobile support
+            if (translation.translatedText) {
+              const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+              
+              if (isMobile) {
+                // Use force-mobile-audio for reliable mobile playback
+                const { forceMobileAudio } = await import('@/lib/force-mobile-audio');
+                forceMobileAudio.enableAudioFromTouch();
+                forceMobileAudio.speakImmediately(translation.translatedText, 'ta');
+              } else {
+                // Desktop playback
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(translation.translatedText);
+                utterance.lang = 'ta-IN';
+                utterance.rate = 0.8;
+                utterance.volume = 1.0;
+                
+                const voices = speechSynthesis.getVoices();
+                const tamilVoice = voices.find(v => v.lang.includes('ta')) || 
+                                 voices.find(v => v.lang.includes('hi')) ||
+                                 voices.find(v => v.lang.includes('en'));
+                
+                if (tamilVoice) {
+                  utterance.voice = tamilVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+              }
+            }
+            
+          } catch (error) {
+            setLastResult('Translation failed');
+          }
         },
         (error) => {
           setLastResult(`Error: ${error}`);
