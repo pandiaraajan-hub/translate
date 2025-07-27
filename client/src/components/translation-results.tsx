@@ -105,14 +105,15 @@ export function TranslationResults({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      {/* Translate Now Button - Compact */}
-      {translatedText.trim() && (
-        <div className="flex justify-center mb-3">
-          <button 
-            onClick={(e) => {
-              console.log('🎯 Translate Now button clicked');
-              const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-              
+      {/* Translate Now Button - Always visible for testing */}
+      <div className="flex justify-center mb-3">
+        <button 
+          onClick={(e) => {
+            console.log('🎯 Translate Now button clicked');
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (translatedText.trim()) {
+              // Play translation if available
               if (isMobile) {
                 console.log('🎯 Mobile - playing translation with direct touch');
                 forceMobileAudio.enableAudioFromTouch();
@@ -123,13 +124,24 @@ export function TranslationResults({
                 utterance.rate = 0.8;
                 speechSynthesis.speak(utterance);
               }
-            }}
-            className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            🔊 Translate Now
-          </button>
-        </div>
-      )}
+            } else {
+              // Play test message if no translation
+              if (isMobile) {
+                console.log('🎯 Mobile - playing test message');
+                forceMobileAudio.enableAudioFromTouch();
+                forceMobileAudio.speakImmediately('Please record something first', 'en-US');
+              } else {
+                console.log('🖥️ Desktop - playing test message');
+                const utterance = new SpeechSynthesisUtterance('Please record something first');
+                speechSynthesis.speak(utterance);
+              }
+            }
+          }}
+          className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          {translatedText.trim() ? '🔊 Translate Now' : '🔊 Record First'}
+        </button>
+      </div>
 
       {/* Simple Translation Status */}
       <Card>
