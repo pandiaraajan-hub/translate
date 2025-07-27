@@ -146,13 +146,12 @@ export function RecentTranslations({ onSelectTranslation }: RecentTranslationsPr
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 truncate" title={translation.sourceText}>
-                    {translation.sourceText}
-                  </p>
-                  <p className="text-sm text-gray-500 truncate" title={translation.translatedText}>
-                    {translation.translatedText}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <span className="text-sm font-medium text-gray-700">
+                      {getLanguageName(translation.sourceLanguage)} → {getLanguageName(translation.targetLanguage)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400">
                     {formatRelativeTime(new Date(translation.createdAt))}
                   </p>
                 </div>

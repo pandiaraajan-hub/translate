@@ -1,11 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '@shared/schema';
 import { speechUtils } from '@/lib/speech-utils';
-import { Volume2, Copy, Edit } from 'lucide-react';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { Volume2, ArrowDown } from 'lucide-react';
 
 interface TranslationResultsProps {
   sourceLanguage: LanguageCode;
@@ -22,12 +19,7 @@ export function TranslationResults({
   sourceText,
   translatedText,
   confidence,
-  onSourceTextChange,
 }: TranslationResultsProps) {
-  const [isEditingSource, setIsEditingSource] = useState(false);
-  const [editedSourceText, setEditedSourceText] = useState(sourceText);
-  const { toast } = useToast();
-
   const sourceConfig = SUPPORTED_LANGUAGES[sourceLanguage];
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
 
@@ -53,144 +45,72 @@ export function TranslationResults({
         lang: languageCode,
       });
     } catch (error) {
-      toast({
-        title: 'Speech Error',
-        description: 'Unable to play text-to-speech. Please check your browser settings.',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleCopy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast({
-        title: 'Copied',
-        description: 'Text copied to clipboard',
-      });
-    } catch (error) {
-      toast({
-        title: 'Copy Error',
-        description: 'Unable to copy text to clipboard',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleEditSource = () => {
-    if (isEditingSource) {
-      onSourceTextChange(editedSourceText);
-      setIsEditingSource(false);
-    } else {
-      setEditedSourceText(sourceText);
-      setIsEditingSource(true);
+      console.error('Speech synthesis error:', error);
     }
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 sm:grid sm:grid-cols-2 sm:gap-6">
-      {/* Source Text */}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Voice-Only Translation Results */}
       <Card>
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-medium text-gray-900 flex items-center">
-              <div className={`language-flag mr-2 ${getFlagColors(sourceLanguage)}`}>
-                {sourceConfig.flag}
+        <CardContent className="p-6">
+          <div className="text-center space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-6">Voice Translation</h3>
+            
+            {/* Source Language Play Button */}
+            <div className="flex flex-col items-center space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className={`language-flag ${getFlagColors(sourceLanguage)} text-2xl`}>
+                  {sourceConfig.flag}
+                </div>
+                <span className="font-medium text-gray-700">{sourceConfig.name}</span>
               </div>
-              {sourceConfig.name} (Source)
-            </h3>
-            <div className="flex space-x-2">
               <Button
-                variant="ghost"
-                size="sm"
-                className="p-2 text-gray-500 hover:text-primary"
+                size="lg"
+                variant="outline"
+                className="w-16 h-16 rounded-full border-2 hover:bg-blue-50 transition-all duration-200"
                 onClick={() => handleSpeak(sourceText, sourceConfig.code)}
                 disabled={!sourceText.trim()}
               >
-                <Volume2 className="h-4 w-4" />
+                <Volume2 className="h-6 w-6 text-blue-600" />
               </Button>
+              <p className="text-sm text-gray-500">
+                {sourceText.trim() ? 'Play original' : 'No speech recorded'}
+              </p>
             </div>
-          </div>
-          
-          <div className="space-y-3">
-            {isEditingSource ? (
-              <Textarea
-                value={editedSourceText}
-                onChange={(e) => setEditedSourceText(e.target.value)}
-                className="h-32 resize-none"
-                placeholder="Enter text to translate..."
-              />
-            ) : (
-              <Textarea
-                value={sourceText}
-                className="h-32 resize-none"
-                placeholder="Recognized speech will appear here..."
-                readOnly
-              />
-            )}
-            
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <span>
-                {confidence && `Confidence: ${Math.round(confidence * 100)}%`}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-blue-700 h-auto p-1"
-                onClick={handleEditSource}
-              >
-                <Edit className="h-3 w-3 mr-1" />
-                {isEditingSource ? 'Save' : 'Edit'}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Target Text */}
-      <Card>
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-medium text-gray-900 flex items-center">
-              <div className={`language-flag mr-2 ${getFlagColors(targetLanguage)}`}>
-                {targetConfig.flag}
+            {/* Translation Arrow */}
+            <div className="flex justify-center">
+              <ArrowDown className="h-6 w-6 text-gray-400" />
+            </div>
+
+            {/* Target Language Play Button */}
+            <div className="flex flex-col items-center space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className={`language-flag ${getFlagColors(targetLanguage)} text-2xl`}>
+                  {targetConfig.flag}
+                </div>
+                <span className="font-medium text-gray-700">{targetConfig.name}</span>
               </div>
-              {targetConfig.name} (Target)
-            </h3>
-            <div className="flex space-x-2">
               <Button
-                variant="ghost"
-                size="sm"
-                className="p-2 text-gray-500 hover:text-primary"
+                size="lg"
+                className="w-16 h-16 rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200"
                 onClick={() => handleSpeak(translatedText, targetConfig.code)}
                 disabled={!translatedText.trim()}
               >
-                <Volume2 className="h-4 w-4" />
+                <Volume2 className="h-6 w-6" />
               </Button>
+              <p className="text-sm text-gray-500">
+                {translatedText.trim() ? 'Play translation' : 'No translation available'}
+              </p>
             </div>
-          </div>
-          
-          <div className="space-y-3">
-            <Textarea
-              value={translatedText}
-              className="h-32 resize-none"
-              placeholder="Translation will appear here..."
-              readOnly
-            />
-            
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <span>Powered by Google Translate</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-blue-700 h-auto p-1"
-                onClick={() => handleCopy(translatedText)}
-                disabled={!translatedText.trim()}
-              >
-                <Copy className="h-3 w-3 mr-1" />
-                Copy
-              </Button>
-            </div>
+
+            {/* Status Indicators */}
+            {confidence && (
+              <div className="text-xs text-gray-400 bg-gray-50 rounded-lg p-2">
+                Speech confidence: {Math.round(confidence * 100)}%
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
