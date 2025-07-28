@@ -131,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate Google TTS URL
       const encodedText = encodeURIComponent((text as string).substring(0, 200));
       const langCode = mapLanguageToGoogleTTS(lang as string);
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodedText}&tl=${langCode}&ttsspeed=1.0`; // Faster speech for quicker response
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodedText}&tl=${langCode}&ttsspeed=0.8`;
       
       console.log('🎵 Serving TTS audio for Samsung:', { text, lang, ttsUrl });
       
