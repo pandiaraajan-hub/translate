@@ -85,8 +85,14 @@ export function SimpleVoiceRecorder({
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
           <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
-          {typeof window !== 'undefined' && (/samsung/i.test(navigator.userAgent) || /SM-/i.test(navigator.userAgent)) && (
-            <div className="text-xs text-green-600 font-medium">Samsung Device - Enhanced Audio Mode Active</div>
+          {typeof window !== 'undefined' && (
+            <div className="text-xs">
+              Device: {/samsung/i.test(navigator.userAgent) || /SM-/i.test(navigator.userAgent) || /galaxy/i.test(navigator.userAgent) ? (
+                <span className="text-green-600 font-medium">Samsung - Enhanced Audio Mode</span>
+              ) : (
+                <span className="text-blue-600">Standard Mobile</span>
+              )}
+            </div>
           )}
         </div>
 
