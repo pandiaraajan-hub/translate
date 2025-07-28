@@ -35,23 +35,25 @@ export class ExternalTTS {
         
         audio.oncanplaythrough = () => {
           if (!resolved) {
-            // Immediate play for faster response
-            audio.play().then(() => {
-              console.log('🎵 Server TTS started playing');
-              if (!resolved) {
-                resolved = true;
-                resolve(true);
-              }
-            }).catch((error) => {
-              console.error('🎵 Server TTS play failed:', error);
-              // Quick fallback for Samsung
-              this.forceSamsungAudioPlay(audio).then(success => {
+            // Small delay for better audio quality on mobile
+            setTimeout(() => {
+              audio.play().then(() => {
+                console.log('🎵 Server TTS started playing');
                 if (!resolved) {
                   resolved = true;
-                  resolve(success);
+                  resolve(true);
                 }
+              }).catch((error) => {
+                console.error('🎵 Server TTS play failed:', error);
+                // Fallback for Samsung
+                this.forceSamsungAudioPlay(audio).then(success => {
+                  if (!resolved) {
+                    resolved = true;
+                    resolve(success);
+                  }
+                });
               });
-            });
+            }, 200);
           }
         };
         
@@ -67,9 +69,9 @@ export class ExternalTTS {
           console.log('🎵 Server TTS completed');
         };
         
-        // Optimized audio loading for faster response
+        // Standard audio loading for better quality
         audio.volume = 1.0;
-        audio.preload = 'metadata'; // Faster than 'auto'
+        audio.preload = 'auto';
         audio.crossOrigin = 'anonymous';
         audio.src = audioUrl;
         
