@@ -107,19 +107,37 @@ export function SimpleVoiceRecorder({
               <div className="text-xs text-gray-400 break-all">
                 UA: {navigator.userAgent.slice(0, 80)}...
               </div>
-              <button 
-                className="text-xs bg-orange-500 text-white px-2 py-1 rounded"
-                onClick={() => {
-                  const userAgent = navigator.userAgent;
-                  alert(`User Agent: ${userAgent}\n\nSamsung Keywords Found:\n${
-                    ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser']
-                      .filter(keyword => userAgent.toLowerCase().includes(keyword))
-                      .join(', ') || 'None'
-                  }`);
-                }}
-              >
-                Debug Device
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  className="text-xs bg-orange-500 text-white px-2 py-1 rounded"
+                  onClick={() => {
+                    const userAgent = navigator.userAgent;
+                    alert(`User Agent: ${userAgent}\n\nSamsung Keywords Found:\n${
+                      ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser']
+                        .filter(keyword => userAgent.toLowerCase().includes(keyword))
+                        .join(', ') || 'None'
+                    }`);
+                  }}
+                >
+                  Debug Device
+                </button>
+                <button 
+                  className="text-xs bg-green-600 text-white px-2 py-1 rounded"
+                  onClick={async () => {
+                    const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
+                    const current = localStorage.getItem('forceSamsungMode') === 'true';
+                    if (current) {
+                      SamsungAudioFix.disableSamsungMode();
+                      alert('Samsung mode disabled - refresh page');
+                    } else {
+                      SamsungAudioFix.enableSamsungMode();
+                      alert('Samsung mode enabled - refresh page');
+                    }
+                  }}
+                >
+                  {localStorage.getItem('forceSamsungMode') === 'true' ? 'Disable Samsung' : 'Enable Samsung'}
+                </button>
+              </div>
             </div>
           )}
         </div>
