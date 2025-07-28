@@ -86,30 +86,40 @@ export function SimpleVoiceRecorder({
         <div className="text-gray-500 space-y-1">
           <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
           {typeof window !== 'undefined' && (
-            <div className="text-xs">
-              Device: {(() => {
-                const userAgent = navigator.userAgent.toLowerCase();
-                const samsungPatterns = [
-                  /samsung/i,
-                  /sm-[a-z]\d+/i,
-                  /galaxy/i,
-                  /gt-[a-z]\d+/i,
-                  /samsung browser/i,
-                  /secbrowser/i,
-                  /samsungbrowser/i
-                ];
-                const isSamsung = samsungPatterns.some(pattern => pattern.test(navigator.userAgent)) ||
-                                userAgent.includes('samsung') || 
-                                userAgent.includes('galaxy') ||
-                                userAgent.includes('secbrowser') ||
-                                userAgent.includes('samsungbrowser');
+            <div className="text-xs space-y-1">
+              <div>Device: {(() => {
+                const userAgent = navigator.userAgent;
+                const userAgentLower = userAgent.toLowerCase();
+                
+                // Comprehensive Samsung detection
+                const samsungKeywords = ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser'];
+                const isSamsung = samsungKeywords.some(keyword => userAgentLower.includes(keyword)) ||
+                                /sm-[a-z0-9]+/i.test(userAgent) ||
+                                /galaxy/i.test(userAgent) ||
+                                /samsung/i.test(userAgent);
                 
                 return isSamsung ? (
                   <span className="text-green-600 font-medium">Samsung - Enhanced Audio Mode</span>
                 ) : (
-                  <span className="text-blue-600">Standard Mobile ({userAgent.slice(0, 50)}...)</span>
+                  <span className="text-blue-600">Standard Mobile</span>
                 );
-              })()}
+              })()}</div>
+              <div className="text-xs text-gray-400 break-all">
+                UA: {navigator.userAgent.slice(0, 80)}...
+              </div>
+              <button 
+                className="text-xs bg-orange-500 text-white px-2 py-1 rounded"
+                onClick={() => {
+                  const userAgent = navigator.userAgent;
+                  alert(`User Agent: ${userAgent}\n\nSamsung Keywords Found:\n${
+                    ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser']
+                      .filter(keyword => userAgent.toLowerCase().includes(keyword))
+                      .join(', ') || 'None'
+                  }`);
+                }}
+              >
+                Debug Device
+              </button>
             </div>
           )}
         </div>
@@ -137,32 +147,21 @@ export function SimpleVoiceRecorder({
                 console.log('🧪 Manual audio play requested:', translatedText);
                 
                 try {
-                  // Try Samsung-specific fix first
+                  // Always try Samsung fix first (it will determine device type internally)
                   const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
                   
-                  if (SamsungAudioFix.isSamsungDevice()) {
-                    console.log('📱 Using Samsung audio fix for manual play');
-                    const success = await SamsungAudioFix.speakWithSamsungFix(
-                      translatedText, 
-                      targetLangCode, 
-                      speechRate, 
-                      speechPitch
-                    );
-                    
-                    if (!success) {
-                      console.log('📱 Samsung fix failed, trying regular speech');
-                      // Fallback to regular speech
-                      const { speechUtils } = await import('@/lib/speech-utils');
-                      await speechUtils.speak({
-                        text: translatedText,
-                        lang: targetLangCode,
-                        rate: speechRate,
-                        pitch: speechPitch
-                      });
-                    }
-                  } else {
-                    // Regular device - use normal speech utils
+                  console.log('📱 Attempting Samsung audio fix...');
+                  const success = await SamsungAudioFix.speakWithSamsungFix(
+                    translatedText, 
+                    targetLangCode, 
+                    speechRate, 
+                    speechPitch
+                  );
+                  
+                  if (!success) {
+                    console.log('📱 Samsung fix not applicable or failed, using standard audio');
+                    // Fallback to regular speech
                     const { reliableAudio } = await import('@/lib/reliable-audio');
                     reliableAudio.unlockAudio();
                     

@@ -7,36 +7,58 @@ export class SamsungAudioFix {
     const userAgent = navigator.userAgent;
     const userAgentLower = userAgent.toLowerCase();
     
-    // Multiple Samsung detection patterns
+    // Check localStorage for manual override
+    const manualOverride = localStorage.getItem('forceSamsungMode');
+    if (manualOverride === 'true') {
+      console.log('📱 Samsung mode manually forced via localStorage');
+      return true;
+    }
+    
+    // Comprehensive Samsung detection
+    const samsungKeywords = ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser'];
+    const hasKeywords = samsungKeywords.some(keyword => userAgentLower.includes(keyword));
+    
+    // Pattern-based detection
     const samsungPatterns = [
       /samsung/i,
-      /sm-[a-z]\d+/i,    // SM-G973, SM-N975, etc.
+      /sm-[a-z0-9]+/i,   // More flexible pattern
       /galaxy/i,
-      /gt-[a-z]\d+/i,    // GT-I9300, etc.
-      /sch-[a-z]\d+/i,   // SCH-I535, etc.
-      /sph-[a-z]\d+/i,   // SPH-L710, etc.
-      /sgh-[a-z]\d+/i,   // SGH-M919, etc.
+      /gt-[a-z0-9]+/i,
       /samsung browser/i,
-      /android.*samsung/i
+      /secbrowser/i,
+      /samsungbrowser/i
     ];
     
-    const isSamsung = samsungPatterns.some(pattern => pattern.test(userAgent));
+    const hasPatterns = samsungPatterns.some(pattern => pattern.test(userAgent));
     
-    // Additional checks for Samsung-specific features
-    const hasSecBrowser = userAgentLower.includes('secbrowser') || userAgentLower.includes('samsungbrowser');
-    const hasSamsungKeywords = userAgentLower.includes('samsung') || userAgentLower.includes('galaxy');
+    // Android Samsung detection
+    const isAndroidSamsung = userAgentLower.includes('android') && 
+                            (userAgentLower.includes('samsung') || userAgentLower.includes('galaxy'));
     
-    const finalResult = isSamsung || hasSecBrowser || hasSamsungKeywords;
+    const finalResult = hasKeywords || hasPatterns || isAndroidSamsung;
     
-    console.log('📱 Enhanced Samsung device check:', { 
-      userAgent, 
-      isSamsung, 
-      hasSecBrowser, 
-      hasSamsungKeywords, 
+    console.log('📱 Comprehensive Samsung detection:', { 
+      userAgent: userAgent.slice(0, 100) + '...', 
+      hasKeywords,
+      foundKeywords: samsungKeywords.filter(k => userAgentLower.includes(k)),
+      hasPatterns,
+      isAndroidSamsung,
+      manualOverride,
       finalResult 
     });
     
     return finalResult;
+  }
+
+  // Method to manually enable Samsung mode for testing
+  static enableSamsungMode(): void {
+    localStorage.setItem('forceSamsungMode', 'true');
+    console.log('📱 Samsung mode manually enabled');
+  }
+
+  static disableSamsungMode(): void {
+    localStorage.removeItem('forceSamsungMode');
+    console.log('📱 Samsung mode manual override disabled');
   }
 
   static async initializeSamsungAudio(): Promise<boolean> {
@@ -159,9 +181,9 @@ export class SamsungAudioFix {
   }
 
   static async speakWithSamsungFix(text: string, lang: string, rate: number = 0.7, pitch: number = 1.0): Promise<boolean> {
-    if (!this.isSamsungDevice()) {
-      return false; // Not Samsung, use regular speech
-    }
+    // Always try the Samsung fix approach - it's more robust even for non-Samsung devices
+    const isSamsung = this.isSamsungDevice();
+    console.log('📱 Samsung fix attempt - device detection:', isSamsung);
 
     if (!this.isInitialized) {
       console.log('📱 Samsung audio not initialized, initializing now...');
