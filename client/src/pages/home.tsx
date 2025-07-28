@@ -169,36 +169,25 @@ export default function Home() {
     }
   }, [translationResult, autoPlayTranslation]);
 
-  // Function to play translated text with Samsung support
+  // Function to play translated text with enhanced mobile support
   const playTranslatedText = async (text: string) => {
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
       
-      // Try Samsung-specific fix first
+      // Always try the enhanced Samsung audio fix for all mobile devices
       const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
       
-      if (SamsungAudioFix.isSamsungDevice()) {
-        console.log('📱 Auto-playing with Samsung audio fix');
-        const success = await SamsungAudioFix.speakWithSamsungFix(
-          text, 
-          targetLangCode, 
-          speechRate, 
-          speechPitch
-        );
-        
-        if (!success) {
-          console.log('📱 Samsung fix failed, trying regular speech');
-          // Fallback to regular speech
-          const { speechUtils } = await import('@/lib/speech-utils');
-          await speechUtils.speak({
-            text,
-            lang: targetLangCode,
-            rate: speechRate,
-            pitch: speechPitch
-          });
-        }
-      } else {
-        // Regular device - use normal speech utils
+      console.log('🔊 Auto-playing with enhanced mobile audio fix');
+      const success = await SamsungAudioFix.speakWithSamsungFix(
+        text, 
+        targetLangCode, 
+        speechRate, 
+        speechPitch
+      );
+      
+      if (!success) {
+        console.log('🔊 Enhanced fix failed, trying standard speech');
+        // Fallback to regular speech
         const { reliableAudio } = await import('@/lib/reliable-audio');
         reliableAudio.unlockAudio();
         

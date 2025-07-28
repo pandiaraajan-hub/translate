@@ -142,6 +142,23 @@ export function SimpleVoiceRecorder({
           )}
         </div>
 
+        {/* Samsung Activation Button - Make it prominent */}
+        {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') !== 'true' && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded text-center">
+            <div className="text-red-800 text-sm mb-2">Samsung Phone Detected - Audio Fix Available</div>
+            <button 
+              className="bg-red-600 text-white px-4 py-2 rounded font-medium"
+              onClick={async () => {
+                const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
+                SamsungAudioFix.enableSamsungMode();
+                window.location.reload();
+              }}
+            >
+              Activate Samsung Audio Fix
+            </button>
+          </div>
+        )}
+
         <div className="flex items-center justify-center gap-4">
           <button
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${

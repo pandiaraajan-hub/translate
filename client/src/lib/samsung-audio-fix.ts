@@ -290,6 +290,10 @@ export class SamsungAudioFix {
         // Start speaking with delay for mobile compatibility
         setTimeout(() => {
           try {
+            // Additional mobile audio unlock attempt
+            if (speechSynth.paused) {
+              speechSynth.resume();
+            }
             speechSynth.speak(utterance);
             console.log('📱 Speech queued successfully');
           } catch (error) {
