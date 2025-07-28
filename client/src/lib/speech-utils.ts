@@ -514,6 +514,12 @@ export class SpeechUtils {
         console.log('⚠️ No Bengali voice found, using Hindi male voice');
         candidateVoices = voices.filter(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
       }
+    } else if (languageCode === 'es-ES') {
+      // For Spanish, find Spanish voices
+      candidateVoices = voices.filter(v => v.lang === 'es-ES' || v.lang.startsWith('es'));
+    } else if (languageCode === 'ar-SA') {
+      // For Arabic, find Arabic voices
+      candidateVoices = voices.filter(v => v.lang === 'ar-SA' || v.lang.startsWith('ar'));
     } else {
       // For other languages, find exact matches first
       candidateVoices = voices.filter(v => v.lang === languageCode);
@@ -530,7 +536,9 @@ export class SpeechUtils {
           'en-US': ['en-US', 'en', 'en-GB'],
           'ms-MY': ['ms-MY', 'ms', 'en-US', 'en'],
           'hi-IN': ['hi-IN', 'hi', 'en-US', 'en'],
-          'bn-IN': ['bn-IN', 'bn', 'hi-IN', 'hi', 'en-US', 'en']
+          'bn-IN': ['bn-IN', 'bn', 'hi-IN', 'hi', 'en-US', 'en'],
+          'es-ES': ['es-ES', 'es', 'es-MX', 'en-US', 'en'],
+          'ar-SA': ['ar-SA', 'ar', 'ar-EG', 'en-US', 'en']
         };
         
         const alts = alternatives[languageCode as keyof typeof alternatives] || [];

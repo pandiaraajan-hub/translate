@@ -397,7 +397,11 @@ export class ExternalTTS {
       'ms': 'Malay Male',
       'ms-MY': 'Malay Male',
       'bn': 'Bangla Male',
-      'bn-IN': 'Bangla Male'
+      'bn-IN': 'Bangla Male',
+      'es': 'Spanish Male',
+      'es-ES': 'Spanish Male',
+      'ar': 'Arabic Male',
+      'ar-SA': 'Arabic Male'
     };
     
     return mapping[lang] || 'UK English Male';
@@ -418,7 +422,11 @@ export class ExternalTTS {
       'ms': 'ms',
       'ms-MY': 'ms',
       'bn': 'bn',
-      'bn-IN': 'bn'
+      'bn-IN': 'bn',
+      'es': 'es',
+      'es-ES': 'es',
+      'ar': 'ar',
+      'ar-SA': 'ar'
     };
     
     return mapping[lang] || 'en';

@@ -167,7 +167,11 @@ function mapLanguageToGoogleTTS(lang: string): string {
     'ms': 'ms',
     'ms-MY': 'ms',
     'bn': 'bn',
-    'bn-IN': 'bn'
+    'bn-IN': 'bn',
+    'es': 'es',
+    'es-ES': 'es',
+    'ar': 'ar',
+    'ar-SA': 'ar'
   };
   
   return mapping[lang] || 'en';

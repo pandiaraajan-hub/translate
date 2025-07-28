@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between Chinese, English, and Tamil languages using the Google Translate API. It features press-and-hold recording (walkie-talkie style) with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
+This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic languages using the Google Translate API. It features press-and-hold recording (walkie-talkie style) with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
 
 **Status: FULLY FUNCTIONAL ON SAMSUNG** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. User confirmed "thank you its working now".
 
@@ -32,12 +32,13 @@ Preferred communication style: Simple, everyday language.
 ## Key Components
 
 ### Core Features - COMPLETED
-1. **Voice-to-Voice Translation**: Press-and-hold recording with automatic real-time translation between English and Tamil
-2. **Mobile Touch Events**: Fully functional mobile recording with proper touch event handling (resolved January 27, 2025)
-3. **Automatic Speech Playback**: Translation automatically plays Tamil audio after English speech recognition
-4. **Simplified Interface**: Clean, streamlined design with single recording button and status feedback
-5. **Direct Speech Recognition**: Bypasses complex hook systems for reliable mobile performance
-6. **Pandi Tech Branding**: VoiceBridge header with company branding as requested
+1. **Voice-to-Voice Translation**: Press-and-hold recording with automatic real-time translation between 8 languages
+2. **Supported Languages**: English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic
+3. **Mobile Touch Events**: Fully functional mobile recording with proper touch event handling
+4. **Automatic Speech Playback**: Translation automatically plays audio in target language
+5. **Simplified Interface**: Clean, streamlined design with single recording button and status feedback
+6. **Direct Speech Recognition**: Bypasses complex hook systems for reliable mobile performance
+7. **Pandi Tech Branding**: VoiceBridge header with company branding as requested
 
 ### Recent Changes - January 28, 2025
 - **BREAKTHROUGH**: Samsung voice output fixed using server-side TTS streaming solution ✅
