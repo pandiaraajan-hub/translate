@@ -142,20 +142,30 @@ export function SimpleVoiceRecorder({
           )}
         </div>
 
-        {/* Samsung Activation Button - Make it prominent */}
-        {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') !== 'true' && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded text-center">
-            <div className="text-red-800 text-sm mb-2">Samsung Phone Detected - Audio Fix Available</div>
+        {/* Samsung Activation Button - Always show on mobile */}
+        {typeof window !== 'undefined' && 
+         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && 
+         localStorage.getItem('forceSamsungMode') !== 'true' && (
+          <div className="mb-4 p-3 bg-orange-100 border border-orange-300 rounded text-center">
+            <div className="text-orange-800 text-sm mb-2">Mobile Audio Enhancement Available</div>
             <button 
-              className="bg-red-600 text-white px-4 py-2 rounded font-medium"
+              className="bg-orange-600 text-white px-4 py-2 rounded font-medium"
               onClick={async () => {
                 const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                 SamsungAudioFix.enableSamsungMode();
-                window.location.reload();
+                alert('Enhanced audio mode activated! Page will refresh.');
+                setTimeout(() => window.location.reload(), 500);
               }}
             >
-              Activate Samsung Audio Fix
+              Fix Mobile Audio Issues
             </button>
+          </div>
+        )}
+
+        {/* Show enhanced mode status */}
+        {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded text-center">
+            <div className="text-green-800 text-sm font-medium">✓ Enhanced Mobile Audio Mode Active</div>
           </div>
         )}
 
@@ -186,7 +196,7 @@ export function SimpleVoiceRecorder({
                   const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
                   
-                  console.log('📱 Attempting Samsung audio fix...');
+                  console.log('📱 Attempting enhanced mobile audio...');
                   const success = await SamsungAudioFix.speakWithSamsungFix(
                     translatedText, 
                     targetLangCode, 
@@ -195,7 +205,7 @@ export function SimpleVoiceRecorder({
                   );
                   
                   if (!success) {
-                    console.log('📱 Samsung fix not applicable or failed, using standard audio');
+                    console.log('📱 Enhanced mobile audio failed, using standard audio');
                     // Fallback to regular speech
                     const { reliableAudio } = await import('@/lib/reliable-audio');
                     reliableAudio.unlockAudio();
