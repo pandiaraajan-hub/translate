@@ -5,10 +5,13 @@ export class SamsungAudioFix {
 
   static isSamsungDevice(): boolean {
     const userAgent = navigator.userAgent.toLowerCase();
-    return userAgent.includes('samsung') || 
+    const isSamsung = userAgent.includes('samsung') || 
            userAgent.includes('sm-') || 
            userAgent.includes('galaxy') ||
            /android.*samsung/i.test(navigator.userAgent);
+    
+    console.log('📱 Samsung device check:', { userAgent, isSamsung });
+    return isSamsung;
   }
 
   static async initializeSamsungAudio(): Promise<boolean> {

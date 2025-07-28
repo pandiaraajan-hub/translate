@@ -147,17 +147,71 @@ export default function Home() {
     }
   }, [sourceText, sourceLanguage, targetLanguage, translate]);
 
-  // Handle translation result
+  // Handle translation result with automatic audio playback
   useEffect(() => {
     console.log('🔍 Translation result effect triggered:', translationResult);
     if (translationResult) {
       console.log('🔍 Setting translated text:', translationResult.translatedText);
       setTranslatedText(translationResult.translatedText);
       setIsProcessing(false);
+      
+      // Auto-play translated text if auto-play is enabled
+      if (autoPlayTranslation && translationResult.translatedText.trim()) {
+        console.log('🔊 Auto-playing translation:', translationResult.translatedText);
+        playTranslatedText(translationResult.translatedText);
+      }
     } else {
       console.log('🔍 No translation result available');
     }
-  }, [translationResult]);
+  }, [translationResult, autoPlayTranslation]);
+
+  // Function to play translated text with Samsung support
+  const playTranslatedText = async (text: string) => {
+    try {
+      const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
+      
+      // Try Samsung-specific fix first
+      const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
+      
+      if (SamsungAudioFix.isSamsungDevice()) {
+        console.log('📱 Auto-playing with Samsung audio fix');
+        const success = await SamsungAudioFix.speakWithSamsungFix(
+          text, 
+          targetLangCode, 
+          speechRate, 
+          speechPitch
+        );
+        
+        if (!success) {
+          console.log('📱 Samsung fix failed, trying regular speech');
+          // Fallback to regular speech
+          const { speechUtils } = await import('@/lib/speech-utils');
+          await speechUtils.speak({
+            text,
+            lang: targetLangCode,
+            rate: speechRate,
+            pitch: speechPitch
+          });
+        }
+      } else {
+        // Regular device - use normal speech utils
+        const { reliableAudio } = await import('@/lib/reliable-audio');
+        reliableAudio.unlockAudio();
+        
+        const { speechUtils } = await import('@/lib/speech-utils');
+        await speechUtils.speak({
+          text,
+          lang: targetLangCode,
+          rate: speechRate,
+          pitch: speechPitch
+        });
+      }
+      
+      console.log('🔊 Auto-play completed successfully');
+    } catch (error) {
+      console.error('🔊 Auto-play failed:', error);
+    }
+  };
 
   // Handle translation error
   useEffect(() => {

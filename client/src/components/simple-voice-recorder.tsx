@@ -116,7 +116,7 @@ export function SimpleVoiceRecorder({
           <button
             onClick={async () => {
               if (translatedText && translatedText.trim()) {
-                console.log('🧪 Testing audio with translation:', translatedText);
+                console.log('🧪 Manual audio play requested:', translatedText);
                 
                 try {
                   // Try Samsung-specific fix first
@@ -124,8 +124,7 @@ export function SimpleVoiceRecorder({
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
                   
                   if (SamsungAudioFix.isSamsungDevice()) {
-                    console.log('📱 Using Samsung audio fix');
-                    alert('Samsung device detected - using enhanced audio mode');
+                    console.log('📱 Using Samsung audio fix for manual play');
                     const success = await SamsungAudioFix.speakWithSamsungFix(
                       translatedText, 
                       targetLangCode, 
@@ -135,7 +134,6 @@ export function SimpleVoiceRecorder({
                     
                     if (!success) {
                       console.log('📱 Samsung fix failed, trying regular speech');
-                      alert('Samsung enhanced mode failed, trying standard audio');
                       // Fallback to regular speech
                       const { speechUtils } = await import('@/lib/speech-utils');
                       await speechUtils.speak({
@@ -144,8 +142,6 @@ export function SimpleVoiceRecorder({
                         rate: speechRate,
                         pitch: speechPitch
                       });
-                    } else {
-                      alert('Samsung audio successful!');
                     }
                   } else {
                     // Regular device - use normal speech utils
@@ -161,10 +157,10 @@ export function SimpleVoiceRecorder({
                     });
                   }
                   
-                  console.log('🧪 Audio played with custom settings:', { rate: speechRate, pitch: speechPitch });
+                  console.log('🧪 Manual audio play completed');
                 } catch (error) {
-                  console.error('🧪 Audio test error:', error);
-                  alert('Audio test failed: ' + error);
+                  console.error('🧪 Manual audio play error:', error);
+                  alert('Audio play failed: ' + error);
                 }
               } else if (onTestAudio) {
                 onTestAudio();
