@@ -141,10 +141,21 @@ export default function Home() {
   useEffect(() => {
     if (sourceText.trim() && sourceLanguage !== targetLanguage) {
       setIsProcessing(true);
+      const fromCode = SUPPORTED_LANGUAGES[sourceLanguage].code;
+      const toCode = SUPPORTED_LANGUAGES[targetLanguage].code;
+      
+      console.log('🔍 Translation request:', { 
+        sourceText, 
+        sourceLanguage, 
+        targetLanguage, 
+        fromCode, 
+        toCode 
+      });
+      
       translate({
         text: sourceText,
-        from: SUPPORTED_LANGUAGES[sourceLanguage].code,
-        to: SUPPORTED_LANGUAGES[targetLanguage].code,
+        from: fromCode,
+        to: toCode,
       });
     } else {
       setTranslatedText('');

@@ -5,20 +5,48 @@ import { insertTranslationSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add CORS headers for production deployment
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+    } else {
+      next();
+    }
+  });
   // Translation endpoint
   app.post("/api/translate", async (req, res) => {
     try {
       const { text, from, to } = req.body;
       
       if (!text || !from || !to) {
+        console.error('❌ Missing required fields:', { text: !!text, from: !!from, to: !!to });
         return res.status(400).json({ error: "Missing required fields: text, from, to" });
+      }
+      
+      // Validate language codes
+      const validCodes = ['en', 'ta', 'zh', 'zh-cn', 'hi', 'ms', 'bn', 'es', 'ar', 'en-US', 'ta-IN', 'zh-CN', 'hi-IN', 'ms-MY', 'bn-IN', 'es-ES', 'ar-SA'];
+      if (!validCodes.includes(from) && !validCodes.includes(from.split('-')[0])) {
+        console.error('❌ Invalid source language code:', from);
+        return res.status(400).json({ error: `Invalid source language: ${from}` });
+      }
+      if (!validCodes.includes(to) && !validCodes.includes(to.split('-')[0])) {
+        console.error('❌ Invalid target language code:', to);
+        return res.status(400).json({ error: `Invalid target language: ${to}` });
       }
 
       // Use Google Translate API
       const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY || process.env.VITE_GOOGLE_TRANSLATE_API_KEY;
       if (!apiKey) {
+        console.error('❌ Google Translate API key not found in environment');
         return res.status(500).json({ error: "Google Translate API key not configured" });
       }
+      
+      console.log('🔍 Translation request:', { text: text.substring(0, 50), from, to });
 
       const response = await fetch(
         `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
@@ -38,12 +66,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!response.ok) {
         const error = await response.text();
+        console.error('❌ Google Translate API error:', response.status, error);
         return res.status(response.status).json({ error: `Translation API error: ${error}` });
       }
 
       const data = await response.json();
       const translatedText = data.data.translations[0].translatedText;
       const confidence = data.data.translations[0].confidence || "unknown";
+      
+      console.log('✅ Translation successful:', { translatedText: translatedText.substring(0, 50), confidence });
 
       // Save translation to storage
       const translation = await storage.createTranslation({
