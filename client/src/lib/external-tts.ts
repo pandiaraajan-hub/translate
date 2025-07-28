@@ -35,15 +35,21 @@ export class ExternalTTS {
         
         audio.oncanplaythrough = () => {
           if (!resolved) {
-            audio.play().then(() => {
-              console.log('🎵 Server TTS started playing');
-              resolve(true);
-            }).catch((error) => {
-              console.error('🎵 Server TTS play failed:', error);
-              if (!resolved) {
-                resolved = true;
-                resolve(false);
-              }
+            // Samsung-specific audio unlock sequence
+            this.unlockSamsungAudioContext().then(() => {
+              audio.play().then(() => {
+                console.log('🎵 Server TTS started playing');
+                resolve(true);
+              }).catch((error) => {
+                console.error('🎵 Server TTS play failed:', error);
+                // Try alternative play method for Samsung
+                this.forceSamsungAudioPlay(audio).then(success => {
+                  if (!resolved) {
+                    resolved = true;
+                    resolve(success);
+                  }
+                });
+              });
             });
           }
         };
@@ -60,9 +66,25 @@ export class ExternalTTS {
           console.log('🎵 Server TTS completed');
         };
         
-        // Load the audio from our server
+        // Samsung-specific audio loading
+        audio.volume = 1.0;
+        audio.preload = 'auto';
         audio.src = audioUrl;
-        audio.load();
+        
+        // Force load with Samsung-specific settings
+        try {
+          audio.load();
+          // Immediate play attempt for Samsung
+          setTimeout(() => {
+            if (!resolved && audio.readyState >= 2) {
+              audio.play().catch(() => {
+                console.log('🎵 Immediate play failed, waiting for canplaythrough');
+              });
+            }
+          }, 100);
+        } catch (error) {
+          console.error('🎵 Audio load failed:', error);
+        }
         
         // Timeout after 8 seconds
         setTimeout(() => {
@@ -284,6 +306,79 @@ export class ExternalTTS {
       console.log('🔓 Audio contexts unlocked');
     } catch (error) {
       console.log('🔓 Audio unlock failed:', error);
+    }
+  }
+
+  // Samsung-specific audio context unlocking
+  private static async unlockSamsungAudioContext(): Promise<void> {
+    try {
+      // Method 1: Create and play silent audio
+      const silentAudio = new Audio();
+      silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+      silentAudio.volume = 0.01;
+      try {
+        await silentAudio.play();
+        silentAudio.pause();
+      } catch (e) {
+        // Silent failure
+      }
+
+      // Method 2: Web Audio API unlock
+      try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioContext) {
+          const audioContext = new AudioContext();
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+          }
+          
+          // Create brief silent tone
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          gainNode.gain.setValueAtTime(0.001, audioContext.currentTime);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.01);
+        }
+      } catch (e) {
+        // Silent failure
+      }
+
+      console.log('🔓 Samsung audio context unlocked');
+    } catch (error) {
+      console.log('🔓 Samsung audio unlock failed:', error);
+    }
+  }
+
+  // Force Samsung audio play with multiple attempts
+  private static async forceSamsungAudioPlay(audio: HTMLAudioElement): Promise<boolean> {
+    try {
+      console.log('🎵 Trying forced Samsung audio play');
+      
+      // Multiple play attempts with different timing
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await new Promise(resolve => setTimeout(resolve, attempt * 100));
+          await audio.play();
+          console.log(`🎵 Samsung forced play attempt ${attempt} successful`);
+          return true;
+        } catch (error) {
+          console.log(`🎵 Samsung forced play attempt ${attempt} failed:`, error);
+          
+          // Try resetting audio for next attempt
+          if (attempt < 3) {
+            audio.currentTime = 0;
+            audio.load();
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('🎵 Samsung forced play failed:', error);
+      return false;
     }
   }
   

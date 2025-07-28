@@ -170,13 +170,21 @@ export function SimpleVoiceRecorder({
             <button 
               className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded"
               onClick={async () => {
-                // Quick test of server TTS
                 try {
-                  const audio = new Audio('/api/tts-audio?text=Test&lang=en');
-                  await audio.play();
-                  alert('Server TTS test successful!');
+                  console.log('🎵 Testing Samsung server TTS...');
+                  
+                  // Test with enhanced Samsung audio handling
+                  const { ExternalTTS } = await import('@/lib/external-tts');
+                  const success = await ExternalTTS.speakWithExternalService('Test audio', 'en');
+                  
+                  if (success) {
+                    alert('✅ Samsung server TTS working!');
+                  } else {
+                    alert('❌ Samsung server TTS failed - check console logs');
+                  }
                 } catch (error) {
-                  alert('Server TTS test failed: ' + error);
+                  alert('❌ Test error: ' + error);
+                  console.error('🎵 Test error:', error);
                 }
               }}
             >
