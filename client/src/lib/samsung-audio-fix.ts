@@ -4,14 +4,39 @@ export class SamsungAudioFix {
   private static audioContext: AudioContext | null = null;
 
   static isSamsungDevice(): boolean {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isSamsung = userAgent.includes('samsung') || 
-           userAgent.includes('sm-') || 
-           userAgent.includes('galaxy') ||
-           /android.*samsung/i.test(navigator.userAgent);
+    const userAgent = navigator.userAgent;
+    const userAgentLower = userAgent.toLowerCase();
     
-    console.log('📱 Samsung device check:', { userAgent, isSamsung });
-    return isSamsung;
+    // Multiple Samsung detection patterns
+    const samsungPatterns = [
+      /samsung/i,
+      /sm-[a-z]\d+/i,    // SM-G973, SM-N975, etc.
+      /galaxy/i,
+      /gt-[a-z]\d+/i,    // GT-I9300, etc.
+      /sch-[a-z]\d+/i,   // SCH-I535, etc.
+      /sph-[a-z]\d+/i,   // SPH-L710, etc.
+      /sgh-[a-z]\d+/i,   // SGH-M919, etc.
+      /samsung browser/i,
+      /android.*samsung/i
+    ];
+    
+    const isSamsung = samsungPatterns.some(pattern => pattern.test(userAgent));
+    
+    // Additional checks for Samsung-specific features
+    const hasSecBrowser = userAgentLower.includes('secbrowser') || userAgentLower.includes('samsungbrowser');
+    const hasSamsungKeywords = userAgentLower.includes('samsung') || userAgentLower.includes('galaxy');
+    
+    const finalResult = isSamsung || hasSecBrowser || hasSamsungKeywords;
+    
+    console.log('📱 Enhanced Samsung device check:', { 
+      userAgent, 
+      isSamsung, 
+      hasSecBrowser, 
+      hasSamsungKeywords, 
+      finalResult 
+    });
+    
+    return finalResult;
   }
 
   static async initializeSamsungAudio(): Promise<boolean> {

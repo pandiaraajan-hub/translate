@@ -43,6 +43,10 @@ export default function Home() {
   const activateMobileAudio = async () => {
     console.log('📱 Activating mobile speech...');
     
+    // Log detailed device information for debugging
+    const { DeviceDetection } = await import('@/lib/device-detection');
+    DeviceDetection.logDeviceInfo();
+    
     // Check if Samsung device
     const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
     const isSamsung = SamsungAudioFix.isSamsungDevice();

@@ -87,11 +87,29 @@ export function SimpleVoiceRecorder({
           <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
           {typeof window !== 'undefined' && (
             <div className="text-xs">
-              Device: {/samsung/i.test(navigator.userAgent) || /SM-/i.test(navigator.userAgent) || /galaxy/i.test(navigator.userAgent) ? (
-                <span className="text-green-600 font-medium">Samsung - Enhanced Audio Mode</span>
-              ) : (
-                <span className="text-blue-600">Standard Mobile</span>
-              )}
+              Device: {(() => {
+                const userAgent = navigator.userAgent.toLowerCase();
+                const samsungPatterns = [
+                  /samsung/i,
+                  /sm-[a-z]\d+/i,
+                  /galaxy/i,
+                  /gt-[a-z]\d+/i,
+                  /samsung browser/i,
+                  /secbrowser/i,
+                  /samsungbrowser/i
+                ];
+                const isSamsung = samsungPatterns.some(pattern => pattern.test(navigator.userAgent)) ||
+                                userAgent.includes('samsung') || 
+                                userAgent.includes('galaxy') ||
+                                userAgent.includes('secbrowser') ||
+                                userAgent.includes('samsungbrowser');
+                
+                return isSamsung ? (
+                  <span className="text-green-600 font-medium">Samsung - Enhanced Audio Mode</span>
+                ) : (
+                  <span className="text-blue-600">Standard Mobile ({userAgent.slice(0, 50)}...)</span>
+                );
+              })()}
             </div>
           )}
         </div>
