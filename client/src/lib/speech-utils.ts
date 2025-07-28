@@ -184,7 +184,9 @@ export class SpeechUtils {
   async speak(options: SpeechSynthesisOptions): Promise<void> {
     console.log('🔊 Speech synthesis requested:', { text: options.text, lang: options.lang });
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isSamsung = /samsung/i.test(navigator.userAgent) || /SM-/i.test(navigator.userAgent);
     console.log('📱 Device type:', isMobile ? 'Mobile' : 'Desktop');
+    console.log('📱 Samsung device:', isSamsung);
     console.log('📱 User agent:', navigator.userAgent);
     
     if (!this.isSynthesisSupported()) {
@@ -193,27 +195,53 @@ export class SpeechUtils {
       throw new Error(error);
     }
 
-    // Mobile-specific initialization
+    // Mobile-specific initialization with Samsung fixes
     if (isMobile) {
       console.log('📱 Mobile device detected - applying mobile audio policies');
       
-      // Force complete cancellation on mobile
-      this.synthesis.cancel();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Check if we're in a user gesture context
-      console.log('📱 Checking user gesture context...');
-      
-      // Trigger voice loading with a silent utterance
-      console.log('📱 Forcing voice initialization...');
-      try {
-        const initUtterance = new SpeechSynthesisUtterance('');
-        initUtterance.volume = 0; // Silent
-        this.synthesis.speak(initUtterance);
+      // Samsung-specific fixes
+      if (isSamsung) {
+        console.log('📱 Samsung device detected - applying Samsung-specific fixes');
+        
+        // Samsung requires longer delays and multiple initialization attempts
         this.synthesis.cancel();
-        await new Promise(resolve => setTimeout(resolve, 300));
-      } catch (error) {
-        console.warn('📱 Voice initialization failed:', error);
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Multiple voice initialization attempts for Samsung
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            console.log(`📱 Samsung voice init attempt ${attempt + 1}`);
+            const initUtterance = new SpeechSynthesisUtterance(' ');
+            initUtterance.volume = 0.01; // Very quiet but not silent
+            initUtterance.rate = 1.0;
+            initUtterance.pitch = 1.0;
+            this.synthesis.speak(initUtterance);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            this.synthesis.cancel();
+            await new Promise(resolve => setTimeout(resolve, 300));
+          } catch (error) {
+            console.warn(`📱 Samsung init attempt ${attempt + 1} failed:`, error);
+          }
+        }
+      } else {
+        // Standard mobile initialization
+        this.synthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if we're in a user gesture context
+        console.log('📱 Checking user gesture context...');
+        
+        // Trigger voice loading with a silent utterance
+        console.log('📱 Forcing voice initialization...');
+        try {
+          const initUtterance = new SpeechSynthesisUtterance('');
+          initUtterance.volume = 0; // Silent
+          this.synthesis.speak(initUtterance);
+          this.synthesis.cancel();
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } catch (error) {
+          console.warn('📱 Voice initialization failed:', error);
+        }
       }
     } else {
       // Desktop behavior - standard cancellation
@@ -281,41 +309,93 @@ export class SpeechUtils {
         isMobile
       });
 
-      // Mobile-specific event handlers with enhanced logging
+      // Mobile-specific event handlers with Samsung enhancements
       if (isMobile) {
-        utterance.onstart = () => {
-          console.log('📱 Mobile speech synthesis started successfully');
-        };
-        
-        utterance.onend = () => {
-          console.log('📱 Mobile speech synthesis completed successfully');
-          resolve();
-        };
-        
-        utterance.onerror = (event) => {
-          console.error('📱 Mobile speech synthesis error:', event);
-          console.error('📱 Error details:', {
-            error: event.error,
-            type: event.type,
-            target: event.target
-          });
+        if (isSamsung) {
+          // Samsung-specific event handlers
+          utterance.onstart = () => {
+            console.log('📱 Samsung speech synthesis started successfully');
+          };
           
-          // Try to recover from common mobile errors
-          if (event.error === 'not-allowed' || event.error === 'audio-busy') {
-            console.log('📱 Attempting mobile audio recovery...');
-            setTimeout(() => {
-              try {
-                this.synthesis.speak(utterance);
-                console.log('📱 Mobile recovery attempt made');
-              } catch (recoveryError) {
-                console.error('📱 Mobile recovery failed:', recoveryError);
-                reject(new Error(`Mobile speech failed: ${event.error}`));
-              }
-            }, 500);
-          } else {
-            reject(new Error(`Mobile speech failed: ${event.error || 'Unknown mobile error'}`));
-          }
-        };
+          utterance.onend = () => {
+            console.log('📱 Samsung speech synthesis completed successfully');
+            resolve();
+          };
+          
+          utterance.onerror = (event) => {
+            console.error('📱 Samsung speech synthesis error:', event);
+            console.error('📱 Samsung error details:', {
+              error: event.error,
+              type: event.type,
+              target: event.target
+            });
+            
+            // Samsung-specific error recovery
+            if (event.error === 'not-allowed' || event.error === 'audio-busy' || event.error === 'network') {
+              console.log('📱 Attempting Samsung-specific audio recovery...');
+              setTimeout(() => {
+                try {
+                  // Create new utterance for Samsung retry
+                  const retryUtterance = new SpeechSynthesisUtterance(options.text);
+                  retryUtterance.lang = options.lang;
+                  retryUtterance.rate = Math.min(options.rate || 0.7, 0.8); // Slower for Samsung
+                  retryUtterance.pitch = options.pitch || 1.0;
+                  retryUtterance.volume = 1.0;
+                  
+                  // Find Samsung-compatible voice
+                  const voice = this.getBestVoiceForLanguage(options.lang);
+                  if (voice) retryUtterance.voice = voice;
+                  
+                  retryUtterance.onend = () => resolve();
+                  retryUtterance.onerror = () => reject(new Error(`Samsung speech failed: ${event.error}`));
+                  
+                  this.synthesis.speak(retryUtterance);
+                  console.log('📱 Samsung recovery attempt made');
+                } catch (recoveryError) {
+                  console.error('📱 Samsung recovery failed:', recoveryError);
+                  reject(new Error(`Samsung speech failed: ${event.error}`));
+                }
+              }, 800); // Longer delay for Samsung
+            } else {
+              reject(new Error(`Samsung speech failed: ${event.error || 'Unknown Samsung error'}`));
+            }
+          };
+        } else {
+          // Standard mobile event handlers
+          utterance.onstart = () => {
+            console.log('📱 Mobile speech synthesis started successfully');
+          };
+          
+          utterance.onend = () => {
+            console.log('📱 Mobile speech synthesis completed successfully');
+            resolve();
+          };
+          
+          utterance.onerror = (event) => {
+            console.error('📱 Mobile speech synthesis error:', event);
+            console.error('📱 Error details:', {
+              error: event.error,
+              type: event.type,
+              target: event.target
+            });
+            
+            // Try to recover from common mobile errors
+            if (event.error === 'not-allowed' || event.error === 'audio-busy') {
+              console.log('📱 Attempting mobile audio recovery...');
+              setTimeout(() => {
+                try {
+                  this.synthesis.speak(utterance);
+                  console.log('📱 Mobile recovery attempt made');
+                } catch (recoveryError) {
+                  console.error('📱 Mobile recovery failed:', recoveryError);
+                  reject(new Error(`Mobile speech failed: ${event.error}`));
+                }
+              }, 500);
+            } else {
+              reject(new Error(`Mobile speech failed: ${event.error || 'Unknown mobile error'}`));
+            }
+          };
+        }
       } else {
         // Desktop event handlers
         utterance.onstart = () => {
@@ -346,16 +426,34 @@ export class SpeechUtils {
         this.synthesis.resume();
       }
 
-      // Start speaking with mobile-specific handling
+      // Start speaking with Samsung-specific handling
       console.log('🚀 Starting speech synthesis...');
       try {
         if (isMobile) {
-          console.log('📱 Queuing mobile speech with enhanced handling');
-          // Add small delay for mobile audio context
-          setTimeout(() => {
-            this.synthesis.speak(utterance);
-            console.log('📱 Mobile speech queued after delay');
-          }, 100);
+          if (isSamsung) {
+            console.log('📱 Queuing Samsung speech with enhanced handling');
+            // Samsung needs longer delay and specific handling
+            setTimeout(() => {
+              try {
+                // Ensure synthesis is ready for Samsung
+                if (this.synthesis.paused) {
+                  this.synthesis.resume();
+                }
+                this.synthesis.speak(utterance);
+                console.log('📱 Samsung speech queued after extended delay');
+              } catch (samsungError) {
+                console.error('📱 Samsung speech queue error:', samsungError);
+                reject(new Error(`Samsung speech queue failed: ${samsungError}`));
+              }
+            }, 200); // Extended delay for Samsung
+          } else {
+            console.log('📱 Queuing mobile speech with enhanced handling');
+            // Add small delay for mobile audio context
+            setTimeout(() => {
+              this.synthesis.speak(utterance);
+              console.log('📱 Mobile speech queued after delay');
+            }, 100);
+          }
         } else {
           this.synthesis.speak(utterance);
           console.log('📢 Desktop speech queued successfully');
