@@ -298,37 +298,215 @@ export class SamsungAudioFix {
           }
         };
 
-        // Start speaking with delay for mobile compatibility
-        setTimeout(() => {
-          try {
-            console.log('📱 About to start speech synthesis...');
-            console.log('📱 Speech synthesis state:', {
-              speaking: speechSynth.speaking,
-              pending: speechSynth.pending,
-              paused: speechSynth.paused
-            });
-            
-            // Additional mobile audio unlock attempt
-            if (speechSynth.paused) {
-              console.log('📱 Resuming paused speech synthesis');
-              speechSynth.resume();
+        // For Samsung devices, try alternative audio method first
+        if (this.isSamsungDevice() || localStorage.getItem('forceSamsungMode') === 'true') {
+          console.log('📱 Trying alternative Samsung audio method...');
+          this.trySamsungAlternativeAudio(text, lang).then(success => {
+            if (success) {
+              console.log('📱 ✅ Samsung alternative audio worked!');
+              alert('Alternative Samsung audio method successful!');
+              resolve(true);
+            } else {
+              console.log('📱 Samsung alternative failed, trying standard method...');
+              this.standardSpeechSynthesis(utterance, speechSynth, resolve);
             }
-            
-            speechSynth.speak(utterance);
-            console.log('📱 ✅ Speech queued successfully');
-            alert('Speech queued - should start soon'); // Debug alert
-          } catch (error) {
-            console.error('📱 ❌ Failed to queue speech:', error);
-            alert(`Failed to queue speech: ${error}`); // Debug alert
-            resolve(false);
-          }
-        }, 200);
+          });
+        } else {
+          // Standard speech synthesis for non-Samsung devices
+          this.standardSpeechSynthesis(utterance, speechSynth, resolve);
+        }
       });
 
     } catch (error) {
       console.error('📱 Samsung audio fix failed:', error);
       return false;
     }
+  }
+
+  // Standard speech synthesis method
+  private static standardSpeechSynthesis(
+    utterance: SpeechSynthesisUtterance, 
+    speechSynth: SpeechSynthesis, 
+    resolve: (value: boolean) => void
+  ) {
+    setTimeout(() => {
+      try {
+        console.log('📱 About to start speech synthesis...');
+        
+        // Additional mobile audio unlock attempt
+        if (speechSynth.paused) {
+          console.log('📱 Resuming paused speech synthesis');
+          speechSynth.resume();
+        }
+        
+        speechSynth.speak(utterance);
+        console.log('📱 ✅ Speech queued successfully');
+      } catch (error) {
+        console.error('📱 ❌ Failed to queue speech:', error);
+        resolve(false);
+      }
+    }, 200);
+  }
+
+  // Alternative audio method specifically for Samsung devices
+  private static async trySamsungAlternativeAudio(text: string, lang: string): Promise<boolean> {
+    try {
+      console.log('📱 Starting Samsung alternative audio method...');
+      
+      // Method 1: Try creating a direct audio element with TTS URL
+      const success1 = await this.tryDirectAudioElement(text, lang);
+      if (success1) return true;
+      
+      // Method 2: Try Web Audio API with oscillator (audio test)
+      const success2 = await this.tryWebAudioTest();
+      if (success2) {
+        // If Web Audio works, try a different speech approach
+        return this.tryForcedSpeechSynthesis(text, lang);
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('📱 Samsung alternative audio failed:', error);
+      return false;
+    }
+  }
+
+  // Try playing audio with direct audio element
+  private static async tryDirectAudioElement(text: string, lang: string): Promise<boolean> {
+    try {
+      // Create a simple audio element to unlock audio context
+      const audio = new Audio();
+      
+      // Create a minimal audio data URL
+      const silentAudio = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+      audio.src = silentAudio;
+      audio.volume = 0.1;
+      
+      await audio.play();
+      console.log('📱 Audio element test successful');
+      
+      // Now try using speech synthesis with unlocked audio
+      return this.tryForcedSpeechSynthesis(text, lang);
+      
+    } catch (error) {
+      console.error('📱 Direct audio element failed:', error);
+      return false;
+    }
+  }
+
+  // Try Web Audio API test
+  private static async tryWebAudioTest(): Promise<boolean> {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return false;
+
+      const audioContext = new AudioContext();
+      
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+      
+      // Create a brief tone
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+      
+      console.log('📱 Web Audio test beep played');
+      return true;
+      
+    } catch (error) {
+      console.error('📱 Web Audio test failed:', error);
+      return false;
+    }
+  }
+
+  // Force speech synthesis with different approach
+  private static async tryForcedSpeechSynthesis(text: string, lang: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      try {
+        const speechSynth = window.speechSynthesis;
+        
+        // Cancel any existing speech
+        speechSynth.cancel();
+        
+        // Create utterance with different settings
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Get available voices
+        const voices = speechSynth.getVoices();
+        const voice = this.findBestSamsungVoice(voices, lang);
+        if (voice) {
+          utterance.voice = voice;
+        }
+        
+        let completed = false;
+        
+        utterance.onstart = () => {
+          console.log('📱 Forced speech started');
+        };
+        
+        utterance.onend = () => {
+          if (!completed) {
+            completed = true;
+            console.log('📱 Forced speech completed');
+            resolve(true);
+          }
+        };
+        
+        utterance.onerror = (event) => {
+          if (!completed) {
+            completed = true;
+            console.log('📱 Forced speech error:', event.error);
+            resolve(false);
+          }
+        };
+        
+        // Multiple attempts to start speech
+        let attempts = 0;
+        const trySpeak = () => {
+          if (attempts >= 3) {
+            resolve(false);
+            return;
+          }
+          
+          attempts++;
+          try {
+            speechSynth.speak(utterance);
+            console.log(`📱 Forced speech attempt ${attempts}`);
+          } catch (error) {
+            console.error(`📱 Forced speech attempt ${attempts} failed:`, error);
+            setTimeout(trySpeak, 100);
+          }
+        };
+        
+        // Start first attempt
+        setTimeout(trySpeak, 100);
+        
+        // Timeout
+        setTimeout(() => {
+          if (!completed) {
+            completed = true;
+            resolve(false);
+          }
+        }, 5000);
+        
+      } catch (error) {
+        console.error('📱 Forced speech synthesis failed:', error);
+        resolve(false);
+      }
+    });
   }
 
   private static findBestSamsungVoice(voices: SpeechSynthesisVoice[], lang: string): SpeechSynthesisVoice | null {
