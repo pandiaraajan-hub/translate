@@ -83,8 +83,11 @@ export function SimpleVoiceRecorder({
   return (
     <Card>
       <CardContent className="p-6 text-center space-y-4">
-        <div className="text-gray-500">
-          Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}
+        <div className="text-gray-500 space-y-1">
+          <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
+          {typeof window !== 'undefined' && (/samsung/i.test(navigator.userAgent) || /SM-/i.test(navigator.userAgent)) && (
+            <div className="text-xs text-green-600 font-medium">Samsung Device - Enhanced Audio Mode Active</div>
+          )}
         </div>
 
         <div className="flex items-center justify-center gap-4">
@@ -116,6 +119,7 @@ export function SimpleVoiceRecorder({
                   
                   if (SamsungAudioFix.isSamsungDevice()) {
                     console.log('📱 Using Samsung audio fix');
+                    alert('Samsung device detected - using enhanced audio mode');
                     const success = await SamsungAudioFix.speakWithSamsungFix(
                       translatedText, 
                       targetLangCode, 
@@ -125,6 +129,7 @@ export function SimpleVoiceRecorder({
                     
                     if (!success) {
                       console.log('📱 Samsung fix failed, trying regular speech');
+                      alert('Samsung enhanced mode failed, trying standard audio');
                       // Fallback to regular speech
                       const { speechUtils } = await import('@/lib/speech-utils');
                       await speechUtils.speak({
@@ -133,6 +138,8 @@ export function SimpleVoiceRecorder({
                         rate: speechRate,
                         pitch: speechPitch
                       });
+                    } else {
+                      alert('Samsung audio successful!');
                     }
                   } else {
                     // Regular device - use normal speech utils
