@@ -169,12 +169,26 @@ export default function Home() {
     }
   }, [translationResult, autoPlayTranslation]);
 
-  // Function to play translated text with enhanced mobile support
+  // Function to play translated text with server-side TTS for Samsung
   const playTranslatedText = async (text: string) => {
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
       
-      // Always try the enhanced Samsung audio fix for all mobile devices
+      // Use server-side TTS for Samsung devices (enhanced mode)
+      if (localStorage.getItem('forceSamsungMode') === 'true') {
+        console.log('🔊 Using server-side TTS for Samsung device');
+        const { ExternalTTS } = await import('@/lib/external-tts');
+        
+        const success = await ExternalTTS.speakWithExternalService(text, targetLangCode);
+        if (success) {
+          console.log('🔊 Server-side TTS completed successfully');
+          return;
+        } else {
+          console.log('🔊 Server-side TTS failed, trying fallback');
+        }
+      }
+      
+      // Fallback to enhanced Samsung audio fix
       const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
       
       console.log('🔊 Auto-playing with enhanced mobile audio fix');

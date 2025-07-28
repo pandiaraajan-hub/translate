@@ -216,9 +216,24 @@ export function SimpleVoiceRecorder({
                 console.log('🧪 Manual audio play requested:', translatedText);
                 
                 try {
-                  // Always try Samsung fix first (it will determine device type internally)
-                  const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
+                  
+                  // Use server-side TTS for Samsung devices (enhanced mode)
+                  if (localStorage.getItem('forceSamsungMode') === 'true') {
+                    console.log('📱 Using server-side TTS for Samsung device');
+                    const { ExternalTTS } = await import('@/lib/external-tts');
+                    
+                    const success = await ExternalTTS.speakWithExternalService(translatedText, targetLangCode);
+                    if (success) {
+                      console.log('📱 Server-side TTS completed successfully');
+                      return;
+                    } else {
+                      console.log('📱 Server-side TTS failed, trying Samsung fallback');
+                    }
+                  }
+                  
+                  // Fallback to Samsung audio fix
+                  const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                   
                   console.log('📱 Attempting enhanced mobile audio...');
                   const success = await SamsungAudioFix.speakWithSamsungFix(
