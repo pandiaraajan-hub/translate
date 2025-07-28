@@ -245,12 +245,20 @@ export class SamsungAudioFix {
         utterance.volume = 1.0;
 
         // Find best voice
+        console.log('📱 Available voices:', voices.length);
         if (voices.length > 0) {
           const voice = this.findBestSamsungVoice(voices, lang);
           if (voice) {
             utterance.voice = voice;
-            console.log('📱 Using voice:', voice.name);
+            console.log('📱 Using voice:', voice.name, 'for language:', lang);
+            alert(`Using voice: ${voice.name}`); // Debug alert
+          } else {
+            console.log('📱 No suitable voice found, using default');
+            alert('Using default voice'); // Debug alert
           }
+        } else {
+          console.log('📱 No voices available');
+          alert('No voices available'); // Debug alert
         }
 
         let speechCompleted = false;
@@ -263,20 +271,23 @@ export class SamsungAudioFix {
         }, 15000);
 
         utterance.onstart = () => {
-          console.log('📱 Speech started successfully');
+          console.log('📱 ✅ Speech started successfully');
+          alert('Voice started playing'); // Debug alert
         };
 
         utterance.onend = () => {
           speechCompleted = true;
           clearTimeout(timeout);
-          console.log('📱 Speech completed successfully');
+          console.log('📱 ✅ Speech completed successfully');
+          alert('Voice finished playing'); // Debug alert
           resolve(true);
         };
 
         utterance.onerror = (event) => {
           speechCompleted = true;
           clearTimeout(timeout);
-          console.error('📱 Speech error:', event.error);
+          console.error('📱 ❌ Speech error:', event.error);
+          alert(`Voice error: ${event.error}`); // Debug alert
           
           // For Samsung devices, some errors are normal, still consider it success
           if (event.error === 'interrupted' || event.error === 'canceled') {
@@ -290,14 +301,25 @@ export class SamsungAudioFix {
         // Start speaking with delay for mobile compatibility
         setTimeout(() => {
           try {
+            console.log('📱 About to start speech synthesis...');
+            console.log('📱 Speech synthesis state:', {
+              speaking: speechSynth.speaking,
+              pending: speechSynth.pending,
+              paused: speechSynth.paused
+            });
+            
             // Additional mobile audio unlock attempt
             if (speechSynth.paused) {
+              console.log('📱 Resuming paused speech synthesis');
               speechSynth.resume();
             }
+            
             speechSynth.speak(utterance);
-            console.log('📱 Speech queued successfully');
+            console.log('📱 ✅ Speech queued successfully');
+            alert('Speech queued - should start soon'); // Debug alert
           } catch (error) {
-            console.error('📱 Failed to queue speech:', error);
+            console.error('📱 ❌ Failed to queue speech:', error);
+            alert(`Failed to queue speech: ${error}`); // Debug alert
             resolve(false);
           }
         }, 200);
