@@ -41,40 +41,48 @@ export default function Home() {
     ('ontouchstart' in window);
 
   const activateMobileAudio = async () => {
-    console.log('📱 Activating direct mobile speech...');
+    console.log('📱 Activating mobile speech...');
+    
+    // Check if Samsung device
+    const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
+    const isSamsung = SamsungAudioFix.isSamsungDevice();
     
     toast({
-      title: 'Activating Mobile Audio',
+      title: isSamsung ? 'Activating Samsung Audio' : 'Activating Mobile Audio',
       description: 'Initializing speech system...',
     });
 
     try {
-      const success = await directMobileSpeech.initialize();
+      let success = false;
+      
+      if (isSamsung) {
+        console.log('📱 Samsung device detected - using Samsung audio fix');
+        success = await SamsungAudioFix.initializeSamsungAudio();
+      } else {
+        success = await directMobileSpeech.initialize();
+      }
+      
       setMobileAudioActivated(success);
       
       if (success) {
-        console.log('📱 Direct mobile speech activated');
+        console.log('📱 Mobile speech activated');
         toast({
-          title: 'Mobile Audio Ready!',
+          title: isSamsung ? 'Samsung Audio Ready!' : 'Mobile Audio Ready!',
           description: 'Voice output enabled. Recording translations will now play audio.',
         });
         
-        // Test with confirmation message - multiple attempts
+        // Test with confirmation message
         setTimeout(async () => {
           try {
             console.log('📱 Attempting confirmation speech...');
-            await directMobileSpeech.speak('Audio is working', 'en-US');
+            if (isSamsung) {
+              await SamsungAudioFix.speakWithSamsungFix('Audio is working', 'en-US');
+            } else {
+              await directMobileSpeech.speak('Audio is working', 'en-US');
+            }
             console.log('📱 Confirmation speech successful');
           } catch (testError) {
             console.warn('📱 Confirmation message failed:', testError);
-            // Try backup approach
-            setTimeout(async () => {
-              try {
-                await directMobileSpeech.speak('Ready', 'en-US');
-              } catch (backupError) {
-                console.warn('📱 Backup confirmation failed:', backupError);
-              }
-            }, 1000);
           }
         }, 1200);
         
@@ -86,7 +94,7 @@ export default function Home() {
         });
       }
     } catch (error) {
-      console.error('📱 Direct mobile speech error:', error);
+      console.error('📱 Mobile speech error:', error);
       toast({
         title: 'Audio System Error',
         description: 'Failed to initialize mobile audio. Try refreshing the page.',

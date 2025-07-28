@@ -110,19 +110,43 @@ export function SimpleVoiceRecorder({
                 console.log('🧪 Testing audio with translation:', translatedText);
                 
                 try {
-                  const { reliableAudio } = await import('@/lib/reliable-audio');
-                  reliableAudio.unlockAudio();
-                  
-                  // Use speech utils with custom settings
-                  const { speechUtils } = await import('@/lib/speech-utils');
+                  // Try Samsung-specific fix first
+                  const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
                   
-                  await speechUtils.speak({
-                    text: translatedText,
-                    lang: targetLangCode,
-                    rate: speechRate,
-                    pitch: speechPitch
-                  });
+                  if (SamsungAudioFix.isSamsungDevice()) {
+                    console.log('📱 Using Samsung audio fix');
+                    const success = await SamsungAudioFix.speakWithSamsungFix(
+                      translatedText, 
+                      targetLangCode, 
+                      speechRate, 
+                      speechPitch
+                    );
+                    
+                    if (!success) {
+                      console.log('📱 Samsung fix failed, trying regular speech');
+                      // Fallback to regular speech
+                      const { speechUtils } = await import('@/lib/speech-utils');
+                      await speechUtils.speak({
+                        text: translatedText,
+                        lang: targetLangCode,
+                        rate: speechRate,
+                        pitch: speechPitch
+                      });
+                    }
+                  } else {
+                    // Regular device - use normal speech utils
+                    const { reliableAudio } = await import('@/lib/reliable-audio');
+                    reliableAudio.unlockAudio();
+                    
+                    const { speechUtils } = await import('@/lib/speech-utils');
+                    await speechUtils.speak({
+                      text: translatedText,
+                      lang: targetLangCode,
+                      rate: speechRate,
+                      pitch: speechPitch
+                    });
+                  }
                   
                   console.log('🧪 Audio played with custom settings:', { rate: speechRate, pitch: speechPitch });
                 } catch (error) {
