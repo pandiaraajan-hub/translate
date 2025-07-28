@@ -292,35 +292,47 @@ export class SamsungAudioFix {
           }
         };
 
-        // For Samsung devices with enhanced mode, try direct volume and timing fixes
+        // For Samsung devices with enhanced mode, try external TTS services
         if (localStorage.getItem('forceSamsungMode') === 'true') {
-          console.log('📱 Using Samsung enhanced audio mode');
+          console.log('📱 Using Samsung enhanced audio mode with external TTS');
           
-          // Try immediate audio unlock
-          this.unlockSamsungAudio().then(() => {
-            // Use a more aggressive approach for Samsung
-            setTimeout(() => {
-              try {
-                // Force maximum volume
-                utterance.volume = 1.0;
+          // Try external TTS services first
+          import('@/lib/external-tts').then(({ ExternalTTS }) => {
+            ExternalTTS.speakWithExternalService(text, lang).then(success => {
+              if (success) {
+                console.log('📱 ✅ External TTS successful!');
+                resolve(true);
+              } else {
+                console.log('📱 External TTS failed, trying internal methods');
                 
-                // Multiple rapid attempts
-                speechSynth.speak(utterance);
-                
-                // Backup attempt after short delay
-                setTimeout(() => {
-                  if (!speechSynth.speaking) {
-                    console.log('📱 Backup Samsung speech attempt');
-                    speechSynth.speak(utterance);
-                  }
-                }, 300);
-                
-                console.log('📱 Samsung enhanced speech queued');
-              } catch (error) {
-                console.error('📱 Samsung enhanced speech failed:', error);
-                this.standardSpeechSynthesis(utterance, speechSynth, resolve);
+                // Fallback to enhanced internal method
+                this.unlockSamsungAudio().then(() => {
+                  setTimeout(() => {
+                    try {
+                      utterance.volume = 1.0;
+                      speechSynth.speak(utterance);
+                      
+                      setTimeout(() => {
+                        if (!speechSynth.speaking) {
+                          console.log('📱 Backup Samsung speech attempt');
+                          speechSynth.speak(utterance);
+                        }
+                      }, 300);
+                      
+                      console.log('📱 Samsung internal speech queued');
+                    } catch (error) {
+                      console.error('📱 Samsung internal speech failed:', error);
+                      this.standardSpeechSynthesis(utterance, speechSynth, resolve);
+                    }
+                  }, 100);
+                });
               }
-            }, 100);
+            });
+          }).catch(() => {
+            // If external TTS import fails, fallback to internal
+            this.unlockSamsungAudio().then(() => {
+              this.standardSpeechSynthesis(utterance, speechSynth, resolve);
+            });
           });
         } else {
           // Standard speech synthesis

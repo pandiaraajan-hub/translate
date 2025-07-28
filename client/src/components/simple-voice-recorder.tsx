@@ -166,6 +166,7 @@ export function SimpleVoiceRecorder({
         {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' && (
           <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded text-center">
             <div className="text-green-800 text-sm font-medium">✓ Enhanced Mobile Audio Mode Active</div>
+            <div className="text-green-600 text-xs mt-1">Using external TTS services for Samsung compatibility</div>
           </div>
         )}
 
