@@ -148,9 +148,10 @@ export function SimpleVoiceRecorder({
                 try {
                   const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
                   
-                  // Use server-side TTS for Samsung devices (enhanced mode)
-                  if (localStorage.getItem('forceSamsungMode') === 'true') {
-                    console.log('📱 Using server-side TTS for Samsung device');
+                  // Always try server-side TTS first for mobile devices (especially Tamil and Malay)
+                  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  if (isMobile || localStorage.getItem('forceSamsungMode') === 'true') {
+                    console.log('📱 Using server-side TTS for mobile/Samsung device');
                     const { ExternalTTS } = await import('@/lib/external-tts');
                     
                     const success = await ExternalTTS.speakWithExternalService(translatedText, targetLangCode);
