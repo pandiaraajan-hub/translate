@@ -135,7 +135,7 @@ export function SimpleVoiceRecorder({
                     }
                   }}
                 >
-                  {localStorage.getItem('forceSamsungMode') === 'true' ? 'Disable Samsung' : 'Enable Samsung'}
+                  {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' ? 'Disable Samsung' : 'Enable Samsung'}
                 </button>
               </div>
             </div>
