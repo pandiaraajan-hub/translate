@@ -28,6 +28,7 @@ export function SimpleVoiceRecorder({
 }: SimpleVoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
+  const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handleTouchStart = async (e: React.TouchEvent) => {
     e.preventDefault();
@@ -36,6 +37,13 @@ export function SimpleVoiceRecorder({
     if (isRecording) return;
     
     setIsRecording(true);
+    
+    // Set a timeout to auto-stop recording after 10 seconds (safety measure)
+    const timeout = setTimeout(() => {
+      setIsRecording(false);
+      console.log('🎤 Recording auto-stopped after timeout');
+    }, 10000);
+    setRecordingTimeout(timeout);
     
     try {
       // Initialize audio system on touch start
@@ -50,11 +58,28 @@ export function SimpleVoiceRecorder({
         async (result) => {
           setLastResult(`Heard: "${result.transcript}"`);
           
+          // Auto-stop recording when we get a result
+          setIsRecording(false);
+          
+          // Clear the timeout since we got a result
+          if (recordingTimeout) {
+            clearTimeout(recordingTimeout);
+            setRecordingTimeout(null);
+          }
+          
           // Call the parent's callback - this will trigger translation in the parent component
           onRecognitionResult(result.transcript, result.confidence || 0.9);
         },
         (error) => {
           setLastResult(`Error: ${error}`);
+          setIsRecording(false); // Also stop recording on error
+          
+          // Clear the timeout on error
+          if (recordingTimeout) {
+            clearTimeout(recordingTimeout);
+            setRecordingTimeout(null);
+          }
+          
           onError(error);
         }
       );
@@ -71,6 +96,12 @@ export function SimpleVoiceRecorder({
     if (!isRecording) return;
     
     setIsRecording(false);
+    
+    // Clear the timeout when manually stopping
+    if (recordingTimeout) {
+      clearTimeout(recordingTimeout);
+      setRecordingTimeout(null);
+    }
     
     try {
       const { speechUtils } = await import('@/lib/speech-utils');
