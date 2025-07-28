@@ -35,17 +35,14 @@ export class ExternalTTS {
         
         audio.oncanplaythrough = () => {
           if (!resolved) {
-            // Small delay for better audio quality on mobile
-            setTimeout(() => {
+            // Samsung-specific audio unlock sequence
+            this.unlockSamsungAudioContext().then(() => {
               audio.play().then(() => {
                 console.log('🎵 Server TTS started playing');
-                if (!resolved) {
-                  resolved = true;
-                  resolve(true);
-                }
+                resolve(true);
               }).catch((error) => {
                 console.error('🎵 Server TTS play failed:', error);
-                // Fallback for Samsung
+                // Try alternative play method for Samsung
                 this.forceSamsungAudioPlay(audio).then(success => {
                   if (!resolved) {
                     resolved = true;
@@ -53,7 +50,7 @@ export class ExternalTTS {
                   }
                 });
               });
-            }, 200);
+            });
           }
         };
         
@@ -69,34 +66,33 @@ export class ExternalTTS {
           console.log('🎵 Server TTS completed');
         };
         
-        // Standard audio loading for better quality
+        // Samsung-specific audio loading
         audio.volume = 1.0;
         audio.preload = 'auto';
-        audio.crossOrigin = 'anonymous';
         audio.src = audioUrl;
         
-        // Immediate load trigger
+        // Force load with Samsung-specific settings
         try {
           audio.load();
-          // Immediate play attempt for Samsung - faster response
+          // Immediate play attempt for Samsung
           setTimeout(() => {
-            if (!resolved && audio.readyState >= 1) { // Play as soon as metadata is loaded
+            if (!resolved && audio.readyState >= 2) {
               audio.play().catch(() => {
                 console.log('🎵 Immediate play failed, waiting for canplaythrough');
               });
             }
-          }, 50); // Reduced from 100ms to 50ms
+          }, 100);
         } catch (error) {
           console.error('🎵 Audio load failed:', error);
         }
         
-        // Faster timeout for quicker fallback
+        // Timeout after 8 seconds
         setTimeout(() => {
           if (!resolved) {
             resolved = true;
             resolve(false);
           }
-        }, 3000); // Reduced from 8000ms to 3000ms
+        }, 8000);
       });
       
     } catch (error) {

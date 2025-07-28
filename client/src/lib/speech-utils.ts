@@ -203,9 +203,9 @@ export class SpeechUtils {
       if (isSamsung) {
         console.log('📱 Samsung device detected - applying Samsung-specific fixes');
         
-        // Samsung optimized initialization for faster response
+        // Samsung requires longer delays and multiple initialization attempts
         this.synthesis.cancel();
-        await new Promise(resolve => setTimeout(resolve, 200)); // Reduced from 800ms
+        await new Promise(resolve => setTimeout(resolve, 800));
         
         // Multiple voice initialization attempts for Samsung
         for (let attempt = 0; attempt < 3; attempt++) {
@@ -216,17 +216,17 @@ export class SpeechUtils {
             initUtterance.rate = 1.0;
             initUtterance.pitch = 1.0;
             this.synthesis.speak(initUtterance);
-            await new Promise(resolve => setTimeout(resolve, 50)); // Reduced delay
+            await new Promise(resolve => setTimeout(resolve, 200));
             this.synthesis.cancel();
-            await new Promise(resolve => setTimeout(resolve, 100)); // Reduced delay
+            await new Promise(resolve => setTimeout(resolve, 300));
           } catch (error) {
             console.warn(`📱 Samsung init attempt ${attempt + 1} failed:`, error);
           }
         }
       } else {
-        // Standard mobile initialization - optimized
+        // Standard mobile initialization
         this.synthesis.cancel();
-        await new Promise(resolve => setTimeout(resolve, 150)); // Reduced from 500ms
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Check if we're in a user gesture context
         console.log('📱 Checking user gesture context...');
@@ -238,7 +238,7 @@ export class SpeechUtils {
           initUtterance.volume = 0; // Silent
           this.synthesis.speak(initUtterance);
           this.synthesis.cancel();
-          await new Promise(resolve => setTimeout(resolve, 100)); // Reduced delay
+          await new Promise(resolve => setTimeout(resolve, 300));
         } catch (error) {
           console.warn('📱 Voice initialization failed:', error);
         }
