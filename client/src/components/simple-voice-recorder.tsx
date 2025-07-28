@@ -85,113 +85,12 @@ export function SimpleVoiceRecorder({
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
           <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
-          {typeof window !== 'undefined' && (
-            <div className="text-xs space-y-1">
-              <div>Device: {(() => {
-                const userAgent = navigator.userAgent;
-                const userAgentLower = userAgent.toLowerCase();
-                
-                // Comprehensive Samsung detection
-                const samsungKeywords = ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser'];
-                const isSamsung = samsungKeywords.some(keyword => userAgentLower.includes(keyword)) ||
-                                /sm-[a-z0-9]+/i.test(userAgent) ||
-                                /galaxy/i.test(userAgent) ||
-                                /samsung/i.test(userAgent);
-                
-                return isSamsung ? (
-                  <span className="text-green-600 font-medium">Samsung - Enhanced Audio Mode</span>
-                ) : (
-                  <span className="text-blue-600">Standard Mobile</span>
-                );
-              })()}</div>
-              <div className="text-xs text-gray-400 break-all">
-                UA: {navigator.userAgent.slice(0, 80)}...
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  className="text-xs bg-orange-500 text-white px-2 py-1 rounded"
-                  onClick={() => {
-                    const userAgent = navigator.userAgent;
-                    alert(`User Agent: ${userAgent}\n\nSamsung Keywords Found:\n${
-                      ['samsung', 'galaxy', 'sm-', 'gt-', 'secbrowser', 'samsungbrowser']
-                        .filter(keyword => userAgent.toLowerCase().includes(keyword))
-                        .join(', ') || 'None'
-                    }`);
-                  }}
-                >
-                  Debug Device
-                </button>
-                <button 
-                  className="text-xs bg-green-600 text-white px-2 py-1 rounded"
-                  onClick={async () => {
-                    const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
-                    const current = localStorage.getItem('forceSamsungMode') === 'true';
-                    if (current) {
-                      SamsungAudioFix.disableSamsungMode();
-                      alert('Samsung mode disabled - refresh page');
-                    } else {
-                      SamsungAudioFix.enableSamsungMode();
-                      alert('Samsung mode enabled - refresh page');
-                    }
-                  }}
-                >
-                  {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' ? 'Disable Samsung' : 'Enable Samsung'}
-                </button>
-              </div>
-            </div>
-          )}
+
         </div>
 
-        {/* Samsung Activation Button - Always show on mobile */}
-        {typeof window !== 'undefined' && 
-         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && 
-         localStorage.getItem('forceSamsungMode') !== 'true' && (
-          <div className="mb-4 p-3 bg-orange-100 border border-orange-300 rounded text-center">
-            <div className="text-orange-800 text-sm mb-2">Mobile Audio Enhancement Available</div>
-            <button 
-              className="bg-orange-600 text-white px-4 py-2 rounded font-medium"
-              onClick={async () => {
-                const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
-                SamsungAudioFix.enableSamsungMode();
-                alert('Enhanced audio mode activated! Page will refresh.');
-                setTimeout(() => window.location.reload(), 500);
-              }}
-            >
-              Fix Mobile Audio Issues
-            </button>
-          </div>
-        )}
 
-        {/* Show enhanced mode status */}
-        {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' && (
-          <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded text-center">
-            <div className="text-green-800 text-sm font-medium">✓ Enhanced Mobile Audio Mode Active</div>
-            <div className="text-green-600 text-xs mt-1">Using server-side TTS for Samsung compatibility</div>
-            <button 
-              className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded"
-              onClick={async () => {
-                try {
-                  console.log('🎵 Testing Samsung server TTS...');
-                  
-                  // Test with enhanced Samsung audio handling
-                  const { ExternalTTS } = await import('@/lib/external-tts');
-                  const success = await ExternalTTS.speakWithExternalService('Test audio', 'en');
-                  
-                  if (success) {
-                    alert('✅ Samsung server TTS working!');
-                  } else {
-                    alert('❌ Samsung server TTS failed - check console logs');
-                  }
-                } catch (error) {
-                  alert('❌ Test error: ' + error);
-                  console.error('🎵 Test error:', error);
-                }
-              }}
-            >
-              Test Audio
-            </button>
-          </div>
-        )}
+
+
 
         <div className="flex items-center justify-center gap-4">
           <button
