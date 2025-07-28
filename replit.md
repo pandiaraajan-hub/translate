@@ -4,7 +4,7 @@
 
 This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic languages using the Google Translate API. It features press-and-hold recording (walkie-talkie style) with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
 
-**Status: FULLY FUNCTIONAL ON SAMSUNG** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. User confirmed "thank you its working now".
+**Status: FULLY FUNCTIONAL ON MOBILE** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. Compatible with iPhone, Samsung, and all mobile browsers through server-side TTS streaming.
 
 ## User Preferences
 
@@ -48,6 +48,7 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced Mode Activation**: Orange button system for mobile audio enhancement with server-side TTS priority ✅
 - **User Confirmation**: Samsung device voice output confirmed working by user
 - **Language Expansion**: Added Spanish and Arabic support (8 total languages) - tested and confirmed working
+- **Mobile Compatibility**: Enhanced server-side TTS to work on iPhone, Samsung, and all mobile browsers
 
 ### Frontend Components
 - **SimpleVoiceRecorder**: Streamlined speech recognition component with mobile-optimized touch events
