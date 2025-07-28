@@ -88,6 +88,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Server-side TTS for Samsung compatibility
+  app.get("/api/tts-audio", async (req, res) => {
+    try {
+      const { text, lang } = req.query;
+      
+      if (!text || !lang) {
+        return res.status(400).json({ error: "Missing text or language" });
+      }
+
+      // Generate Google TTS URL
+      const encodedText = encodeURIComponent((text as string).substring(0, 200));
+      const langCode = mapLanguageToGoogleTTS(lang as string);
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodedText}&tl=${langCode}&ttsspeed=0.8`;
+      
+      console.log('🎵 Serving TTS audio for Samsung:', { text, lang, ttsUrl });
+      
+      // Fetch the audio from Google and stream it
+      const response = await fetch(ttsUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Referer': 'https://translate.google.com/'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`TTS API returned ${response.status}`);
+      }
+
+      // Set appropriate headers for audio streaming
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Accept-Ranges', 'bytes');
+      
+      // Stream the audio directly to the client
+      if (response.body) {
+        const reader = response.body.getReader();
+        const pump = async () => {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              res.write(value);
+            }
+            res.end();
+          } catch (error) {
+            console.error('TTS streaming error:', error);
+            res.end();
+          }
+        };
+        pump();
+      } else {
+        res.status(500).json({ error: 'No audio data received' });
+      }
+    } catch (error) {
+      console.error("TTS proxy error:", error);
+      res.status(500).json({ error: "TTS generation failed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Helper function to map language codes to Google TTS
+function mapLanguageToGoogleTTS(lang: string): string {
+  const mapping: { [key: string]: string } = {
+    'ta': 'ta',
+    'ta-IN': 'ta',
+    'en': 'en',
+    'en-US': 'en',
+    'en-GB': 'en',
+    'zh': 'zh',
+    'zh-CN': 'zh-cn',
+    'hi': 'hi',
+    'hi-IN': 'hi',
+    'ms': 'ms',
+    'ms-MY': 'ms',
+    'bn': 'bn',
+    'bn-IN': 'bn'
+  };
+  
+  return mapping[lang] || 'en';
 }

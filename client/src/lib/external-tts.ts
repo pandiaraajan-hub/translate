@@ -5,19 +5,78 @@ export class ExternalTTS {
   static async speakWithExternalService(text: string, lang: string): Promise<boolean> {
     console.log('🌐 Trying external TTS services for Samsung...');
     
-    // Method 1: ResponsiveVoice API (free tier)
-    const responsiveVoiceSuccess = await this.tryResponsiveVoice(text, lang);
-    if (responsiveVoiceSuccess) return true;
+    // Method 1: Server-side TTS proxy (most reliable for Samsung)
+    const serverTTSSuccess = await this.tryServerTTS(text, lang);
+    if (serverTTSSuccess) return true;
     
-    // Method 2: Web Speech API with forced browser audio
-    const forcedWebSpeechSuccess = await this.tryForcedWebSpeech(text, lang);
-    if (forcedWebSpeechSuccess) return true;
-    
-    // Method 3: Google Translate TTS URL
+    // Method 2: Direct Google TTS
     const googleTTSSuccess = await this.tryGoogleTTS(text, lang);
     if (googleTTSSuccess) return true;
     
+    // Method 3: Web Speech API with forced browser audio
+    const forcedWebSpeechSuccess = await this.tryForcedWebSpeech(text, lang);
+    if (forcedWebSpeechSuccess) return true;
+    
     return false;
+  }
+
+  // Method 1: Server-side TTS proxy
+  private static async tryServerTTS(text: string, lang: string): Promise<boolean> {
+    try {
+      console.log('🎵 Trying server-side TTS proxy');
+      
+      // Use our server as a proxy to avoid CORS issues
+      const audioUrl = `/api/tts-audio?text=${encodeURIComponent(text)}&lang=${encodeURIComponent(lang)}`;
+      
+      const audio = new Audio();
+      
+      return new Promise<boolean>((resolve) => {
+        let resolved = false;
+        
+        audio.oncanplaythrough = () => {
+          if (!resolved) {
+            audio.play().then(() => {
+              console.log('🎵 Server TTS started playing');
+              resolve(true);
+            }).catch((error) => {
+              console.error('🎵 Server TTS play failed:', error);
+              if (!resolved) {
+                resolved = true;
+                resolve(false);
+              }
+            });
+          }
+        };
+        
+        audio.onerror = (error) => {
+          console.error('🎵 Server TTS audio error:', error);
+          if (!resolved) {
+            resolved = true;
+            resolve(false);
+          }
+        };
+        
+        audio.onended = () => {
+          console.log('🎵 Server TTS completed');
+        };
+        
+        // Load the audio from our server
+        audio.src = audioUrl;
+        audio.load();
+        
+        // Timeout after 8 seconds
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            resolve(false);
+          }
+        }, 8000);
+      });
+      
+    } catch (error) {
+      console.error('🎵 Server TTS error:', error);
+      return false;
+    }
   }
   
   // Method 1: ResponsiveVoice (external service)

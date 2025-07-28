@@ -166,7 +166,22 @@ export function SimpleVoiceRecorder({
         {typeof window !== 'undefined' && localStorage.getItem('forceSamsungMode') === 'true' && (
           <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded text-center">
             <div className="text-green-800 text-sm font-medium">✓ Enhanced Mobile Audio Mode Active</div>
-            <div className="text-green-600 text-xs mt-1">Using external TTS services for Samsung compatibility</div>
+            <div className="text-green-600 text-xs mt-1">Using server-side TTS for Samsung compatibility</div>
+            <button 
+              className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded"
+              onClick={async () => {
+                // Quick test of server TTS
+                try {
+                  const audio = new Audio('/api/tts-audio?text=Test&lang=en');
+                  await audio.play();
+                  alert('Server TTS test successful!');
+                } catch (error) {
+                  alert('Server TTS test failed: ' + error);
+                }
+              }}
+            >
+              Test Audio
+            </button>
           </div>
         )}
 
