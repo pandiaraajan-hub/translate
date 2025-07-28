@@ -100,7 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate Google TTS URL
       const encodedText = encodeURIComponent((text as string).substring(0, 200));
       const langCode = mapLanguageToGoogleTTS(lang as string);
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodedText}&tl=${langCode}&ttsspeed=0.8`;
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodedText}&tl=${langCode}&ttsspeed=1.0`; // Faster speech for quicker response
       
       console.log('🎵 Serving TTS audio for Samsung:', { text, lang, ttsUrl });
       
@@ -116,11 +116,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error(`TTS API returned ${response.status}`);
       }
 
-      // Set appropriate headers for audio streaming
+      // Optimized headers for faster audio streaming
       res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.setHeader('Cache-Control', 'public, max-age=7200'); // Longer cache
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Connection', 'keep-alive');
       
       // Stream the audio directly to the client
       if (response.body) {
