@@ -494,6 +494,19 @@ export default function Home() {
                 </div>
               </div>
               
+              {error.includes('Microphone access') && (
+                <div className="mt-3 p-3 bg-blue-50 rounded-md text-sm">
+                  <p className="font-medium text-blue-800 mb-2">iPhone Setup Instructions:</p>
+                  <ol className="list-decimal list-inside text-blue-700 space-y-1">
+                    <li>Open iPhone Settings app</li>
+                    <li>Scroll down and tap "Safari"</li>
+                    <li>Tap "Camera & Microphone"</li>
+                    <li>Select "Allow" for this website</li>
+                    <li>Return here and refresh the page</li>
+                  </ol>
+                </div>
+              )}
+              
               {error.includes('No speech detected') && (
                 <div className="mt-3 p-3 bg-red-50 rounded-md text-sm">
                   <p className="font-medium text-red-800 mb-2">Troubleshooting Tips:</p>

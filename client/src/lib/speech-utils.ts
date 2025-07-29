@@ -110,6 +110,16 @@ export class SpeechUtils {
       return;
     }
 
+    // Check for microphone permissions first
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('🎤 Microphone permission granted');
+    } catch (permError) {
+      console.error('🎤 Microphone permission denied:', permError);
+      onError('Microphone access required. Please allow microphone access and try again. On iPhone: Settings > Safari > Camera & Microphone > Allow');
+      return;
+    }
+
     // Stop any existing recognition first
     if (this.isRecognitionActive) {
       console.log('🎤 Stopping existing recognition before starting new one');
@@ -162,7 +172,8 @@ export class SpeechUtils {
           errorMessage = 'Microphone access denied. Please allow microphone permissions and try again.';
           break;
         case 'not-allowed':
-          errorMessage = 'Microphone permission denied. Please enable microphone access in your browser settings.';
+        case 'service-not-allowed':
+          errorMessage = 'Microphone access blocked. On iPhone: Go to Settings > Safari > Camera & Microphone > Allow. Then refresh this page.';
           break;
         case 'network':
           errorMessage = 'Network error. Please check your internet connection and try again.';

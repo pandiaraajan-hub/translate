@@ -55,6 +55,8 @@ Preferred communication style: Simple, everyday language.
 - **Recording State Management**: Implemented robust state management preventing button from staying in recording mode ✅
 - **iPhone Click Toggle**: Optimized iPhone button for immediate click-to-start/click-to-stop behavior ✅
 - **Simple Click Mode**: Reverted to single-tap behavior - tap to start recording, tap to stop and translate ✅
+- **FIXED**: Microphone permission handling for iPhone with clear setup instructions ✅
+- **Translation Display**: Fixed multiple event handlers causing speech recognition conflicts ✅
 
 
 ### Frontend Components
