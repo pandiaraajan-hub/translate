@@ -194,28 +194,26 @@ export class SpeechUtils {
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       console.log('🎤 iPhone Speech recognition result received');
       console.log('🎤 iPhone Event results length:', event.results.length);
-      console.log('🎤 iPhone Event results:', event.results);
       
       const result = event.results[0];
-      if (result.isFinal) {
-        const transcript = result[0].transcript.trim();
-        console.log('🎤 iPhone Final transcript:', transcript);
+      const transcript = result[0].transcript.trim();
+      console.log('🎤 iPhone Transcript (isFinal=' + result.isFinal + '):', transcript);
+      
+      // iPhone often doesn't set isFinal properly, so process any non-empty transcript
+      if (transcript && transcript.length > 0) {
+        console.log('🎤 iPhone VALID TRANSCRIPT FOUND - Triggering callback');
         this.isRecognitionActive = false;
         
-        if (transcript && transcript.length > 0) {
-          console.log('🎤 iPhone Calling onResult with transcript:', transcript);
-          onResult({
-            transcript: transcript,
-            confidence: result[0].confidence || 0.9
-          });
-        } else {
-          console.log('🎤 iPhone Empty transcript detected');
+        // Immediate callback execution
+        onResult({
+          transcript: transcript,
+          confidence: result[0].confidence || 0.9
+        });
+      } else {
+        console.log('🎤 iPhone Empty or invalid transcript');
+        if (result.isFinal) {
           onError('No speech detected. Please speak clearly and try again.');
         }
-      } else {
-        // Log interim results for debugging
-        const interimTranscript = result[0].transcript;
-        console.log('🎤 iPhone Interim result:', interimTranscript);
       }
     };
 
