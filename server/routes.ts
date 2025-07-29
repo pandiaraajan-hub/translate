@@ -4,6 +4,9 @@ import { storage } from "./storage";
 import { insertTranslationSchema } from "@shared/schema";
 import { z } from "zod";
 
+// TTS request deduplication to prevent audio echo
+const activeTTSRequests = new Map<string, Promise<any>>();
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Translation endpoint
   app.post("/api/translate", async (req, res) => {
@@ -97,6 +100,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing text or language" });
       }
 
+      // Create a unique key for deduplication
+      const requestKey = `${text}_${lang}`;
+      
+      // If there's already an active request for this text+lang, wait for it
+      if (activeTTSRequests.has(requestKey)) {
+        console.log('🎵 Duplicate TTS request detected, blocking to prevent echo');
+        return res.status(429).json({ error: "Audio request already in progress" });
+      }
+
       // Generate Google TTS URL
       const encodedText = encodeURIComponent((text as string).substring(0, 200));
       const langCode = mapLanguageToGoogleTTS(lang as string);
@@ -104,13 +116,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('🎵 Serving TTS audio for Samsung:', { text, lang, ttsUrl });
       
-      // Fetch the audio from Google and stream it
-      const response = await fetch(ttsUrl, {
+      // Create and track the request promise
+      const audioPromise = fetch(ttsUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           'Referer': 'https://translate.google.com/'
         }
       });
+      
+      activeTTSRequests.set(requestKey, audioPromise);
+      
+      const response = await audioPromise;
 
       if (!response.ok) {
         throw new Error(`TTS API returned ${response.status}`);
@@ -133,9 +149,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               res.write(value);
             }
             res.end();
+            // Clean up the request from active requests
+            activeTTSRequests.delete(requestKey);
           } catch (error) {
             console.error('TTS streaming error:', error);
             res.end();
+            // Clean up the request from active requests
+            activeTTSRequests.delete(requestKey);
           }
         };
         pump();
@@ -144,6 +164,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       console.error("TTS proxy error:", error);
+      // Clean up the request from active requests
+      const requestKey = `${req.query.text}_${req.query.lang}`;
+      activeTTSRequests.delete(requestKey);
       res.status(500).json({ error: "TTS generation failed" });
     }
   });
