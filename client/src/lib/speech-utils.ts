@@ -79,13 +79,11 @@ export class SpeechUtils {
   constructor() {
     this.synthesis = window.speechSynthesis;
     
-    // Initialize speech recognition if available
+    // Initialize speech recognition if available - no pre-configuration for iPhone compatibility
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      this.recognition = new SpeechRecognition();
-      this.recognition.continuous = false;
-      this.recognition.interimResults = false;
-      this.recognition.maxAlternatives = 1;
+      console.log('🎤 iPhone Speech recognition available, will initialize on demand');
+    } else {
+      console.log('🎤 iPhone Speech recognition not available');
     }
   }
 
@@ -102,28 +100,50 @@ export class SpeechUtils {
     onResult: (result: SpeechResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
-    console.log('🎤 SpeechUtils.startRecognition called with language:', language);
+    console.log('🎤 iPhone SpeechUtils.startRecognition called with language:', language);
     
-    if (!this.recognition) {
-      console.error('🎤 Speech recognition not supported');
-      onError('Speech recognition is not supported in this browser');
+    // Create fresh recognition instance for iPhone compatibility
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      console.error('🎤 iPhone Speech recognition not supported');
+      onError('Speech recognition is not supported in this browser on iPhone');
       return;
     }
+    
+    // Always create a new recognition instance for iPhone reliability
+    if (this.recognition) {
+      try {
+        this.recognition.stop();
+      } catch (e) {
+        console.log('🎤 iPhone Error stopping old recognition:', e);
+      }
+    }
+    
+    this.recognition = new SpeechRec();
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+    console.log('🎤 iPhone Created fresh recognition instance');
 
-    // Check for microphone permissions first on supported browsers
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Skip microphone check on iPhone after first successful use to avoid blocking subsequent attempts
+    const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const hasUsedMicBefore = localStorage.getItem('iphone_mic_granted') === 'true';
+    
+    if (!hasUsedMicBefore && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log('🎤 Microphone permission granted');
-        // Stop the stream immediately as we only needed permission
+        console.log('🎤 iPhone Microphone permission granted for first time');
         stream.getTracks().forEach(track => track.stop());
+        if (isIPhone) {
+          localStorage.setItem('iphone_mic_granted', 'true');
+        }
       } catch (permError) {
-        console.error('🎤 Microphone permission denied:', permError);
+        console.error('🎤 iPhone Microphone permission denied:', permError);
         onError('Microphone access required. Please allow microphone access and try again. On iPhone: Settings > Safari > Camera & Microphone > Allow');
         return;
       }
     } else {
-      console.log('🎤 getUserMedia not available, proceeding with speech recognition');
+      console.log('🎤 iPhone Skipping microphone check - previously granted or unavailable');
     }
 
     // Stop any existing recognition first
