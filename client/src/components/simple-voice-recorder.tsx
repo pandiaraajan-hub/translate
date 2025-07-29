@@ -78,7 +78,9 @@ export function SimpleVoiceRecorder({
         await speechUtils.startRecognition(
           sourceLanguage,
           (result) => {
+            console.log('🎤 Speech result received:', result.transcript);
             setLastResult(`"${result.transcript}"`);
+            console.log('🎤 Calling onRecognitionResult callback');
             onRecognitionResult(result.transcript, result.confidence || 0.9);
           },
           (error) => {
