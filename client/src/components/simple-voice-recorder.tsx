@@ -188,6 +188,21 @@ export function SimpleVoiceRecorder({
               iPhone Status: {lastResult}
             </div>
           )}
+          
+          {/* Test Button - Bypass Speech Recognition */}
+          <button
+            onClick={() => {
+              console.log('🧪 Testing direct translation bypass');
+              setLastResult('SUCCESS: "hello test"');
+              setTimeout(() => {
+                onRecognitionResult('hello test', 0.9);
+                setLastResult('Translation completed! Direct test worked');
+              }, 500);
+            }}
+            className="px-4 py-2 bg-orange-500 text-white rounded text-sm"
+          >
+            Test Translation (Bypass Speech)
+          </button>
         </div>
 
         <div className="flex items-center justify-center gap-4">

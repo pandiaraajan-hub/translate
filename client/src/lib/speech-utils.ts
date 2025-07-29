@@ -202,15 +202,26 @@ export class SpeechUtils {
       // iPhone often doesn't set isFinal properly, so process any non-empty transcript
       if (transcript && transcript.length > 0) {
         console.log('🎤 iPhone VALID TRANSCRIPT FOUND - Triggering callback');
+        console.log('🎤 iPhone About to call onResult function');
         this.isRecognitionActive = false;
         
-        // Immediate callback execution
-        onResult({
-          transcript: transcript,
-          confidence: result[0].confidence || 0.9
-        });
+        try {
+          // Test if callback function exists and is callable
+          if (typeof onResult === 'function') {
+            console.log('🎤 iPhone onResult is a valid function, calling now');
+            onResult({
+              transcript: transcript,
+              confidence: result[0].confidence || 0.9
+            });
+            console.log('🎤 iPhone onResult callback completed successfully');
+          } else {
+            console.error('🎤 iPhone onResult is not a function:', typeof onResult);
+          }
+        } catch (callbackError) {
+          console.error('🎤 iPhone Error calling onResult:', callbackError);
+        }
       } else {
-        console.log('🎤 iPhone Empty or invalid transcript');
+        console.log('🎤 iPhone Empty or invalid transcript, length:', transcript.length);
         if (result.isFinal) {
           onError('No speech detected. Please speak clearly and try again.');
         }
