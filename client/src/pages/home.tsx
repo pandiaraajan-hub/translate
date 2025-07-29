@@ -17,6 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { mobileAudio } from '@/lib/mobile-audio';
 import { speechUtils } from '@/lib/speech-utils';
 import { directMobileSpeech } from '@/lib/direct-mobile-speech';
+import { InstallPrompt } from '@/components/install-prompt';
+import { MobileAppBanner } from '@/components/mobile-app-banner';
 
 export default function Home() {
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
@@ -488,6 +490,10 @@ export default function Home() {
           </Alert>
         )}
       </main>
+
+      {/* PWA Install Components */}
+      <InstallPrompt />
+      <MobileAppBanner />
     </div>
   );
 }
