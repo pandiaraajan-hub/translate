@@ -29,113 +29,86 @@ export function SimpleVoiceRecorder({
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
   const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [forceStop, setForceStop] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
-    console.log('🎤 Recording button clicked, current state:', { isRecording, forceStop });
-    console.log('🎤 Event type:', e.type);
-    console.log('🎤 User agent:', navigator.userAgent);
+  const handleRecordingToggle = (e: React.MouseEvent | React.TouchEvent) => {
+    console.log('🎤 Button clicked, state:', { isRecording, isProcessing });
+    
+    // Prevent multiple rapid clicks
+    if (isProcessing) {
+      console.log('🎤 Processing, ignoring click');
+      return;
+    }
+    
     e.preventDefault();
     e.stopPropagation();
+    setIsProcessing(true);
     
-    // Detect device type for specific handling
-    const isIPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    console.log('🎤 iPhone device:', isIPhone);
-    
-    if (isRecording || forceStop) {
-      // Stop recording - iPhone click-to-stop behavior
-      console.log('🎤 Stopping recording (iPhone click-to-stop)...');
-      console.log('🎤 Setting isRecording to false');
-      
-      // iPhone-specific immediate force stop
-      if (isIPhone) {
-        setForceStop(true);
-        // Immediate reset for instant response
-        setForceStop(false);
-        console.log('🎤 iPhone immediate force stop applied');
-      }
-      
+    if (isRecording) {
+      // Stop recording immediately
+      console.log('🎤 Stopping recording NOW');
       setIsRecording(false);
-      setLastResult('Recording stopped');
+      setLastResult('Stopped');
       
-      // Clear the timeout when manually stopping
+      // Clear timeout
       if (recordingTimeout) {
         clearTimeout(recordingTimeout);
         setRecordingTimeout(null);
       }
       
-      try {
-        const { speechUtils } = await import('@/lib/speech-utils');
+      // Stop speech recognition
+      import('@/lib/speech-utils').then(({ speechUtils }) => {
         speechUtils.stopRecognition();
-        console.log('🎤 Speech recognition stopped');
-      } catch (error) {
-        console.error('🎤 Error stopping speech recognition:', error);
-      }
+      }).catch(console.error);
       
+      // Reset processing flag quickly
+      setTimeout(() => setIsProcessing(false), 100);
       return;
     }
     
-    // Start recording
-    console.log('🎤 Starting recording...');
+    // Start recording immediately
+    console.log('🎤 Starting recording NOW');
     setIsRecording(true);
     setLastResult('Listening...');
     
-    // Set a timeout to auto-stop recording after 30 seconds (safety feature)
+    // Safety timeout
     const timeout = setTimeout(() => {
-      if (isRecording) {
-        setIsRecording(false);
-        setLastResult('Recording stopped (timeout)');
-        console.log('🎤 Recording auto-stopped after timeout');
-        try {
-          import('@/lib/speech-utils').then(({ speechUtils }) => {
-            speechUtils.stopRecognition();
-          });
-        } catch (error) {
-          console.error('Error stopping recognition on timeout:', error);
-        }
-      }
+      setIsRecording(false);
+      setLastResult('Timeout');
     }, 30000);
     setRecordingTimeout(timeout);
     
-    try {
-      // Initialize audio system on touch start
-      const { reliableAudio } = await import('@/lib/reliable-audio');
-      reliableAudio.unlockAudio();
-      
-      // Import speech utils dynamically
-      const { speechUtils } = await import('@/lib/speech-utils');
-      
-      console.log('🎤 Starting speech recognition...');
-      speechUtils.startRecognition(
-        sourceLanguage,
-        async (result) => {
-          console.log('🎤 Speech recognized:', result.transcript);
-          setLastResult(`Heard: "${result.transcript}"`);
-          
-          // Don't auto-stop recording in click mode - let user control when to stop
-          // Call the parent's callback - this will trigger translation
-          onRecognitionResult(result.transcript, result.confidence || 0.9);
-        },
-        (error) => {
-          console.error('🎤 Speech recognition error:', error);
-          setLastResult(`Error: ${error}`);
-          setIsRecording(false); // Also stop recording on error
-          
-          // Clear the timeout on error
-          if (recordingTimeout) {
-            clearTimeout(recordingTimeout);
-            setRecordingTimeout(null);
+    // Start speech recognition asynchronously 
+    (async () => {
+      try {
+        const { reliableAudio } = await import('@/lib/reliable-audio');
+        reliableAudio.unlockAudio();
+        
+        const { speechUtils } = await import('@/lib/speech-utils');
+        await speechUtils.startRecognition(
+          sourceLanguage,
+          (result) => {
+            setLastResult(`"${result.transcript}"`);
+            onRecognitionResult(result.transcript, result.confidence || 0.9);
+          },
+          (error) => {
+            setLastResult(`Error: ${error}`);
+            setIsRecording(false);
+            if (recordingTimeout) {
+              clearTimeout(recordingTimeout);
+              setRecordingTimeout(null);
+            }
+            onError(error);
           }
-          
-          onError(error);
-        }
-      );
-      
-    } catch (error) {
-      console.error('🎤 Recording toggle error:', error);
-      setIsRecording(false);
-      setLastResult('Recording failed to start');
-    }
+        );
+      } catch (error) {
+        console.error('🎤 Start error:', error);
+        setIsRecording(false);
+        setLastResult('Failed to start');
+      } finally {
+        setIsProcessing(false);
+      }
+    })();
   };
 
   // Remove the old touch handlers since we're using toggle mode now
@@ -144,7 +117,7 @@ export function SimpleVoiceRecorder({
     <Card>
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
-          <div>Click to {(isRecording && !forceStop) ? 'stop recording' : 'start recording'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
+          <div>Click to {isRecording ? 'stop recording' : 'start recording'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
         </div>
 
 
@@ -154,24 +127,17 @@ export function SimpleVoiceRecorder({
         <div className="flex flex-col items-center justify-center gap-4">
           <button
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
-              (isRecording && !forceStop)
+              isRecording
                 ? 'bg-red-500 animate-pulse' 
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
             onClick={(e) => {
-              console.log('🎤 Button click event fired');
+              console.log('🎤 Click');
               handleRecordingToggle(e);
             }}
             onTouchStart={(e) => {
-              console.log('🎤 Touch start - instant iPhone toggle');
-              e.preventDefault();
-              e.stopPropagation();
-              // Immediate execution - no delays
+              console.log('🎤 Touch');
               handleRecordingToggle(e);
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
             }}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');
@@ -185,12 +151,12 @@ export function SimpleVoiceRecorder({
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            {(isRecording && !forceStop) ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+            {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
           
           {/* Status text */}
           <div className="text-sm text-gray-600">
-            {(isRecording && !forceStop) ? 'Recording... Click to stop' : 'Click to start'}
+            {isRecording ? 'Recording... Click to stop' : 'Click to start'}
           </div>
         </div>
 
