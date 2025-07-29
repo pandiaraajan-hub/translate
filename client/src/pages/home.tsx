@@ -170,81 +170,84 @@ export default function Home() {
     }
   }, [translationResult, autoPlayTranslation, isAudioPlaying]);
 
-  // Function to play translated text with server-side TTS for Samsung
+  // Function to play translated text - SINGLE AUDIO PATH ONLY
   const playTranslatedText = async (text: string) => {
     // Prevent multiple simultaneous audio playbacks
     if (isAudioPlaying) {
-      console.log('🔊 Audio already playing, skipping');
+      console.log('🔊 Audio already playing, skipping completely');
       return;
     }
     
     setIsAudioPlaying(true);
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
+      console.log('🔊 Playing audio with SINGLE PATH ONLY:', { text, targetLangCode });
       
-      // Use server-side TTS for Samsung devices (enhanced mode)
-      if (localStorage.getItem('forceSamsungMode') === 'true') {
-        console.log('🔊 Using server-side TTS for Samsung device');
-        const { ExternalTTS } = await import('@/lib/external-tts');
+      // ONLY use server-side TTS - no fallbacks to prevent repetition
+      const audioUrl = `/api/tts-audio?text=${encodeURIComponent(text)}&lang=${encodeURIComponent(targetLangCode)}`;
+      
+      const audio = new Audio();
+      
+      const playPromise = new Promise<boolean>((resolve) => {
+        let resolved = false;
         
-        const success = await ExternalTTS.speakWithExternalService(text, targetLangCode);
-        if (success) {
-          console.log('🔊 Server-side TTS completed successfully');
-          setIsAudioPlaying(false);
-          return;
-        } else {
-          console.log('🔊 Server-side TTS failed, trying fallback');
-        }
-      }
-      
-      // iPhone-specific voice output (separate from Samsung system)
-      const { iPhoneVoice } = await import('@/lib/iphone-voice');
-      console.log('🍎 Checking if device is iPhone...');
-      if (iPhoneVoice.isIOSDevice()) {
-        console.log('🍎 iPhone device detected, using iPhone voice handler');
-        const iPhoneSuccess = await iPhoneVoice.speakOnIPhone(text, targetLangCode);
-        if (iPhoneSuccess) {
-          console.log('🍎 iPhone voice output completed successfully');
-          setIsAudioPlaying(false);
-          return;
-        } else {
-          console.log('🍎 iPhone voice failed, continuing to Samsung fallback');
-        }
-      } else {
-        console.log('🍎 Not an iPhone device, skipping iPhone handler');
-      }
-      
-      // Fallback to enhanced Samsung audio fix
-      const { SamsungAudioFix } = await import('@/lib/samsung-audio-fix');
-      
-      console.log('🔊 Auto-playing with enhanced mobile audio fix');
-      const success = await SamsungAudioFix.speakWithSamsungFix(
-        text, 
-        targetLangCode, 
-        speechRate, 
-        speechPitch
-      );
-      
-      if (!success) {
-        console.log('🔊 Enhanced fix failed, trying standard speech');
-        // Fallback to regular speech
-        const { reliableAudio } = await import('@/lib/reliable-audio');
-        reliableAudio.unlockAudio();
+        const resolveOnce = (success: boolean) => {
+          if (!resolved) {
+            resolved = true;
+            console.log('🔊 Audio playback resolved:', success);
+            resolve(success);
+          }
+        };
+
+        audio.oncanplaythrough = () => {
+          console.log('🔊 Audio ready, starting playback');
+          audio.play().then(() => {
+            console.log('🔊 Audio playing successfully');
+            resolveOnce(true);
+          }).catch((error) => {
+            console.error('🔊 Audio play failed:', error);
+            resolveOnce(false);
+          });
+        };
+
+        audio.onerror = (error) => {
+          console.error('🔊 Audio error:', error);
+          resolveOnce(false);
+        };
+
+        audio.onended = () => {
+          console.log('🔊 Audio playback completed');
+        };
+
+        // Basic audio settings
+        audio.volume = 1.0;
+        audio.preload = 'auto';
+        audio.src = audioUrl;
         
-        const { speechUtils } = await import('@/lib/speech-utils');
-        await speechUtils.speak({
-          text,
-          lang: targetLangCode,
-          rate: speechRate,
-          pitch: speechPitch
-        });
-      }
+        try {
+          audio.load();
+        } catch (loadError) {
+          console.error('🔊 Audio load failed:', loadError);
+          resolveOnce(false);
+        }
+
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          if (!resolved) {
+            console.log('🔊 Audio timeout reached');
+            resolveOnce(false);
+          }
+        }, 10000);
+      });
+
+      const success = await playPromise;
+      console.log('🔊 Single path audio completed:', success);
       
-      console.log('🔊 Auto-play completed successfully');
     } catch (error) {
-      console.error('🔊 Auto-play failed:', error);
+      console.error('🔊 Audio playback error:', error);
     } finally {
       setIsAudioPlaying(false);
+      console.log('🔊 Audio state reset to false');
     }
   };
 
