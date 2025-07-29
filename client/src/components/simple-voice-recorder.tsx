@@ -129,9 +129,23 @@ export function SimpleVoiceRecorder({
                 ? 'bg-red-500 animate-pulse' 
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
-            onClick={handleRecordingToggle}
-            onTouchStart={(e) => e.preventDefault()}
-            onTouchEnd={(e) => e.preventDefault()}
+            onClick={(e) => {
+              console.log('🎤 Button click event fired');
+              handleRecordingToggle(e);
+            }}
+            onMouseDown={(e) => {
+              console.log('🎤 Mouse down event');
+              e.preventDefault();
+            }}
+            onTouchStart={(e) => {
+              console.log('🎤 Touch start event');
+              e.preventDefault();
+            }}
+            onTouchEnd={(e) => {
+              console.log('🎤 Touch end event');
+              e.preventDefault();
+            }}
+            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
           >
             {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>

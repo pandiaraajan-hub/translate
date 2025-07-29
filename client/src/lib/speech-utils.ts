@@ -102,7 +102,10 @@ export class SpeechUtils {
     onResult: (result: SpeechResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
+    console.log('🎤 SpeechUtils.startRecognition called with language:', language);
+    
     if (!this.recognition) {
+      console.error('🎤 Speech recognition not supported');
       onError('Speech recognition is not supported in this browser');
       return;
     }
@@ -165,10 +168,11 @@ export class SpeechUtils {
     };
 
     try {
+      console.log('🎤 Starting recognition with language:', this.recognition.lang);
       this.recognition.start();
     } catch (error) {
+      console.error('🎤 Failed to start recognition:', error);
       this.isRecognitionActive = false;
-      console.error('Failed to start recognition:', error);
       onError('Failed to start speech recognition');
     }
   }
