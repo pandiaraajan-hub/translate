@@ -31,6 +31,7 @@ export function SimpleVoiceRecorder({
   const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
+    console.log('🎤 Recording button clicked, current state:', { isRecording });
     e.preventDefault();
     e.stopPropagation();
     
@@ -55,6 +56,7 @@ export function SimpleVoiceRecorder({
     }
     
     // Start recording
+    console.log('🎤 Starting recording...');
     setIsRecording(true);
     setLastResult('Listening...');
     
@@ -74,9 +76,11 @@ export function SimpleVoiceRecorder({
       // Import speech utils dynamically
       const { speechUtils } = await import('@/lib/speech-utils');
       
+      console.log('🎤 Starting speech recognition...');
       speechUtils.startRecognition(
         sourceLanguage,
         async (result) => {
+          console.log('🎤 Speech recognized:', result.transcript);
           setLastResult(`Heard: "${result.transcript}"`);
           
           // Don't auto-stop recording in click mode - let user control when to stop
@@ -84,6 +88,7 @@ export function SimpleVoiceRecorder({
           onRecognitionResult(result.transcript, result.confidence || 0.9);
         },
         (error) => {
+          console.error('🎤 Speech recognition error:', error);
           setLastResult(`Error: ${error}`);
           setIsRecording(false); // Also stop recording on error
           
@@ -98,7 +103,9 @@ export function SimpleVoiceRecorder({
       );
       
     } catch (error) {
+      console.error('🎤 Recording toggle error:', error);
       setIsRecording(false);
+      setLastResult('Recording failed to start');
     }
   };
 
