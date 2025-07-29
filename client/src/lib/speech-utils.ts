@@ -110,14 +110,16 @@ export class SpeechUtils {
       return;
     }
 
-    // Prevent starting if already active
+    // Stop any existing recognition first
     if (this.isRecognitionActive) {
-      console.log('Speech recognition already active, skipping start');
-      return;
+      console.log('🎤 Stopping existing recognition before starting new one');
+      this.stopRecognition();
+      // Add a small delay to ensure the previous recognition has fully stopped
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
 
     const langConfig = SUPPORTED_LANGUAGES[language];
-    this.recognition.lang = langConfig.code;
+    this.recognition.lang = langConfig.speechLang;
 
     this.recognition.onstart = () => {
       console.log('Speech recognition started');
@@ -130,13 +132,21 @@ export class SpeechUtils {
     };
 
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+      console.log('🎤 Speech recognition result received');
       const result = event.results[0];
       if (result.isFinal) {
+        const transcript = result[0].transcript.trim();
+        console.log('🎤 Final transcript:', transcript);
         this.isRecognitionActive = false;
-        onResult({
-          transcript: result[0].transcript,
-          confidence: result[0].confidence || 0
-        });
+        
+        if (transcript) {
+          onResult({
+            transcript: transcript,
+            confidence: result[0].confidence || 0.9
+          });
+        } else {
+          onError('No speech detected');
+        }
       }
     };
 

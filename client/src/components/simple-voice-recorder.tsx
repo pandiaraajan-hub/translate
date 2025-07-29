@@ -135,7 +135,6 @@ export function SimpleVoiceRecorder({
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
             onClick={handleButtonPress}
-            onTouchStart={handleButtonPress}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');
               e.preventDefault();
