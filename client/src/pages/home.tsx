@@ -154,10 +154,12 @@ export default function Home() {
   // Handle translation result with automatic audio playback
   useEffect(() => {
     console.log('🔍 Translation result effect triggered:', translationResult);
+    console.log('🔍 Current translatedText state:', translatedText);
     if (translationResult) {
       console.log('🔍 Setting translated text:', translationResult.translatedText);
       setTranslatedText(translationResult.translatedText);
       setIsProcessing(false);
+      console.log('🔍 translatedText updated to:', translationResult.translatedText);
       
       // Auto-play translated text if auto-play is enabled
       if (autoPlayTranslation && translationResult.translatedText.trim()) {
@@ -167,7 +169,7 @@ export default function Home() {
     } else {
       console.log('🔍 No translation result available');
     }
-  }, [translationResult, autoPlayTranslation]);
+  }, [translationResult, autoPlayTranslation, translatedText]);
 
   // Function to play translated text with server-side TTS for Samsung
   const playTranslatedText = async (text: string) => {
@@ -275,10 +277,12 @@ export default function Home() {
 
   const handleRecognitionResult = useCallback((text: string, recognitionConfidence: number) => {
     console.log('🏠 Home handleRecognitionResult called with:', text, recognitionConfidence);
+    console.log('🏠 Current sourceText state:', sourceText);
     setSourceText(text);
     setConfidence(recognitionConfidence);
     setError(null);
-  }, []);
+    console.log('🏠 sourceText updated to:', text);
+  }, [sourceText]);
 
   const handleRecognitionError = useCallback((errorMessage: string) => {
     setError(errorMessage);

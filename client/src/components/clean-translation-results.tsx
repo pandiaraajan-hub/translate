@@ -22,17 +22,21 @@ export function CleanTranslationResults({
   isPlaying,
   onTestAudio
 }: CleanTranslationResultsProps) {
+  console.log('🎯 CleanTranslationResults render:', { sourceText, translatedText });
+  
   const sourceConfig = SUPPORTED_LANGUAGES[sourceLanguage];
   const targetConfig = SUPPORTED_LANGUAGES[targetLanguage];
 
   const getFlagColors = (language: LanguageCode) => {
-    const colors = {
+    const colors: Record<LanguageCode, string> = {
       english: 'text-blue-600',
       tamil: 'text-orange-600',
       chinese: 'text-red-600',
       malay: 'text-green-600',
       hindi: 'text-purple-600',
-      bengali: 'text-indigo-600'
+      bengali: 'text-indigo-600',
+      spanish: 'text-yellow-600',
+      arabic: 'text-teal-600'
     };
     return colors[language] || 'text-gray-600';
   };
