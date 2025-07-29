@@ -333,12 +333,13 @@ export default function Home() {
                 <div className="space-y-6 py-4">
                   {/* Speech Rate */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium flex items-center space-x-2">
+                    <Label htmlFor="speech-rate" className="text-sm font-medium flex items-center space-x-2">
                       <Volume2 className="h-4 w-4" />
                       <span>Speech Speed</span>
                     </Label>
                     <div className="space-y-2">
                       <Slider
+                        id="speech-rate"
                         value={[speechRate]}
                         onValueChange={(value) => setSpeechRate(value[0])}
                         min={0.3}
@@ -356,12 +357,13 @@ export default function Home() {
 
                   {/* Speech Pitch */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium flex items-center space-x-2">
+                    <Label htmlFor="speech-pitch" className="text-sm font-medium flex items-center space-x-2">
                       <Mic className="h-4 w-4" />
                       <span>Voice Pitch</span>
                     </Label>
                     <div className="space-y-2">
                       <Slider
+                        id="speech-pitch"
                         value={[speechPitch]}
                         onValueChange={(value) => setSpeechPitch(value[0])}
                         min={0.5}
