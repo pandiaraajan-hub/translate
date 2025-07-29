@@ -88,7 +88,7 @@ export class SpeechUtils {
   }
 
   isRecognitionSupported(): boolean {
-    return this.recognition !== null;
+    return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
   }
 
   isSynthesisSupported(): boolean {
@@ -146,13 +146,24 @@ export class SpeechUtils {
       console.log('🎤 iPhone Skipping microphone check - previously granted or unavailable');
     }
 
-    // Stop any existing recognition first
-    if (this.isRecognitionActive) {
-      console.log('🎤 Stopping existing recognition before starting new one');
-      this.stopRecognition();
-      // Add a small delay to ensure the previous recognition has fully stopped
-      await new Promise(resolve => setTimeout(resolve, 200));
+    // Force stop any existing recognition and reset state for iPhone
+    this.isRecognitionActive = false;
+    if (this.recognition) {
+      try {
+        this.recognition.stop();
+        this.recognition.onstart = null;
+        this.recognition.onend = null;
+        this.recognition.onresult = null;
+        this.recognition.onerror = null;
+      } catch (e) {
+        console.log('🎤 iPhone Error cleaning old recognition:', e);
+      }
+      this.recognition = null;
     }
+    
+    // Wait for complete cleanup before creating new instance
+    await new Promise(resolve => setTimeout(resolve, 300));
+    console.log('🎤 iPhone Recognition state fully reset');
 
     const langConfig = SUPPORTED_LANGUAGES[language];
     this.recognition.lang = langConfig.code;
@@ -215,12 +226,15 @@ export class SpeechUtils {
     };
 
     try {
-      console.log('🎤 Starting recognition with language:', this.recognition.lang);
+      console.log('🎤 iPhone Starting fresh recognition with language:', this.recognition.lang);
+      // iPhone-specific: ensure clean start
+      await new Promise(resolve => setTimeout(resolve, 100));
       this.recognition.start();
+      console.log('🎤 iPhone Recognition start command issued');
     } catch (error) {
-      console.error('🎤 Failed to start recognition:', error);
+      console.error('🎤 iPhone Failed to start recognition:', error);
       this.isRecognitionActive = false;
-      onError('Failed to start speech recognition');
+      onError(`iPhone speech recognition failed: ${error}`);
     }
   }
 

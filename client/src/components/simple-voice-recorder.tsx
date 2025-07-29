@@ -52,11 +52,11 @@ export function SimpleVoiceRecorder({
       startRecording();
     }
     
-    // Reset processing flag after delay
+    // Reset processing flag after delay - longer for iPhone
     setTimeout(() => {
       setIsProcessing(false);
       console.log('🎤 iPhone Processing flag reset');
-    }, 300);
+    }, 500);
   };
 
   const startRecording = () => {
