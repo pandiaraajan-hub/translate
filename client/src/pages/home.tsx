@@ -151,28 +151,34 @@ export default function Home() {
     }
   }, [sourceText, sourceLanguage, targetLanguage, translate]);
 
-  // Handle translation result with automatic audio playback
+  // Global audio state to prevent multiple simultaneous playbacks
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+
+  // Handle translation result with automatic audio playback - prevent duplicates
   useEffect(() => {
     console.log('🔍 Translation result effect triggered:', translationResult);
-    console.log('🔍 Current translatedText state:', translatedText);
     if (translationResult) {
       console.log('🔍 Setting translated text:', translationResult.translatedText);
       setTranslatedText(translationResult.translatedText);
       setIsProcessing(false);
-      console.log('🔍 translatedText updated to:', translationResult.translatedText);
       
-      // Auto-play translated text if auto-play is enabled
-      if (autoPlayTranslation && translationResult.translatedText.trim()) {
+      // Auto-play translated text if auto-play is enabled and not already playing
+      if (autoPlayTranslation && translationResult.translatedText.trim() && !isAudioPlaying) {
         console.log('🔊 Auto-playing translation:', translationResult.translatedText);
         playTranslatedText(translationResult.translatedText);
       }
-    } else {
-      console.log('🔍 No translation result available');
     }
-  }, [translationResult, autoPlayTranslation, translatedText]);
+  }, [translationResult, autoPlayTranslation, isAudioPlaying]);
 
   // Function to play translated text with server-side TTS for Samsung
   const playTranslatedText = async (text: string) => {
+    // Prevent multiple simultaneous audio playbacks
+    if (isAudioPlaying) {
+      console.log('🔊 Audio already playing, skipping');
+      return;
+    }
+    
+    setIsAudioPlaying(true);
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
       
@@ -184,6 +190,7 @@ export default function Home() {
         const success = await ExternalTTS.speakWithExternalService(text, targetLangCode);
         if (success) {
           console.log('🔊 Server-side TTS completed successfully');
+          setIsAudioPlaying(false);
           return;
         } else {
           console.log('🔊 Server-side TTS failed, trying fallback');
@@ -198,6 +205,7 @@ export default function Home() {
         const iPhoneSuccess = await iPhoneVoice.speakOnIPhone(text, targetLangCode);
         if (iPhoneSuccess) {
           console.log('🍎 iPhone voice output completed successfully');
+          setIsAudioPlaying(false);
           return;
         } else {
           console.log('🍎 iPhone voice failed, continuing to Samsung fallback');
@@ -235,6 +243,8 @@ export default function Home() {
       console.log('🔊 Auto-play completed successfully');
     } catch (error) {
       console.error('🔊 Auto-play failed:', error);
+    } finally {
+      setIsAudioPlaying(false);
     }
   };
 

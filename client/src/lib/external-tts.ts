@@ -1,8 +1,15 @@
 // External TTS service for Samsung devices
 export class ExternalTTS {
+  private static currentAudio: HTMLAudioElement | null = null;
+  private static isPlaying = false;
   
   // Try multiple external TTS services for Samsung compatibility
   static async speakWithExternalService(text: string, lang: string): Promise<boolean> {
+    // Prevent multiple simultaneous audio to fix echo
+    if (this.isPlaying) {
+      console.log('🎵 Audio already playing, stopping previous audio');
+      this.stopCurrentAudio();
+    }
     console.log('🌐 Trying external TTS services for Samsung...');
     
     // Method 1: Server-side TTS proxy (most reliable for Samsung)
@@ -20,6 +27,16 @@ export class ExternalTTS {
     return false;
   }
 
+  // Stop any currently playing audio
+  private static stopCurrentAudio() {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
+    this.isPlaying = false;
+  }
+
   // Method 1: Server-side TTS proxy
   private static async tryServerTTS(text: string, lang: string): Promise<boolean> {
     try {
@@ -29,6 +46,7 @@ export class ExternalTTS {
       const audioUrl = `/api/tts-audio?text=${encodeURIComponent(text)}&lang=${encodeURIComponent(lang)}`;
       
       const audio = new Audio();
+      this.currentAudio = audio;
       
       return new Promise<boolean>((resolve) => {
         let resolved = false;
@@ -37,6 +55,7 @@ export class ExternalTTS {
           if (!resolved) {
             // Samsung-specific audio unlock sequence
             this.unlockSamsungAudioContext().then(() => {
+              this.isPlaying = true;
               audio.play().then(() => {
                 console.log('🎵 Server TTS started playing');
                 resolve(true);
@@ -64,6 +83,8 @@ export class ExternalTTS {
         
         audio.onended = () => {
           console.log('🎵 Server TTS completed');
+          this.isPlaying = false;
+          this.currentAudio = null;
         };
         
         // Samsung-specific audio loading
