@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import { useEffect } from "react";
 import { PWAManager } from "@/lib/pwa-utils";
+import { OfflineManager } from "@/lib/offline-manager";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function App() {
   useEffect(() => {
     // Initialize PWA functionality
     PWAManager.init();
+    OfflineManager.init();
     
     // Register service worker
     window.addEventListener('load', () => {

@@ -20,6 +20,7 @@ import { directMobileSpeech } from '@/lib/direct-mobile-speech';
 import { InstallPrompt } from '@/components/install-prompt';
 import { MobileAppBanner } from '@/components/mobile-app-banner';
 import { PWAInstallButton } from '@/components/pwa-install-button';
+import { OfflineIndicator } from '@/components/offline-indicator';
 
 export default function Home() {
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
@@ -498,6 +499,7 @@ export default function Home() {
       {/* PWA Install Components */}
       <InstallPrompt />
       <MobileAppBanner />
+      <OfflineIndicator />
     </div>
   );
 }

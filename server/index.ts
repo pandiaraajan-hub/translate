@@ -37,6 +37,22 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Serve PWA static files first
+  app.use('/sw.js', express.static('public/sw.js', {
+    setHeaders: (res) => {
+      res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('Service-Worker-Allowed', '/');
+    }
+  }));
+  
+  app.use('/manifest.json', express.static('public/manifest.json', {
+    setHeaders: (res) => {
+      res.setHeader('Content-Type', 'application/json');
+    }
+  }));
+  
+  app.use('/icons', express.static('public/icons'));
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
