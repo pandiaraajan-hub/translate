@@ -49,6 +49,7 @@ Preferred communication style: Simple, everyday language.
 - **User Confirmation**: Samsung device voice output confirmed working by user
 - **Language Expansion**: Added Spanish and Arabic support (8 total languages) - tested and confirmed working
 - **Mobile Compatibility**: Enhanced server-side TTS to work on iPhone, Samsung, and all mobile browsers
+- **iPhone Voice Support**: Added dedicated iPhone voice handler without affecting Samsung system
 
 
 ### Frontend Components
