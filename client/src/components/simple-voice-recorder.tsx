@@ -33,11 +33,19 @@ export function SimpleVoiceRecorder({
   const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
     console.log('🎤 Recording button clicked, current state:', { isRecording });
     console.log('🎤 Event type:', e.type);
+    console.log('🎤 User agent:', navigator.userAgent);
     e.preventDefault();
     e.stopPropagation();
     
+    // Detect device type for debugging
+    const isIPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    console.log('🎤 iPhone device:', isIPhone);
+    
     if (isRecording) {
       // Stop recording
+      console.log('🎤 Stopping recording...');
+      console.log('🎤 Setting isRecording to false');
+      
       setIsRecording(false);
       setLastResult('Recording stopped');
       
@@ -50,8 +58,9 @@ export function SimpleVoiceRecorder({
       try {
         const { speechUtils } = await import('@/lib/speech-utils');
         speechUtils.stopRecognition();
+        console.log('🎤 Speech recognition stopped');
       } catch (error) {
-        // Handle error silently
+        console.error('🎤 Error stopping speech recognition:', error);
       }
       return;
     }
@@ -138,7 +147,8 @@ export function SimpleVoiceRecorder({
               console.log('🎤 Touch start event - triggering recording toggle');
               e.preventDefault();
               e.stopPropagation();
-              handleRecordingToggle(e);
+              // Use setTimeout to ensure touch event completes before handling
+              setTimeout(() => handleRecordingToggle(e), 0);
             }}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');
