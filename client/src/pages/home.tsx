@@ -174,12 +174,9 @@ export default function Home() {
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
       
-      // Always try server-side TTS first for mobile devices (iPhone, Samsung, etc.)
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      
-      if (isMobile || localStorage.getItem('forceSamsungMode') === 'true') {
-        console.log(`🔊 Using server-side TTS for ${isIOS ? 'iPhone' : 'mobile'} device`);
+      // Use server-side TTS for Samsung devices (enhanced mode)
+      if (localStorage.getItem('forceSamsungMode') === 'true') {
+        console.log('🔊 Using server-side TTS for Samsung device');
         const { ExternalTTS } = await import('@/lib/external-tts');
         
         const success = await ExternalTTS.speakWithExternalService(text, targetLangCode);
