@@ -569,3 +569,12 @@ export class SpeechUtils {
 }
 
 export const speechUtils = new SpeechUtils();
+
+// Add mobile-specific debugging
+if (typeof window !== 'undefined') {
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  console.log('🎤 Speech utils initialized - Mobile device:', isMobile);
+  console.log('🎤 Speech recognition supported:', speechUtils.isRecognitionSupported());
+  console.log('🎤 Speech synthesis supported:', speechUtils.isSynthesisSupported());
+  console.log('🎤 User agent:', navigator.userAgent);
+}

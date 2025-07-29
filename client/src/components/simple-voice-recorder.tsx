@@ -32,6 +32,7 @@ export function SimpleVoiceRecorder({
 
   const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
     console.log('🎤 Recording button clicked, current state:', { isRecording });
+    console.log('🎤 Event type:', e.type);
     e.preventDefault();
     e.stopPropagation();
     
@@ -133,19 +134,23 @@ export function SimpleVoiceRecorder({
               console.log('🎤 Button click event fired');
               handleRecordingToggle(e);
             }}
+            onTouchStart={(e) => {
+              console.log('🎤 Touch start event - triggering recording toggle');
+              e.preventDefault();
+              e.stopPropagation();
+              handleRecordingToggle(e);
+            }}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');
               e.preventDefault();
             }}
-            onTouchStart={(e) => {
-              console.log('🎤 Touch start event');
-              e.preventDefault();
+            style={{ 
+              userSelect: 'none', 
+              WebkitUserSelect: 'none',
+              touchAction: 'manipulation',
+              WebkitTouchCallout: 'none',
+              WebkitTapHighlightColor: 'transparent'
             }}
-            onTouchEnd={(e) => {
-              console.log('🎤 Touch end event');
-              e.preventDefault();
-            }}
-            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
           >
             {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
