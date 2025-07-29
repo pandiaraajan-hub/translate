@@ -139,15 +139,7 @@ export default function Home() {
 
   // Handle translation when source text changes
   useEffect(() => {
-    console.log('🔄 Translation useEffect triggered:', {
-      sourceText: sourceText.trim(),
-      sourceLanguage,
-      targetLanguage,
-      languagesAreDifferent: sourceLanguage !== targetLanguage
-    });
-    
     if (sourceText.trim() && sourceLanguage !== targetLanguage) {
-      console.log('🔄 Starting translation request...');
       setIsProcessing(true);
       translate({
         text: sourceText,
@@ -155,7 +147,6 @@ export default function Home() {
         to: SUPPORTED_LANGUAGES[targetLanguage].code,
       });
     } else {
-      console.log('🔄 Clearing translated text - no valid source or same languages');
       setTranslatedText('');
     }
   }, [sourceText, sourceLanguage, targetLanguage, translate]);
@@ -287,19 +278,11 @@ export default function Home() {
   const handleRecognitionResult = useCallback((text: string, recognitionConfidence: number) => {
     console.log('🏠 Home handleRecognitionResult called with:', text, recognitionConfidence);
     console.log('🏠 Current sourceText state:', sourceText);
-    console.log('🏠 Languages:', { sourceLanguage, targetLanguage });
-    
-    if (!text.trim()) {
-      console.log('🏠 Empty text received, ignoring');
-      return;
-    }
-    
     setSourceText(text);
     setConfidence(recognitionConfidence);
     setError(null);
     console.log('🏠 sourceText updated to:', text);
-    console.log('🏠 This should trigger translation useEffect...');
-  }, [sourceText, sourceLanguage, targetLanguage]);
+  }, [sourceText]);
 
   const handleRecognitionError = useCallback((errorMessage: string) => {
     setError(errorMessage);
