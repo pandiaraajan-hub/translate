@@ -84,14 +84,14 @@ export function SimpleVoiceRecorder({
           sourceLanguage,
           (result) => {
             console.log('🎤 iPhone SUCCESS - Speech result received:', result.transcript);
-            setLastResult(`"${result.transcript}"`);
+            setLastResult(`SUCCESS: "${result.transcript}"`);
             console.log('🎤 iPhone Calling onRecognitionResult callback with:', result.transcript);
             onRecognitionResult(result.transcript, result.confidence || 0.9);
             stopRecording(); // Auto-stop after getting result
           },
           (error) => {
             console.error('🎤 iPhone ERROR - Recognition error callback:', error);
-            setLastResult(`Error: ${error}`);
+            setLastResult(`iPhone Error: ${error}`);
             setIsRecording(false); // Immediately reset button state
             onError(error);
           }
@@ -99,7 +99,7 @@ export function SimpleVoiceRecorder({
         console.log('🎤 iPhone Recognition start request completed');
       } catch (error) {
         console.error('🎤 iPhone Start error:', error);
-        setLastResult('Failed to start');
+        setLastResult(`iPhone Start Failed: ${error}`);
         setIsRecording(false); // Reset button immediately on error
         onError(`iPhone recording failed: ${error}`);
       }
