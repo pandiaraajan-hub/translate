@@ -29,53 +29,55 @@ export function SimpleVoiceRecorder({
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
   const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [touchStartTime, setTouchStartTime] = useState<number>(0);
-  const [longPressTriggered, setLongPressTriggered] = useState(false);
+  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isPressing, setIsPressing] = useState(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    console.log('🎤 Touch start - iPhone long press mode');
+    console.log('🎤 iPhone touch start, recording state:', isRecording);
     e.preventDefault();
     e.stopPropagation();
     
     if (isRecording) {
-      // If already recording, stop immediately
+      // Stop recording if already active
+      console.log('🎤 Already recording - stopping');
       stopRecording();
       return;
     }
     
-    // Record touch start time for long press detection
-    const startTime = Date.now();
-    setTouchStartTime(startTime);
-    setLongPressTriggered(false);
+    // Start press detection
+    setIsPressing(true);
+    console.log('🎤 Starting 300ms press timer');
     
-    // Start long press timer (500ms)
-    const longPressTimer = setTimeout(() => {
-      if (Date.now() - startTime >= 500) {
-        console.log('🎤 Long press detected - starting recording');
-        setLongPressTriggered(true);
-        startRecording();
-      }
-    }, 500);
+    // Shorter timer for better responsiveness
+    const timer = setTimeout(() => {
+      console.log('🎤 Press timer completed - starting recording');
+      setIsPressing(false);
+      startRecording();
+    }, 300);
     
-    // Clean up timer on component unmount
-    setTimeout(() => clearTimeout(longPressTimer), 1000);
+    setPressTimer(timer);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    console.log('🎤 Touch end');
+    console.log('🎤 iPhone touch end, pressing:', isPressing);
     e.preventDefault();
     e.stopPropagation();
     
-    const touchDuration = Date.now() - touchStartTime;
-    console.log('🎤 Touch duration:', touchDuration + 'ms');
-    
-    // If it was a short tap (less than 500ms) and recording, stop it
-    if (touchDuration < 500 && isRecording) {
-      console.log('🎤 Short tap while recording - stopping');
-      stopRecording();
+    // Clear the press timer if still active
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
     }
     
-    setTouchStartTime(0);
+    // If we were in pressing state (didn't complete timer), it was a short tap
+    if (isPressing) {
+      console.log('🎤 Short tap detected');
+      setIsPressing(false);
+      // If recording, stop it
+      if (isRecording) {
+        stopRecording();
+      }
+    }
   };
 
   const startRecording = () => {
@@ -121,12 +123,16 @@ export function SimpleVoiceRecorder({
     console.log('🎤 Stopping recording');
     setIsRecording(false);
     setLastResult('Stopped');
-    setLongPressTriggered(false);
+    setIsPressing(false);
     
-    // Clear timeout
+    // Clear timers
     if (recordingTimeout) {
       clearTimeout(recordingTimeout);
       setRecordingTimeout(null);
+    }
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
     }
     
     // Stop speech recognition
@@ -141,7 +147,7 @@ export function SimpleVoiceRecorder({
     <Card>
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
-          <div>{isRecording ? 'Recording... Tap to stop' : 'Press and hold to record'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
+          <div>{isRecording ? 'Recording... Tap to stop' : isPressing ? 'Keep holding...' : 'Hold button to record'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
         </div>
 
 
@@ -153,6 +159,8 @@ export function SimpleVoiceRecorder({
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
               isRecording
                 ? 'bg-red-500 animate-pulse' 
+                : isPressing 
+                ? 'bg-yellow-500'
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
             onClick={(e) => {
@@ -184,7 +192,7 @@ export function SimpleVoiceRecorder({
           
           {/* Status text */}
           <div className="text-sm text-gray-600">
-            {isRecording ? 'Recording... Tap to stop' : 'Press and hold to start'}
+            {isRecording ? 'Recording... Tap to stop' : isPressing ? 'Keep holding...' : 'Hold to start'}
           </div>
         </div>
 
