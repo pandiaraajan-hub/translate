@@ -190,6 +190,7 @@ export default function Home() {
       
       // iPhone-specific voice output (separate from Samsung system)
       const { iPhoneVoice } = await import('@/lib/iphone-voice');
+      console.log('🍎 Checking if device is iPhone...');
       if (iPhoneVoice.isIOSDevice()) {
         console.log('🍎 iPhone device detected, using iPhone voice handler');
         const iPhoneSuccess = await iPhoneVoice.speakOnIPhone(text, targetLangCode);
@@ -199,6 +200,8 @@ export default function Home() {
         } else {
           console.log('🍎 iPhone voice failed, continuing to Samsung fallback');
         }
+      } else {
+        console.log('🍎 Not an iPhone device, skipping iPhone handler');
       }
       
       // Fallback to enhanced Samsung audio fix

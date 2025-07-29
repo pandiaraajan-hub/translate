@@ -3,7 +3,9 @@ export class iPhoneVoice {
   
   // Check if device is iPhone/iPad
   static isIOSDevice(): boolean {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    console.log('🍎 iPhone device check:', { userAgent: navigator.userAgent, isIOS });
+    return isIOS;
   }
 
   // iPhone-specific voice output using server-side TTS
@@ -55,12 +57,15 @@ export class iPhoneVoice {
 
           // iPhone-specific settings
           audio.volume = 1.0;
-          audio.preload = 'auto';
+          audio.preload = 'auto'; 
           audio.crossOrigin = 'anonymous';
           audio.src = audioUrl;
           
+          console.log('🍎 iPhone audio setup:', { audioUrl, volume: audio.volume });
+          
           try {
             audio.load();
+            console.log('🍎 iPhone audio load initiated');
           } catch (loadError) {
             console.warn('🍎 iPhone audio load warning:', loadError);
           }

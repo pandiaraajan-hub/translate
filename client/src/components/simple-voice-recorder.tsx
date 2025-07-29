@@ -164,15 +164,18 @@ export function SimpleVoiceRecorder({
                   
                   // iPhone-specific voice output (separate from Samsung system)
                   const { iPhoneVoice } = await import('@/lib/iphone-voice');
+                  console.log('📱 Checking if device is iPhone...');
                   if (iPhoneVoice.isIOSDevice()) {
-                    console.log('🍎 iPhone device detected, using iPhone voice handler');
+                    console.log('📱 iPhone device detected, using iPhone voice handler');
                     const iPhoneSuccess = await iPhoneVoice.speakOnIPhone(translatedText, targetLangCode);
                     if (iPhoneSuccess) {
-                      console.log('🍎 iPhone voice output completed successfully');
+                      console.log('📱 iPhone voice output completed successfully');
                       return;
                     } else {
-                      console.log('🍎 iPhone voice failed, continuing to Samsung fallback');
+                      console.log('📱 iPhone voice failed, continuing to Samsung fallback');
                     }
+                  } else {
+                    console.log('📱 Not an iPhone device, skipping iPhone handler');
                   }
                   
                   // Fallback to Samsung audio fix
