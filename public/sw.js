@@ -2,23 +2,27 @@
 const CACHE_NAME = 'voicebridge-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg'
 ];
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
+  console.log('PWA: Service Worker installing');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('PWA: Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch((error) => {
+          console.log('PWA: Cache addAll failed:', error);
+          // Continue installation even if caching fails
+          return Promise.resolve();
+        });
       })
-      .catch((error) => {
-        console.log('PWA: Cache install failed:', error);
+      .then(() => {
+        console.log('PWA: Installation complete');
+        return self.skipWaiting();
       })
   );
 });
@@ -42,6 +46,7 @@ self.addEventListener('fetch', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
+  console.log('PWA: Service Worker activating');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -52,6 +57,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      console.log('PWA: Service Worker activated');
+      return self.clients.claim();
     })
   );
 });
