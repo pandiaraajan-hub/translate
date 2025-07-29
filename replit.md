@@ -54,6 +54,7 @@ Preferred communication style: Simple, everyday language.
 - **Mobile Button Enhancement**: Touch event handling optimized for both iPhone and Samsung devices ✅
 - **Recording State Management**: Implemented robust state management preventing button from staying in recording mode ✅
 - **iPhone Click Toggle**: Optimized iPhone button for immediate click-to-start/click-to-stop behavior ✅
+- **Simple Click Mode**: Reverted to single-tap behavior - tap to start recording, tap to stop and translate ✅
 
 
 ### Frontend Components
