@@ -494,16 +494,18 @@ export default function Home() {
                 </div>
               </div>
               
-              {error.includes('Microphone access') && (
+              {(error.includes('Microphone access') || error.includes('blocked') || error.includes('not-allowed')) && (
                 <div className="mt-3 p-3 bg-blue-50 rounded-md text-sm">
-                  <p className="font-medium text-blue-800 mb-2">iPhone Setup Instructions:</p>
+                  <p className="font-medium text-blue-800 mb-2">iPhone Microphone Setup:</p>
                   <ol className="list-decimal list-inside text-blue-700 space-y-1">
                     <li>Open iPhone Settings app</li>
                     <li>Scroll down and tap "Safari"</li>
                     <li>Tap "Camera & Microphone"</li>
-                    <li>Select "Allow" for this website</li>
-                    <li>Return here and refresh the page</li>
+                    <li>Find this website and select "Allow"</li>
+                    <li>Close Safari completely (swipe up, swipe up on Safari)</li>
+                    <li>Reopen Safari and return to this website</li>
                   </ol>
+                  <p className="mt-2 text-blue-600 font-medium">Alternative: Try using Chrome browser instead of Safari</p>
                 </div>
               )}
               

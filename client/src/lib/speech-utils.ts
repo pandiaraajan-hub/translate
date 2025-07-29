@@ -129,7 +129,7 @@ export class SpeechUtils {
     }
 
     const langConfig = SUPPORTED_LANGUAGES[language];
-    this.recognition.lang = langConfig.speechLang;
+    this.recognition.lang = langConfig.code;
 
     this.recognition.onstart = () => {
       console.log('Speech recognition started');
