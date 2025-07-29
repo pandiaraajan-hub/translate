@@ -38,17 +38,25 @@ export function SimpleVoiceRecorder({
     e.preventDefault();
     e.stopPropagation();
     
-    // Detect device type for debugging
+    // Detect device type for specific handling
     const isIPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     console.log('🎤 iPhone device:', isIPhone);
     
     if (isRecording || forceStop) {
-      // Stop recording with force flag for iPhone
-      console.log('🎤 Stopping recording...');
+      // Stop recording - iPhone click-to-stop behavior
+      console.log('🎤 Stopping recording (iPhone click-to-stop)...');
       console.log('🎤 Setting isRecording to false');
       
-      // Force stop for iPhone compatibility
-      setForceStop(true);
+      // iPhone-specific force stop mechanism
+      if (isIPhone) {
+        setForceStop(true);
+        // Reset force stop immediately for iPhone
+        setTimeout(() => {
+          setForceStop(false);
+          console.log('🎤 iPhone force stop reset');
+        }, 50);
+      }
+      
       setIsRecording(false);
       setLastResult('Recording stopped');
       
@@ -65,12 +73,6 @@ export function SimpleVoiceRecorder({
       } catch (error) {
         console.error('🎤 Error stopping speech recognition:', error);
       }
-      
-      // Reset force stop after a brief delay
-      setTimeout(() => {
-        setForceStop(false);
-        console.log('🎤 Force stop reset');
-      }, 100);
       
       return;
     }
@@ -135,7 +137,7 @@ export function SimpleVoiceRecorder({
     <Card>
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
-          <div>Click to {isRecording ? 'stop recording' : 'start recording'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
+          <div>Click to {(isRecording && !forceStop) ? 'stop recording' : 'start recording'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
         </div>
 
 
@@ -154,11 +156,11 @@ export function SimpleVoiceRecorder({
               handleRecordingToggle(e);
             }}
             onTouchStart={(e) => {
-              console.log('🎤 Touch start event - triggering recording toggle');
+              console.log('🎤 Touch start event - iPhone click toggle mode');
               e.preventDefault();
               e.stopPropagation();
-              // Use setTimeout to ensure touch event completes before handling
-              setTimeout(() => handleRecordingToggle(e), 0);
+              // iPhone click-to-toggle: handle immediately without setTimeout for responsive feel
+              handleRecordingToggle(e);
             }}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');

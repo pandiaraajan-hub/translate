@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic languages using the Google Translate API. It features press-and-hold recording (walkie-talkie style) with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
+This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic languages using the Google Translate API. It features click-to-start/click-to-stop recording with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
 
 **Status: FULLY FUNCTIONAL ON MOBILE** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. iPhone button click-to-stop functionality fixed January 29, 2025. Compatible with iPhone, Samsung, and all mobile browsers through server-side TTS streaming with full recording button functionality.
 
@@ -53,6 +53,7 @@ Preferred communication style: Simple, everyday language.
 - **FIXED**: iPhone button click-to-stop functionality with force-stop mechanism ✅
 - **Mobile Button Enhancement**: Touch event handling optimized for both iPhone and Samsung devices ✅
 - **Recording State Management**: Implemented robust state management preventing button from staying in recording mode ✅
+- **iPhone Click Toggle**: Optimized iPhone button for immediate click-to-start/click-to-stop behavior ✅
 
 
 ### Frontend Components
