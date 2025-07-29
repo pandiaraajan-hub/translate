@@ -47,14 +47,12 @@ export function SimpleVoiceRecorder({
       console.log('🎤 Stopping recording (iPhone click-to-stop)...');
       console.log('🎤 Setting isRecording to false');
       
-      // iPhone-specific force stop mechanism
+      // iPhone-specific immediate force stop
       if (isIPhone) {
         setForceStop(true);
-        // Reset force stop immediately for iPhone
-        setTimeout(() => {
-          setForceStop(false);
-          console.log('🎤 iPhone force stop reset');
-        }, 50);
+        // Immediate reset for instant response
+        setForceStop(false);
+        console.log('🎤 iPhone immediate force stop applied');
       }
       
       setIsRecording(false);
@@ -82,11 +80,20 @@ export function SimpleVoiceRecorder({
     setIsRecording(true);
     setLastResult('Listening...');
     
-    // Set a timeout to auto-stop recording after 30 seconds (for click mode)
+    // Set a timeout to auto-stop recording after 30 seconds (safety feature)
     const timeout = setTimeout(() => {
-      setIsRecording(false);
-      setLastResult('Recording stopped (timeout)');
-      console.log('🎤 Recording auto-stopped after timeout');
+      if (isRecording) {
+        setIsRecording(false);
+        setLastResult('Recording stopped (timeout)');
+        console.log('🎤 Recording auto-stopped after timeout');
+        try {
+          import('@/lib/speech-utils').then(({ speechUtils }) => {
+            speechUtils.stopRecognition();
+          });
+        } catch (error) {
+          console.error('Error stopping recognition on timeout:', error);
+        }
+      }
     }, 30000);
     setRecordingTimeout(timeout);
     
@@ -156,11 +163,15 @@ export function SimpleVoiceRecorder({
               handleRecordingToggle(e);
             }}
             onTouchStart={(e) => {
-              console.log('🎤 Touch start event - iPhone click toggle mode');
+              console.log('🎤 Touch start - instant iPhone toggle');
               e.preventDefault();
               e.stopPropagation();
-              // iPhone click-to-toggle: handle immediately without setTimeout for responsive feel
+              // Immediate execution - no delays
               handleRecordingToggle(e);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
             }}
             onMouseDown={(e) => {
               console.log('🎤 Mouse down event');
