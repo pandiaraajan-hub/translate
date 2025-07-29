@@ -167,6 +167,13 @@ export function SimpleVoiceRecorder({
           <div className="text-sm text-gray-600">
             {isRecording ? 'Recording... Tap to stop' : 'Tap to start'}
           </div>
+          
+          {/* iPhone Debug Status - Prominent Display */}
+          {lastResult && (
+            <div className="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-3 text-sm font-bold text-center">
+              iPhone Status: {lastResult}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-center gap-4">
