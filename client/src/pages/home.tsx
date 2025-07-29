@@ -17,10 +17,6 @@ import { useToast } from '@/hooks/use-toast';
 import { mobileAudio } from '@/lib/mobile-audio';
 import { speechUtils } from '@/lib/speech-utils';
 import { directMobileSpeech } from '@/lib/direct-mobile-speech';
-import { InstallPrompt } from '@/components/install-prompt';
-import { MobileAppBanner } from '@/components/mobile-app-banner';
-import { PWAInstallButton } from '@/components/pwa-install-button';
-import { OfflineIndicator } from '@/components/offline-indicator';
 
 export default function Home() {
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>('english');
@@ -306,15 +302,13 @@ export default function Home() {
                 <p className="text-xs text-gray-500">Pandi Tech</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <PWAInstallButton />
-              <Dialog open={showSettings} onOpenChange={setShowSettings}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
-                    <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
+            <Dialog open={showSettings} onOpenChange={setShowSettings}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 h-7 w-7 sm:h-8 sm:w-8">
+                  <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center space-x-2">
                     <Sliders className="h-5 w-5" />
@@ -399,8 +393,7 @@ export default function Home() {
                   </Button>
                 </div>
               </DialogContent>
-              </Dialog>
-            </div>
+            </Dialog>
           </div>
 
         </div>
@@ -495,11 +488,6 @@ export default function Home() {
           </Alert>
         )}
       </main>
-
-      {/* PWA Install Components */}
-      <InstallPrompt />
-      <MobileAppBanner />
-      <OfflineIndicator />
     </div>
   );
 }
