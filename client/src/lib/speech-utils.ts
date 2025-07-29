@@ -110,14 +110,20 @@ export class SpeechUtils {
       return;
     }
 
-    // Check for microphone permissions first
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('🎤 Microphone permission granted');
-    } catch (permError) {
-      console.error('🎤 Microphone permission denied:', permError);
-      onError('Microphone access required. Please allow microphone access and try again. On iPhone: Settings > Safari > Camera & Microphone > Allow');
-      return;
+    // Check for microphone permissions first on supported browsers
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('🎤 Microphone permission granted');
+        // Stop the stream immediately as we only needed permission
+        stream.getTracks().forEach(track => track.stop());
+      } catch (permError) {
+        console.error('🎤 Microphone permission denied:', permError);
+        onError('Microphone access required. Please allow microphone access and try again. On iPhone: Settings > Safari > Camera & Microphone > Allow');
+        return;
+      }
+    } else {
+      console.log('🎤 getUserMedia not available, proceeding with speech recognition');
     }
 
     // Stop any existing recognition first
