@@ -65,10 +65,11 @@ export function SimpleVoiceRecorder({
     setIsRecording(true);
     setLastResult('Listening...');
     
-    // Safety timeout
+    // Safety timeout - shorter for iPhone testing
     const timeout = setTimeout(() => {
+      console.log('🎤 iPhone Recording timeout reached');
       stopRecording();
-    }, 30000);
+    }, 15000);
     setRecordingTimeout(timeout);
     
     // Start speech recognition

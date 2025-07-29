@@ -176,31 +176,45 @@ export class SpeechUtils {
     console.log('🎤 iPhone Recognition configured with language:', langConfig.code);
 
     this.recognition.onstart = () => {
-      console.log('Speech recognition started');
+      console.log('🎤 iPhone Speech recognition started successfully');
       this.isRecognitionActive = true;
     };
 
     this.recognition.onend = () => {
-      console.log('Speech recognition ended');
+      console.log('🎤 iPhone Speech recognition ended');
       this.isRecognitionActive = false;
+      
+      // iPhone-specific: if no result was captured, show helpful message
+      if (this.isRecognitionActive === false) {
+        console.log('🎤 iPhone Recognition ended without capturing speech');
+      }
     };
 
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
-      console.log('🎤 Speech recognition result received');
+      console.log('🎤 iPhone Speech recognition result received');
+      console.log('🎤 iPhone Event results length:', event.results.length);
+      console.log('🎤 iPhone Event results:', event.results);
+      
       const result = event.results[0];
       if (result.isFinal) {
         const transcript = result[0].transcript.trim();
-        console.log('🎤 Final transcript:', transcript);
+        console.log('🎤 iPhone Final transcript:', transcript);
         this.isRecognitionActive = false;
         
-        if (transcript) {
+        if (transcript && transcript.length > 0) {
+          console.log('🎤 iPhone Calling onResult with transcript:', transcript);
           onResult({
             transcript: transcript,
             confidence: result[0].confidence || 0.9
           });
         } else {
-          onError('No speech detected');
+          console.log('🎤 iPhone Empty transcript detected');
+          onError('No speech detected. Please speak clearly and try again.');
         }
+      } else {
+        // Log interim results for debugging
+        const interimTranscript = result[0].transcript;
+        console.log('🎤 iPhone Interim result:', interimTranscript);
       }
     };
 
