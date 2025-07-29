@@ -87,7 +87,11 @@ export function SimpleVoiceRecorder({
             setLastResult(`SUCCESS: "${result.transcript}"`);
             console.log('🎤 iPhone Calling onRecognitionResult callback with:', result.transcript);
             onRecognitionResult(result.transcript, result.confidence || 0.9);
-            stopRecording(); // Auto-stop after getting result
+            
+            // Show completion status after translation
+            setTimeout(() => {
+              setLastResult('Translation completed! Ready for next recording');
+            }, 2000);
           },
           (error) => {
             console.error('🎤 iPhone ERROR - Recognition error callback:', error);
@@ -123,6 +127,12 @@ export function SimpleVoiceRecorder({
       // Add delay to ensure clean state reset for next recording
       setTimeout(() => {
         console.log('🎤 iPhone Speech recognition fully reset');
+        // Clear processing status after a reasonable time if no result came
+        setTimeout(() => {
+          if (lastResult === 'Processing...') {
+            setLastResult('Ready for next recording');
+          }
+        }, 3000);
       }, 100);
     }).catch(console.error);
   };

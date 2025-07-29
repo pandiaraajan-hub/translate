@@ -183,10 +183,12 @@ export class SpeechUtils {
       console.log('🎤 iPhone Speech recognition ended');
       this.isRecognitionActive = false;
       
-      // iPhone-specific: if no result was captured, show helpful message
-      if (this.isRecognitionActive === false) {
-        console.log('🎤 iPhone Recognition ended without capturing speech');
-      }
+      // iPhone-specific: Check if we got results
+      setTimeout(() => {
+        if (this.isRecognitionActive === false) {
+          console.log('🎤 iPhone Recognition session completed');
+        }
+      }, 100);
     };
 
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
