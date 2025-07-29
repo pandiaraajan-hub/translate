@@ -4,7 +4,7 @@
 
 This is a full-stack voice-to-voice translation application built with a React frontend and Express.js backend. The app provides automatic real-time translation between English, Tamil, Chinese, Malay, Hindi, Bengali, Spanish, and Arabic languages using the Google Translate API. It features press-and-hold recording (walkie-talkie style) with automatic speech-to-speech translation, enhanced mobile responsiveness, and seamless mobile touch event handling - designed for streamlined voice-only communication with "Pandi Tech" branding.
 
-**Status: FULLY FUNCTIONAL ON MOBILE** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. Compatible with iPhone, Samsung, and all mobile browsers through server-side TTS streaming.
+**Status: FULLY FUNCTIONAL ON MOBILE** - Voice output confirmed working on Samsung devices using server-side TTS as of January 28, 2025. iPhone button click-to-stop functionality fixed January 29, 2025. Compatible with iPhone, Samsung, and all mobile browsers through server-side TTS streaming with full recording button functionality.
 
 ## User Preferences
 
@@ -40,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 6. **Direct Speech Recognition**: Bypasses complex hook systems for reliable mobile performance
 7. **Pandi Tech Branding**: VoiceBridge header with company branding as requested
 
-### Recent Changes - January 28, 2025
+### Recent Changes - January 29, 2025
 - **BREAKTHROUGH**: Samsung voice output fixed using server-side TTS streaming solution ✅
 - **Server-side TTS**: Implemented `/api/tts-audio` endpoint that proxies Google Translate TTS ✅
 - **Samsung Audio Enhancement**: Multiple audio unlocking methods and forced play attempts for Samsung compatibility ✅
@@ -50,6 +50,9 @@ Preferred communication style: Simple, everyday language.
 - **Language Expansion**: Added Spanish and Arabic support (8 total languages) - tested and confirmed working
 - **Mobile Compatibility**: Enhanced server-side TTS to work on iPhone, Samsung, and all mobile browsers
 - **iPhone Voice Support**: Added dedicated iPhone voice handler without affecting Samsung system
+- **FIXED**: iPhone button click-to-stop functionality with force-stop mechanism ✅
+- **Mobile Button Enhancement**: Touch event handling optimized for both iPhone and Samsung devices ✅
+- **Recording State Management**: Implemented robust state management preventing button from staying in recording mode ✅
 
 
 ### Frontend Components
