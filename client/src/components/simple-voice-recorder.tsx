@@ -79,21 +79,24 @@ export function SimpleVoiceRecorder({
         reliableAudio.unlockAudio();
         
         const { speechUtils } = await import('@/lib/speech-utils');
+        console.log('🎤 iPhone About to start recognition for language:', sourceLanguage);
         await speechUtils.startRecognition(
           sourceLanguage,
           (result) => {
-            console.log('🎤 Speech result received:', result.transcript);
+            console.log('🎤 iPhone SUCCESS - Speech result received:', result.transcript);
             setLastResult(`"${result.transcript}"`);
-            console.log('🎤 Calling onRecognitionResult callback');
+            console.log('🎤 iPhone Calling onRecognitionResult callback with:', result.transcript);
             onRecognitionResult(result.transcript, result.confidence || 0.9);
+            stopRecording(); // Auto-stop after getting result
           },
           (error) => {
-            console.error('🎤 iPhone Recognition error callback:', error);
+            console.error('🎤 iPhone ERROR - Recognition error callback:', error);
             setLastResult(`Error: ${error}`);
             setIsRecording(false); // Immediately reset button state
             onError(error);
           }
         );
+        console.log('🎤 iPhone Recognition start request completed');
       } catch (error) {
         console.error('🎤 iPhone Start error:', error);
         setLastResult('Failed to start');

@@ -1,0 +1,332 @@
+ stallwart: failed ping 1
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ [LaunchDarkly] LaunchDarkly client initialized
+ stallwart: failed ping 1
+analytics.tiktok.com/i18n/pixel/events.js?sdkid=D004GE3C77U8PIVDSDJG&lib=ttq:1  Failed to load resource: net::ERR_CONNECTION_TIMED_OUT
+/repls:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'battery'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-0ca1b51e9fd8bea3.js:1
+ stallwart: failed ping 1
+ stallwart: failed ping 2
+ stallwart: failed ping 3
+ stallwart: failed ping 4
+ stallwart: failed ping 5
+ stallwart: session stalled
+ WebSocket connection to 'wss://eval.picard.platform.replit.com/wsv2/v2.public.Q2dZSW5hQ2p4QVlTQmdpOHZLUEVCaUlHY0dsallYSmtNQUE2d2dFS0pEQXdObUkzTVRrd0xUTmxPV0V0TkdNd09TMDRNakE0TFdVMk5ETTJaRFU1WkdVMlpoSURibWw0R2hoeVpYQnNhWFF0Y21Wd2JDMW1hV3hsY3kxd2FXTmhjbVFpQ2xOcGRHVlNaWEJ2Y25RcURIQmhibVJwWVhKaFlXcGhia0pVQ2hseVpYQnNhWFF0Y21Wd2JDMWliRzlqYTNNdGNHbGpZWEprRWhkeVpYQnNhWFF0Y21Wd2JDMXRaWFJoTFhCcFkyRnlaQm9lY21Wd2JHbDBMVzFoY21kaGNtbHVaUzFpYkc5amEzTXRjR2xqWVhKa1NnY0k0YXJYRlJBQlVBQjRBRklqQ0FFUWdJQ0FnQ0FaQUFBQUFBQUFFRUFoQUFBQUFBQUFFRUFvZ0lDQWdNZ0JNQUpnQUdvVENPR3ExeFVTREhCaGJtUnBZWEpoWVdwaGJvSUJBaW9BbWdFS0NnZ3dMakF1TVRVMk5xQUJBUT095ujwxUq-En-qdhvi39ZtqxrJFPpAfAF3DCXANhtbZt0hkDPcYA7ZJjh5TGGlAFxIQ-alX1FfvY5xvPKhucEsDw.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: 
+connect @ 5802-f8e6d9c4515a163b.js:1
+ WebSocket connection to 'wss://eval.picard.platform.replit.com/wsv2/v2.public.Q2dZSW5hQ2p4QVlTQmdpOHZLUEVCaUlHY0dsallYSmtNQUE2d2dFS0pEQXdObUkzTVRrd0xUTmxPV0V0TkdNd09TMDRNakE0TFdVMk5ETTJaRFU1WkdVMlpoSURibWw0R2hoeVpYQnNhWFF0Y21Wd2JDMW1hV3hsY3kxd2FXTmhjbVFpQ2xOcGRHVlNaWEJ2Y25RcURIQmhibVJwWVhKaFlXcGhia0pVQ2hseVpYQnNhWFF0Y21Wd2JDMWliRzlqYTNNdGNHbGpZWEprRWhkeVpYQnNhWFF0Y21Wd2JDMXRaWFJoTFhCcFkyRnlaQm9lY21Wd2JHbDBMVzFoY21kaGNtbHVaUzFpYkc5amEzTXRjR2xqWVhKa1NnY0k0YXJYRlJBQlVBQjRBRklqQ0FFUWdJQ0FnQ0FaQUFBQUFBQUFFRUFoQUFBQUFBQUFFRUFvZ0lDQWdNZ0JNQUpnQUdvVENPR3ExeFVTREhCaGJtUnBZWEpoWVdwaGJvSUJBaW9BbWdFS0NnZ3dMakF1TVRVMk5xQUJBUT095ujwxUq-En-qdhvi39ZtqxrJFPpAfAF3DCXANhtbZt0hkDPcYA7ZJjh5TGGlAFxIQ-alX1FfvY5xvPKhucEsDw.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: 
+connect @ 5802-f8e6d9c4515a163b.js:1
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+ Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.google.com') does not match the recipient window's origin ('https://replit.com').
+Pv @ js?id=AW-11411994397:466
+ Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://replit.com').
+Pv @ js?id=AW-11411994397:466
+ Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://m.youtube.com') does not match the recipient window's origin ('https://replit.com').
+Pv @ js?id=AW-11411994397:466
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+ PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/reliable-audio.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html:32 Unrecognized feature: 'battery'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@vite/client
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@react-refresh
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/queryClient.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toaster.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/tooltip.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/not-found.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/pages/home.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/pwa-utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/offline-manager.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/toast.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-toast.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/card.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/language-selector.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/simple-voice-recorder.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/clean-translation-results.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/hooks/use-translation.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/button.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/alert.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/dialog.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/slider.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/switch.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/ui/label.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/speech-utils.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/lib/direct-mobile-speech.ts
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/install-prompt.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/mobile-app-banner.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/pwa-install-button.tsx
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/src/components/offline-indicator.tsx
+home.tsx:160 🔍 Translation result effect triggered: undefined
+home.tsx:172 🔍 No translation result available
+pwa-utils.ts:89 PWA: Service Worker registered: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+client:536 WebSocket connection to 'wss://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/?token=TfcEdEeAKhyE' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=TfcEdEeAKhyE' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar41f%3A
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/
+sw.js:87 PWA: Serving from cache: https://72b52f47-1e4c-47d2-b3dc-4b0d08b273ab-00-2mi7lqxcbd1ws.janeway.replit.dev/manifest.json

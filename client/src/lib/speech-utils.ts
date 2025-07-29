@@ -125,25 +125,24 @@ export class SpeechUtils {
     this.recognition.maxAlternatives = 1;
     console.log('🎤 iPhone Created fresh recognition instance');
 
-    // Skip microphone check on iPhone after first successful use to avoid blocking subsequent attempts
+    // iPhone specific microphone permission handling
     const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    const hasUsedMicBefore = localStorage.getItem('iphone_mic_granted') === 'true';
+    console.log('🎤 iPhone User agent check - isIPhone:', isIPhone);
     
-    if (!hasUsedMicBefore && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (isIPhone && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
+        console.log('🎤 iPhone Requesting microphone permission...');
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log('🎤 iPhone Microphone permission granted for first time');
+        console.log('🎤 iPhone Microphone permission GRANTED successfully');
         stream.getTracks().forEach(track => track.stop());
-        if (isIPhone) {
-          localStorage.setItem('iphone_mic_granted', 'true');
-        }
+        localStorage.setItem('iphone_mic_granted', 'true');
       } catch (permError) {
-        console.error('🎤 iPhone Microphone permission denied:', permError);
-        onError('Microphone access required. Please allow microphone access and try again. On iPhone: Settings > Safari > Camera & Microphone > Allow');
+        console.error('🎤 iPhone Microphone permission DENIED:', permError);
+        onError('iPhone microphone blocked. Settings > Safari > Camera & Microphone > Allow, then refresh page.');
         return;
       }
     } else {
-      console.log('🎤 iPhone Skipping microphone check - previously granted or unavailable');
+      console.log('🎤 iPhone Skipping microphone check - not iPhone or getUserMedia unavailable');
     }
 
     // Force stop any existing recognition and reset state for iPhone
