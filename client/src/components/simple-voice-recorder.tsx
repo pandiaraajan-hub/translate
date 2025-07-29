@@ -30,19 +30,40 @@ export function SimpleVoiceRecorder({
   const [lastResult, setLastResult] = useState<string>('');
   const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const handleTouchStart = async (e: React.TouchEvent) => {
+  const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (isRecording) return;
+    if (isRecording) {
+      // Stop recording
+      setIsRecording(false);
+      setLastResult('Recording stopped');
+      
+      // Clear the timeout when manually stopping
+      if (recordingTimeout) {
+        clearTimeout(recordingTimeout);
+        setRecordingTimeout(null);
+      }
+      
+      try {
+        const { speechUtils } = await import('@/lib/speech-utils');
+        speechUtils.stopRecognition();
+      } catch (error) {
+        // Handle error silently
+      }
+      return;
+    }
     
+    // Start recording
     setIsRecording(true);
+    setLastResult('Listening...');
     
-    // Set a timeout to auto-stop recording after 10 seconds (safety measure)
+    // Set a timeout to auto-stop recording after 30 seconds (for click mode)
     const timeout = setTimeout(() => {
       setIsRecording(false);
+      setLastResult('Recording stopped (timeout)');
       console.log('🎤 Recording auto-stopped after timeout');
-    }, 10000);
+    }, 30000);
     setRecordingTimeout(timeout);
     
     try {
@@ -58,16 +79,8 @@ export function SimpleVoiceRecorder({
         async (result) => {
           setLastResult(`Heard: "${result.transcript}"`);
           
-          // Auto-stop recording when we get a result
-          setIsRecording(false);
-          
-          // Clear the timeout since we got a result
-          if (recordingTimeout) {
-            clearTimeout(recordingTimeout);
-            setRecordingTimeout(null);
-          }
-          
-          // Call the parent's callback - this will trigger translation in the parent component
+          // Don't auto-stop recording in click mode - let user control when to stop
+          // Call the parent's callback - this will trigger translation
           onRecognitionResult(result.transcript, result.confidence || 0.9);
         },
         (error) => {
@@ -89,57 +102,40 @@ export function SimpleVoiceRecorder({
     }
   };
 
-  const handleTouchEnd = async (e: React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!isRecording) return;
-    
-    setIsRecording(false);
-    
-    // Clear the timeout when manually stopping
-    if (recordingTimeout) {
-      clearTimeout(recordingTimeout);
-      setRecordingTimeout(null);
-    }
-    
-    try {
-      const { speechUtils } = await import('@/lib/speech-utils');
-      speechUtils.stopRecognition();
-    } catch (error) {
-      // Handle error silently
-    }
-  };
+  // Remove the old touch handlers since we're using toggle mode now
 
   return (
     <Card>
       <CardContent className="p-6 text-center space-y-4">
         <div className="text-gray-500 space-y-1">
-          <div>Press and hold to record in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
-
+          <div>Click to {isRecording ? 'stop recording' : 'start recording'} in {SUPPORTED_LANGUAGES[sourceLanguage].name} → {SUPPORTED_LANGUAGES[targetLanguage].name}</div>
         </div>
 
 
 
 
 
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4">
           <button
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
               isRecording 
                 ? 'bg-red-500 animate-pulse' 
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            onTouchCancel={handleTouchEnd}
-            onMouseDown={(e) => handleTouchStart(e as any)}
-            onMouseUp={(e) => handleTouchEnd(e as any)}
-            onMouseLeave={(e) => handleTouchEnd(e as any)}
+            onClick={handleRecordingToggle}
+            onTouchStart={(e) => e.preventDefault()}
+            onTouchEnd={(e) => e.preventDefault()}
           >
             {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
+          
+          {/* Status text */}
+          <div className="text-sm text-gray-600">
+            {isRecording ? 'Recording... Click to stop' : 'Click to start'}
+          </div>
+        </div>
 
+        <div className="flex items-center justify-center gap-4">
           <button
             onClick={async () => {
               if (translatedText && translatedText.trim()) {
