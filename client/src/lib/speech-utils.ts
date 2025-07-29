@@ -205,10 +205,23 @@ export class SpeechUtils {
   }
 
   stopRecognition(): void {
-    if (this.recognition && this.isRecognitionActive) {
-      console.log('Stopping speech recognition');
-      this.recognition.stop();
-      this.isRecognitionActive = false;
+    console.log('🎤 iPhone stopRecognition called, active:', this.isRecognitionActive);
+    if (this.recognition) {
+      try {
+        if (this.isRecognitionActive) {
+          console.log('🎤 iPhone Stopping active recognition');
+          this.recognition.stop();
+        }
+        this.isRecognitionActive = false;
+        // Force reset recognition state
+        setTimeout(() => {
+          this.isRecognitionActive = false;
+          console.log('🎤 iPhone Recognition state force reset');
+        }, 100);
+      } catch (error) {
+        console.log('🎤 iPhone Error stopping recognition:', error);
+        this.isRecognitionActive = false;
+      }
     }
   }
 

@@ -32,7 +32,7 @@ export function SimpleVoiceRecorder({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleButtonPress = (e: React.MouseEvent | React.TouchEvent) => {
-    console.log('🎤 Button pressed, current state:', { isRecording, isProcessing });
+    console.log('🎤 iPhone Button pressed, current state:', { isRecording, isProcessing });
     
     // Prevent multiple rapid presses
     if (isProcessing) {
@@ -45,15 +45,18 @@ export function SimpleVoiceRecorder({
     setIsProcessing(true);
     
     if (isRecording) {
-      console.log('🎤 Stopping recording');
+      console.log('🎤 iPhone Stopping recording');
       stopRecording();
     } else {
-      console.log('🎤 Starting recording');
+      console.log('🎤 iPhone Starting recording');
       startRecording();
     }
     
-    // Reset processing flag after short delay
-    setTimeout(() => setIsProcessing(false), 200);
+    // Reset processing flag after delay
+    setTimeout(() => {
+      setIsProcessing(false);
+      console.log('🎤 iPhone Processing flag reset');
+    }, 300);
   };
 
   const startRecording = () => {
@@ -98,9 +101,9 @@ export function SimpleVoiceRecorder({
   };
 
   const stopRecording = () => {
-    console.log('🎤 Stopping recording');
+    console.log('🎤 iPhone Stopping recording');
     setIsRecording(false);
-    setLastResult('Stopped');
+    setLastResult('Processing...');
     
     // Clear timeout
     if (recordingTimeout) {
@@ -108,9 +111,13 @@ export function SimpleVoiceRecorder({
       setRecordingTimeout(null);
     }
     
-    // Stop speech recognition
+    // Stop speech recognition and reset state
     import('@/lib/speech-utils').then(({ speechUtils }) => {
       speechUtils.stopRecognition();
+      // Add delay to ensure clean state reset for next recording
+      setTimeout(() => {
+        console.log('🎤 iPhone Speech recognition fully reset');
+      }, 100);
     }).catch(console.error);
   };
 
