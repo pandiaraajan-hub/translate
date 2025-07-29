@@ -29,9 +29,10 @@ export function SimpleVoiceRecorder({
   const [isRecording, setIsRecording] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
   const [recordingTimeout, setRecordingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [forceStop, setForceStop] = useState(false);
 
   const handleRecordingToggle = async (e: React.MouseEvent | React.TouchEvent) => {
-    console.log('🎤 Recording button clicked, current state:', { isRecording });
+    console.log('🎤 Recording button clicked, current state:', { isRecording, forceStop });
     console.log('🎤 Event type:', e.type);
     console.log('🎤 User agent:', navigator.userAgent);
     e.preventDefault();
@@ -41,11 +42,13 @@ export function SimpleVoiceRecorder({
     const isIPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     console.log('🎤 iPhone device:', isIPhone);
     
-    if (isRecording) {
-      // Stop recording
+    if (isRecording || forceStop) {
+      // Stop recording with force flag for iPhone
       console.log('🎤 Stopping recording...');
       console.log('🎤 Setting isRecording to false');
       
+      // Force stop for iPhone compatibility
+      setForceStop(true);
       setIsRecording(false);
       setLastResult('Recording stopped');
       
@@ -62,6 +65,13 @@ export function SimpleVoiceRecorder({
       } catch (error) {
         console.error('🎤 Error stopping speech recognition:', error);
       }
+      
+      // Reset force stop after a brief delay
+      setTimeout(() => {
+        setForceStop(false);
+        console.log('🎤 Force stop reset');
+      }, 100);
+      
       return;
     }
     
@@ -135,7 +145,7 @@ export function SimpleVoiceRecorder({
         <div className="flex flex-col items-center justify-center gap-4">
           <button
             className={`w-20 h-20 rounded-full text-white transition-all duration-200 flex items-center justify-center font-medium ${
-              isRecording 
+              (isRecording && !forceStop)
                 ? 'bg-red-500 animate-pulse' 
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
@@ -162,12 +172,12 @@ export function SimpleVoiceRecorder({
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            {isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+            {(isRecording && !forceStop) ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
           
           {/* Status text */}
           <div className="text-sm text-gray-600">
-            {isRecording ? 'Recording... Click to stop' : 'Click to start'}
+            {(isRecording && !forceStop) ? 'Recording... Click to stop' : 'Click to start'}
           </div>
         </div>
 
