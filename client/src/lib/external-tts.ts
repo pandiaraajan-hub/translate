@@ -66,24 +66,35 @@ export class ExternalTTS {
           console.log('🎵 Server TTS completed');
         };
         
-        // Samsung-specific audio loading
+        // Mobile-specific audio loading (Samsung + iPhone)
         audio.volume = 1.0;
         audio.preload = 'auto';
+        
+        // iPhone-specific optimizations
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          console.log('🍎 Applying iPhone-specific audio settings');
+          this.unlockiPhoneAudioContext().catch(e => {
+            console.warn('🍎 iPhone unlock failed:', e);
+          });
+          audio.crossOrigin = 'anonymous';
+        }
+        
         audio.src = audioUrl;
         
-        // Force load with Samsung-specific settings
+        // Force load with mobile-specific settings
         try {
           audio.load();
-          // Immediate play attempt for Samsung
+          // Immediate play attempt for mobile devices
           setTimeout(() => {
             if (!resolved && audio.readyState >= 2) {
               audio.play().catch(() => {
-                console.log('🎵 Immediate play failed, waiting for canplaythrough');
+                console.log('📱 Immediate play failed, waiting for canplaythrough');
               });
             }
-          }, 100);
+          }, isIOS ? 200 : 100); // Longer delay for iPhone
         } catch (error) {
-          console.error('🎵 Audio load failed:', error);
+          console.error('📱 Audio load failed:', error);
         }
         
         // Timeout after 8 seconds
@@ -98,6 +109,32 @@ export class ExternalTTS {
     } catch (error) {
       console.error('🎵 Server TTS error:', error);
       return false;
+    }
+  }
+
+  // iPhone-specific audio unlock method
+  private static async unlockiPhoneAudioContext(): Promise<void> {
+    try {
+      console.log('🍎 Unlocking iPhone audio context...');
+      
+      // Create a short silent audio to unlock iOS audio context
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+        console.log('🍎 iPhone audio context resumed');
+      }
+      
+      // Create and play a silent buffer to fully unlock audio
+      const buffer = audioContext.createBuffer(1, 1, 22050);
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+      
+      console.log('🍎 iPhone audio unlock completed');
+    } catch (error) {
+      console.warn('🍎 iPhone audio unlock failed:', error);
     }
   }
   
