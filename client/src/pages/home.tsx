@@ -153,31 +153,41 @@ export default function Home() {
 
   // Global audio state to prevent multiple simultaneous playbacks
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [lastTranslationId, setLastTranslationId] = useState<string>('');
 
   // Handle translation result with automatic audio playback - prevent duplicates
   useEffect(() => {
     console.log('🔍 Translation result effect triggered:', translationResult);
-    if (translationResult) {
-      console.log('🔍 Setting translated text:', translationResult.translatedText);
-      setTranslatedText(translationResult.translatedText);
-      setIsProcessing(false);
+    if (translationResult && translationResult.translation) {
+      const currentTranslationId = translationResult.translation.id;
       
-      // Auto-play translated text if auto-play is enabled and not already playing
-      if (autoPlayTranslation && translationResult.translatedText.trim() && !isAudioPlaying) {
-        console.log('🔊 Auto-playing translation:', translationResult.translatedText);
-        playTranslatedText(translationResult.translatedText);
+      // Only process if this is a new translation and audio is not playing
+      if (currentTranslationId !== lastTranslationId && !isAudioPlaying) {
+        console.log('🔍 Processing NEW translation:', currentTranslationId);
+        setTranslatedText(translationResult.translatedText);
+        setIsProcessing(false);
+        setLastTranslationId(currentTranslationId);
+        
+        // Auto-play translated text if auto-play is enabled
+        if (autoPlayTranslation && translationResult.translatedText.trim()) {
+          console.log('🔊 Auto-playing NEW translation:', translationResult.translatedText);
+          playTranslatedText(translationResult.translatedText);
+        }
+      } else {
+        console.log('🔍 Skipping duplicate/concurrent translation:', { currentTranslationId, lastTranslationId, isAudioPlaying });
       }
     }
-  }, [translationResult, autoPlayTranslation, isAudioPlaying]);
+  }, [translationResult, autoPlayTranslation, isAudioPlaying, lastTranslationId]);
 
   // Function to play translated text - SINGLE AUDIO PATH ONLY
   const playTranslatedText = async (text: string) => {
     // Prevent multiple simultaneous audio playbacks
     if (isAudioPlaying) {
-      console.log('🔊 Audio already playing, skipping completely');
+      console.log('🔊 BLOCKING: Audio already playing, skipping completely');
       return;
     }
     
+    console.log('🔊 STARTING audio playback, setting global lock');
     setIsAudioPlaying(true);
     try {
       const targetLangCode = SUPPORTED_LANGUAGES[targetLanguage].code;
@@ -216,7 +226,8 @@ export default function Home() {
         };
 
         audio.onended = () => {
-          console.log('🔊 Audio playback completed');
+          console.log('🔊 Audio playback completed - releasing lock');
+          setIsAudioPlaying(false);
         };
 
         // Basic audio settings
@@ -246,8 +257,11 @@ export default function Home() {
     } catch (error) {
       console.error('🔊 Audio playback error:', error);
     } finally {
-      setIsAudioPlaying(false);
-      console.log('🔊 Audio state reset to false');
+      // Add delay before releasing lock to prevent rapid successive calls
+      setTimeout(() => {
+        setIsAudioPlaying(false);
+        console.log('🔊 Audio lock released after delay');
+      }, 1000);
     }
   };
 

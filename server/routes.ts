@@ -103,10 +103,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a unique key for deduplication
       const requestKey = `${text}_${lang}`;
       
-      // If there's already an active request for this text+lang, wait for it
+      // If there's already an active request for this text+lang, block it completely
       if (activeTTSRequests.has(requestKey)) {
-        console.log('🎵 Duplicate TTS request detected, blocking to prevent echo');
+        console.log('🎵 BLOCKING duplicate TTS request to prevent echo:', requestKey);
         return res.status(429).json({ error: "Audio request already in progress" });
+      }
+
+      // Also check for any active requests (global audio lock)
+      if (activeTTSRequests.size > 0) {
+        console.log('🎵 BLOCKING new TTS request - audio already playing globally');
+        return res.status(429).json({ error: "Audio playback in progress" });
       }
 
       // Generate Google TTS URL
