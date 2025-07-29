@@ -87,15 +87,17 @@ export function SimpleVoiceRecorder({
             onRecognitionResult(result.transcript, result.confidence || 0.9);
           },
           (error) => {
+            console.error('🎤 iPhone Recognition error callback:', error);
             setLastResult(`Error: ${error}`);
-            stopRecording();
+            setIsRecording(false); // Immediately reset button state
             onError(error);
           }
         );
       } catch (error) {
-        console.error('🎤 Start error:', error);
+        console.error('🎤 iPhone Start error:', error);
         setLastResult('Failed to start');
-        stopRecording();
+        setIsRecording(false); // Reset button immediately on error
+        onError(`iPhone recording failed: ${error}`);
       }
     })();
   };

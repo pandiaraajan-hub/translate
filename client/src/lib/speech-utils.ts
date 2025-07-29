@@ -165,8 +165,15 @@ export class SpeechUtils {
     await new Promise(resolve => setTimeout(resolve, 300));
     console.log('🎤 iPhone Recognition state fully reset');
 
+    // Create the new recognition instance after cleanup
+    this.recognition = new SpeechRec();
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+    
     const langConfig = SUPPORTED_LANGUAGES[language];
     this.recognition.lang = langConfig.code;
+    console.log('🎤 iPhone Recognition configured with language:', langConfig.code);
 
     this.recognition.onstart = () => {
       console.log('Speech recognition started');
@@ -210,14 +217,17 @@ export class SpeechUtils {
           break;
         case 'not-allowed':
         case 'service-not-allowed':
-          errorMessage = 'Microphone access blocked. On iPhone: Go to Settings > Safari > Camera & Microphone > Allow. Then refresh this page.';
+          errorMessage = 'iPhone microphone blocked. Settings > Safari > Camera & Microphone > Allow, then refresh page.';
           break;
         case 'network':
           errorMessage = 'Network error. Please check your internet connection and try again.';
           break;
         case 'aborted':
-        case 'already-started':
+          console.log('🎤 iPhone Recognition aborted');
           return; // Don't show error for these cases
+        case 'already-started':
+          console.log('🎤 iPhone Recognition already started error');
+          return;
         default:
           errorMessage = `Speech recognition error: ${event.error}`;
       }
