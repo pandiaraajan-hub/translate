@@ -1,0 +1,527 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceBridge - Multi-Language Voice Translator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#1976D2',
+                    secondary: '#FFC107',
+                    success: '#4CAF50',
+                    error: '#F44336',
+                    surface: '#FAFAFA'
+                },
+                fontFamily: {
+                    'roboto': ['Roboto', 'sans-serif']
+                }
+            }
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+        .ripple:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .ripple:active:before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .recording-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .language-flag {
+            width: 24px;
+            height: 18px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        
+        .processing-dots {
+            display: inline-block;
+        }
+        .processing-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="bg-surface font-roboto min-h-screen">
+    <!-- @COMPONENT: AppHeader -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-language text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-medium text-gray-900">VoiceBridge</h1>
+                        <p class="text-sm text-gray-500">Multi-Language Voice Translator</p>
+                    </div>
+                </div>
+                <button class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-cog text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: AppHeader -->
+
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <!-- @COMPONENT: LanguageSelector -->
+        <div class="bg-white rounded-xl shadow-sm border p-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Select Languages</h2>
+            
+            <div class="grid md:grid-cols-3 gap-4">
+                <!-- Source Language -->
+                <div class="space-y-3">
+                    <label class="text-sm font-medium text-gray-700">From</label>
+                    <div class="space-y-2">
+                        <button data-event="click:selectSourceLanguage" data-implementation="Set source language to Chinese" 
+                                class="w-full flex items-center p-3 border-2 border-primary bg-primary/5 rounded-lg transition-colors">
+                            <!-- Chinese flag representation -->
+                            <div class="language-flag bg-red-500 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">中</span>
+                            </div>
+                            <span class="font-medium text-primary">Chinese</span>
+                            <i class="fas fa-check ml-auto text-primary"></i>
+                        </button>
+                        <button data-event="click:selectSourceLanguage" data-implementation="Set source language to English"
+                                class="w-full flex items-center p-3 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                            <!-- US flag representation -->
+                            <div class="language-flag bg-blue-600 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">EN</span>
+                            </div>
+                            <span class="text-gray-700">English</span>
+                        </button>
+                        <button data-event="click:selectSourceLanguage" data-implementation="Set source language to Tamil"
+                                class="w-full flex items-center p-3 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                            <!-- Tamil flag representation -->
+                            <div class="language-flag bg-orange-500 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">த</span>
+                            </div>
+                            <span class="text-gray-700">Tamil</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Swap Button -->
+                <div class="flex items-center justify-center">
+                    <button data-event="click:swapLanguages" data-implementation="Swap source and target languages"
+                            class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors ripple">
+                        <i class="fas fa-exchange-alt text-gray-600"></i>
+                    </button>
+                </div>
+
+                <!-- Target Language -->
+                <div class="space-y-3">
+                    <label class="text-sm font-medium text-gray-700">To</label>
+                    <div class="space-y-2">
+                        <button data-event="click:selectTargetLanguage" data-implementation="Set target language to Chinese"
+                                class="w-full flex items-center p-3 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                            <div class="language-flag bg-red-500 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">中</span>
+                            </div>
+                            <span class="text-gray-700">Chinese</span>
+                        </button>
+                        <button data-event="click:selectTargetLanguage" data-implementation="Set target language to English"
+                                class="w-full flex items-center p-3 border-2 border-primary bg-primary/5 rounded-lg transition-colors">
+                            <div class="language-flag bg-blue-600 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">EN</span>
+                            </div>
+                            <span class="font-medium text-primary">English</span>
+                            <i class="fas fa-check ml-auto text-primary"></i>
+                        </button>
+                        <button data-event="click:selectTargetLanguage" data-implementation="Set target language to Tamil"
+                                class="w-full flex items-center p-3 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                            <div class="language-flag bg-orange-500 flex items-center justify-center">
+                                <span class="text-xs text-white font-bold">த</span>
+                            </div>
+                            <span class="text-gray-700">Tamil</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LanguageSelector -->
+
+        <!-- @COMPONENT: VoiceRecorder -->
+        <div class="bg-white rounded-xl shadow-sm border p-6">
+            <div class="text-center space-y-6">
+                <div class="space-y-2">
+                    <h2 class="text-lg font-medium text-gray-900">Voice Recording</h2>
+                    <p class="text-sm text-gray-500">Tap the microphone and speak in Chinese</p>
+                </div>
+
+                <!-- Recording Status -->
+                <!-- @STATE: isRecording:boolean = false -->
+                <div class="flex items-center justify-center space-x-2 text-sm">
+                    <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    <span class="text-gray-500" data-bind="recordingStatus">Ready to record</span>
+                </div>
+
+                <!-- Main Recording Button -->
+                <div class="flex justify-center">
+                    <button data-event="click:toggleRecording" data-implementation="Start/stop voice recording using Web Speech API"
+                            class="w-20 h-20 bg-primary hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ripple">
+                        <i class="fas fa-microphone text-white text-2xl"></i>
+                    </button>
+                </div>
+
+                <!-- Recording Controls -->
+                <div class="flex items-center justify-center space-x-4">
+                    <button data-event="click:clearRecording" data-implementation="Clear current recording and reset"
+                            class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        <i class="fas fa-trash-alt mr-2"></i>Clear
+                    </button>
+                    <button data-event="click:playbackRecording" data-implementation="Play back recorded audio"
+                            class="px-4 py-2 text-primary hover:text-blue-700 transition-colors">
+                        <i class="fas fa-play mr-2"></i>Playback
+                    </button>
+                </div>
+
+                <!-- Audio Visualization -->
+                <div class="flex items-center justify-center space-x-1 h-12">
+                    <!-- @FUNCTIONALITY: Audio visualization bars should animate during recording -->
+                    <div class="w-1 bg-gray-300 rounded-full h-4"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-6"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-3"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-8"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-5"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-7"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-4"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-6"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-3"></div>
+                    <div class="w-1 bg-gray-300 rounded-full h-5"></div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: VoiceRecorder -->
+
+        <!-- @COMPONENT: TranslationResults -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Source Text -->
+            <div class="bg-white rounded-xl shadow-sm border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-medium text-gray-900 flex items-center">
+                        <div class="language-flag bg-red-500 flex items-center justify-center mr-2">
+                            <span class="text-xs text-white font-bold">中</span>
+                        </div>
+                        Chinese (Source)
+                    </h3>
+                    <button data-event="click:speakSourceText" data-implementation="Text-to-speech for source text"
+                            class="p-2 text-gray-500 hover:text-primary transition-colors">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <textarea data-bind="sourceText" data-mock="true" 
+                              class="w-full h-32 p-4 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                              placeholder="Recognized speech will appear here..."
+                              readonly>你好，今天天气怎么样？</textarea>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Confidence: <span data-bind="recognitionConfidence" class="font-medium">95%</span></span>
+                        <button data-event="click:editSourceText" data-implementation="Allow manual editing of recognized text"
+                                class="text-primary hover:text-blue-700">Edit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Text -->
+            <div class="bg-white rounded-xl shadow-sm border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-medium text-gray-900 flex items-center">
+                        <div class="language-flag bg-blue-600 flex items-center justify-center mr-2">
+                            <span class="text-xs text-white font-bold">EN</span>
+                        </div>
+                        English (Target)
+                    </h3>
+                    <button data-event="click:speakTargetText" data-implementation="Text-to-speech for translated text"
+                            class="p-2 text-gray-500 hover:text-primary transition-colors">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <textarea data-bind="translatedText" data-mock="true"
+                              class="w-full h-32 p-4 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                              placeholder="Translation will appear here..."
+                              readonly>Hello, how's the weather today?</textarea>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Powered by Google Translate</span>
+                        <button data-event="click:copyTranslation" data-implementation="Copy translated text to clipboard"
+                                class="text-primary hover:text-blue-700">
+                            <i class="fas fa-copy mr-1"></i>Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: TranslationResults -->
+
+        <!-- @COMPONENT: ProcessingIndicator -->
+        <div class="bg-white rounded-xl shadow-sm border p-6" style="display: none;" data-bind="processingVisible">
+            <div class="flex items-center justify-center space-x-3">
+                <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-gray-600">
+                    <span class="processing-dots">Processing audio</span>
+                </span>
+            </div>
+            
+            <div class="mt-4 space-y-2">
+                <div class="flex justify-between text-sm text-gray-500">
+                    <span data-bind="processingStep">Converting speech to text...</span>
+                    <span data-bind="processingProgress">45%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 45%" data-bind="progressBarWidth"></div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProcessingIndicator -->
+
+        <!-- @COMPONENT: RecentTranslations -->
+        <div class="bg-white rounded-xl shadow-sm border p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-medium text-gray-900">Recent Translations</h3>
+                <button data-event="click:clearHistory" data-implementation="Clear translation history"
+                        class="text-sm text-gray-500 hover:text-gray-700">Clear All</button>
+            </div>
+            
+            <!-- @MAP: recentTranslations.map(translation => ( -->
+            <div class="space-y-3" data-mock="true">
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                     data-event="click:selectRecentTranslation" data-implementation="Load selected translation">
+                    <div class="flex flex-col space-y-1">
+                        <div class="language-flag bg-red-500 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">中</span>
+                        </div>
+                        <i class="fas fa-arrow-down text-gray-400 text-xs"></i>
+                        <div class="language-flag bg-blue-600 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">EN</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900 truncate">你好，今天天气怎么样？</p>
+                        <p class="text-sm text-gray-500 truncate">Hello, how's the weather today?</p>
+                        <p class="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                    </div>
+                    <button data-event="click:playRecentTranslation" data-implementation="Play TTS for this translation"
+                            class="p-1 text-gray-400 hover:text-primary">
+                        <i class="fas fa-play text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                    <div class="flex flex-col space-y-1">
+                        <div class="language-flag bg-blue-600 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">EN</span>
+                        </div>
+                        <i class="fas fa-arrow-down text-gray-400 text-xs"></i>
+                        <div class="language-flag bg-orange-500 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">த</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900 truncate">How are you doing today?</p>
+                        <p class="text-sm text-gray-500 truncate">இன்று நீங்கள் எப்படி இருக்கிறீர்கள்?</p>
+                        <p class="text-xs text-gray-400 mt-1">5 minutes ago</p>
+                    </div>
+                    <button class="p-1 text-gray-400 hover:text-primary">
+                        <i class="fas fa-play text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                    <div class="flex flex-col space-y-1">
+                        <div class="language-flag bg-orange-500 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">த</span>
+                        </div>
+                        <i class="fas fa-arrow-down text-gray-400 text-xs"></i>
+                        <div class="language-flag bg-red-500 flex items-center justify-center">
+                            <span class="text-xs text-white font-bold">中</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900 truncate">நன்றி, உங்களுக்கு நன்றி</p>
+                        <p class="text-sm text-gray-500 truncate">谢谢，谢谢你</p>
+                        <p class="text-xs text-gray-400 mt-1">10 minutes ago</p>
+                    </div>
+                    <button class="p-1 text-gray-400 hover:text-primary">
+                        <i class="fas fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+        </div>
+        <!-- @END_COMPONENT: RecentTranslations -->
+
+        <!-- @COMPONENT: ErrorHandler -->
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4" style="display: none;" data-bind="errorVisible">
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
+                <div class="flex-1">
+                    <h4 class="text-sm font-medium text-red-800">Error</h4>
+                    <p class="text-sm text-red-700 mt-1" data-bind="errorMessage">
+                        Unable to access microphone. Please check your browser settings and grant microphone permissions.
+                    </p>
+                </div>
+                <button data-event="click:dismissError" data-implementation="Hide error message"
+                        class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ErrorHandler -->
+    </main>
+
+    <!-- @COMPONENT: FloatingActionButton -->
+    <div class="fixed bottom-6 right-6">
+        <button data-event="click:quickRecord" data-implementation="Quick record shortcut"
+                class="w-14 h-14 bg-secondary hover:bg-yellow-500 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 ripple">
+            <i class="fas fa-microphone text-white text-lg"></i>
+        </button>
+    </div>
+    <!-- @END_COMPONENT: FloatingActionButton -->
+
+    <script>
+    // TODO: Implement Web Speech API integration
+    // TODO: Implement Google Translate API integration  
+    // TODO: Implement text-to-speech functionality
+    // TODO: Add real-time audio visualization
+    // TODO: Implement local storage for translation history
+    // TODO: Add error handling for API failures and browser compatibility
+
+    (function() {
+        // Encapsulated demo interactions - not production logic
+        
+        // Demo recording state management
+        let isRecording = false;
+        let recordingTimeout;
+        
+        const recordButton = document.querySelector('[data-event="click:toggleRecording"]');
+        const recordingStatus = document.querySelector('[data-bind="recordingStatus"]');
+        const audioVisualization = document.querySelectorAll('.h-12 .w-1');
+        
+        if (recordButton && recordingStatus) {
+            recordButton.addEventListener('click', function() {
+                isRecording = !isRecording;
+                
+                if (isRecording) {
+                    // Demo recording start
+                    recordingStatus.textContent = 'Recording... Speak now';
+                    recordButton.classList.add('recording-pulse', 'bg-red-500');
+                    recordButton.classList.remove('bg-primary');
+                    recordButton.querySelector('i').className = 'fas fa-stop text-white text-2xl';
+                    
+                    // Demo audio visualization
+                    audioVisualization.forEach((bar, index) => {
+                        setTimeout(() => {
+                            bar.classList.add('bg-primary');
+                            bar.style.height = Math.random() * 30 + 10 + 'px';
+                        }, index * 100);
+                    });
+                    
+                    // Auto-stop demo recording after 3 seconds
+                    recordingTimeout = setTimeout(() => {
+                        if (isRecording) {
+                            recordButton.click();
+                        }
+                    }, 3000);
+                } else {
+                    // Demo recording stop
+                    clearTimeout(recordingTimeout);
+                    recordingStatus.textContent = 'Processing...';
+                    recordButton.classList.remove('recording-pulse', 'bg-red-500');
+                    recordButton.classList.add('bg-primary');
+                    recordButton.querySelector('i').className = 'fas fa-microphone text-white text-2xl';
+                    
+                    // Reset audio visualization
+                    audioVisualization.forEach(bar => {
+                        bar.classList.remove('bg-primary');
+                        bar.classList.add('bg-gray-300');
+                        bar.style.height = Math.random() * 20 + 10 + 'px';
+                    });
+                    
+                    // Simulate processing
+                    setTimeout(() => {
+                        recordingStatus.textContent = 'Ready to record';
+                    }, 2000);
+                }
+            });
+        }
+        
+        // Demo language selection
+        document.querySelectorAll('[data-event*="selectSourceLanguage"], [data-event*="selectTargetLanguage"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const isSource = this.dataset.event.includes('Source');
+                const container = isSource ? this.parentElement : this.parentElement;
+                
+                // Remove active state from siblings
+                container.querySelectorAll('button').forEach(btn => {
+                    btn.className = btn.className.replace(/border-2 border-primary bg-primary\/5/, 'border border-gray-200 hover:border-gray-300');
+                    btn.className = btn.className.replace(/font-medium text-primary/, 'text-gray-700');
+                    const checkIcon = btn.querySelector('.fa-check');
+                    if (checkIcon) checkIcon.remove();
+                });
+                
+                // Add active state to clicked button
+                this.className = this.className.replace(/border border-gray-200 hover:border-gray-300/, 'border-2 border-primary bg-primary/5');
+                this.className = this.className.replace(/text-gray-700/, 'font-medium text-primary');
+                if (!this.querySelector('.fa-check')) {
+                    this.innerHTML += '<i class="fas fa-check ml-auto text-primary"></i>';
+                }
+            });
+        });
+        
+        // Demo ripple effect enhancement
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Enhanced visual feedback for demo
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    })();
+    </script>
+</body>
+</html>
