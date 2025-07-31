@@ -2,7 +2,7 @@
 // Simple in-memory storage for serverless (resets on each deploy)
 let translations = [];
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, DELETE, OPTIONS');
@@ -33,4 +33,4 @@ export default async function handler(req, res) {
     console.error("Error handling translations:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-}
+};
