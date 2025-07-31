@@ -1,0 +1,14 @@
+# Vercel ignore file
+node_modules
+.env
+.env.local
+.env.*.local
+server/
+attached_assets/
+replit.md
+.replit
+drizzle.config.ts
+*.log
+.vscode/
+.idea/
+dist/index.js
